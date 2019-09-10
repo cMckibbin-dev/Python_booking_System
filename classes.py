@@ -13,7 +13,9 @@ class Event:
         self.dateOfBooking = datetime.datetime.now()
 
     def total(self):
-        return self.noGuests * self.costPerhead
+        subtotal = self.noGuests * self.costPerhead
+        vat = subtotal / 5
+        return subtotal + vat
 
 
 class Conference(Event):
@@ -25,6 +27,11 @@ class Conference(Event):
         self.projectorRequired = projectorRequired
         self.costPerhead = 20
 
+    def total(self):
+        subtotal = self.noGuests * self.costPerhead
+        vat = subtotal / 5
+        return subtotal + vat
+
 
 class Party(Event):
     def __int__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead, bandName,
@@ -33,6 +40,11 @@ class Party(Event):
         self.bandName = bandName
         self.bandPrice = bandPrice
 
+    def total(self):
+        subtotal = (self.costPerhead * self.noGuests) + self.bandPrice
+        vat = subtotal / 5
+        return subtotal + vat
+
 
 class Wedding(Party):
     def __init__(self, bandName, bandPrice, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent,
@@ -40,3 +52,8 @@ class Wedding(Party):
         super().__init__(self, bandName, bandPrice, noGuests, nameofContact, address, contactNo, eventRoomNo,
                          dateOfEvent, costPerhead)
         self.noBedroomsReserved = noBedroomsReserved
+
+    def total(self):
+        subtotal = (self.costPerhead * self.noGuests) + self.bandPrice
+        vat = subtotal / 5
+        return subtotal + vat
