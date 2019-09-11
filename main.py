@@ -1,6 +1,6 @@
-from gui import index
+from gui import index, update
 from tkinter import *
 
 root = Tk()
-ui = index.IndexUI(root)
+ui = update.UpdateConferenceUI(root)
 root.mainloop()
