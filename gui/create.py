@@ -2,6 +2,8 @@ from tkinter import *
 
 
 class CreateUI:
+    root = Tk()
+
     def __init__(self, root):
 
         self.options = [
@@ -17,7 +19,6 @@ class CreateUI:
             "Prawn Mendes",
             "AB/CD"
         ]
-
 
         self.yesno = IntVar()
 
@@ -45,12 +46,10 @@ class CreateUI:
             else:
                 self.bcs.set("£{0}".format(0))
 
-
         #  Enable save button function
         def enablesavebtn(*args):
             if True:
                 self.saveBtn.config(state='normal')
-
 
         # Funtion to hide widgets(1 = conference, 2=party, 3=wedding)
         def hidewidgets(int):
@@ -77,7 +76,6 @@ class CreateUI:
                 self.noOfDaysEntry.grid_remove()
                 self.projectorLbl.grid_remove()
                 self.projectorCheck.grid_remove()
-
 
         #  Function to detect which option is selected in event list
         def selectedvalue(*args):
@@ -113,13 +111,11 @@ class CreateUI:
 
                 hidewidgets(3)
 
-
         # Widgets
         self.label = Label(self.root, text="Create New Booking", font="Ariel, 16", height=2)
 
         self.eventTypeLbl = Label(self.root, text="Select Event Type:", font="Ariel, 12", anchor='e', width=20)
-        self.eventType = OptionMenu(self.root, self.variable, self.*options, command=selectedvalue)
-
+        self.eventType = OptionMenu(self.root, self.variable, * self.options, command=selectedvalue)
 
         self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20)
         self.noGuestsEntry = Entry(self.root)
@@ -137,7 +133,7 @@ class CreateUI:
         self.roomNoEntry = Entry(self.root)
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfEventEntry = Entry(self.oot)
+        self.dateOfEventEntry = Entry(self.root)
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
         self.dateOfBookingEntry = Entry(self.root)
@@ -149,16 +145,16 @@ class CreateUI:
         self.noOfDaysEntry = Entry(self.root)
 
         self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20)
-        self.projectorCheck = Checkbutton(self.root, variable=yesno)
+        self.projectorCheck = Checkbutton(self.root, variable=self.yesno)
 
         self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
         self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
 
         self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
-        self.bandName = OptionMenu(self.root, bandVariable, *bandOptions, command=selectedvalue)
+        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=selectedvalue)
 
         self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
-        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=bcs, anchor='e', width=20)
+        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
 
         self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
         self.noOfRoomsEntry = Entry(self.root)
@@ -199,7 +195,7 @@ class CreateUI:
         self.costPerHeadLbl.grid(row=13, column=1)
         self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
 
-        self.f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
+        f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
 
         self.backBtn.pack(side="left", padx=(0, 5))
         self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
@@ -208,7 +204,8 @@ class CreateUI:
         self.saveBtn.pack(side="left", padx=(5, 0))
         self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
 
+        root.mainloop()
 
 
 
-        self.root.mainloop()
+
