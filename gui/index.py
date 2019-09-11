@@ -1,11 +1,25 @@
 from tkinter import *
 import tkinter.ttk as ttk
+from Data_Access import data_access as dBA
+from classes import *
+
+
+def get_event_type(event):
+    """function returns a string representing the type of the event"""
+    if isinstance(event, Conference):
+        return 'Conference'
+    elif isinstance(event, Party):
+        return 'Party'
+    else:
+        return 'Wedding'
 
 
 class IndexUI:
     def __init__(self, master):
         # variables
         self.buttonActive = False
+        self.dbAccess = dBA.DBAccess()
+        self.events = self.getdata()
 
         # window configure
         self.master = master
@@ -22,10 +36,12 @@ class IndexUI:
         # combo boxes for form search options
         self.comboEventType = ttk.Combobox(master, values=['All Types', 'Conference', 'Party', 'Wedding'],
                                            font=self.textNormal, state='readonly')
-        self.comboEventType.current(1)
+        self.comboEventType.current(0)
 
         # Future dates only checkbox
-        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", font=self.textNormal)
+        self.isChecked = BooleanVar()
+        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", font=self.textNormal,
+                                              var=self.isChecked)
         # buttons for form
         self.buttonSearch = Button(master, text='Search', font=self.textNormal)
 
@@ -76,11 +92,14 @@ class IndexUI:
         self.master.grid_columnconfigure(2, weight=0, uniform='fred')
 
         self.TotalLabel['text'] = self.total_treeview()
+        self.refresh_eventlist()
 
+    # function get total of events in function
     def total_treeview(self):
         itemCount = len(self.tree.get_children())
         return itemCount
 
+    # function to active buttons
     def active_buttons(self, event):
         if not self.buttonActive:
             item = self.tree.focus()
@@ -90,3 +109,26 @@ class IndexUI:
                 self.buttonActive = True
             else:
                 print('Select option')
+
+    def insert_to_tree(self, data):
+        """Insert data in to tree view"""
+        self.tree.insert('', 'end', values=(data.nameofContact, data.noGuests, data.eventRoomNumber,
+                                            get_event_type(data), data.dateofEvent))
+
+    def refresh_eventlist(self, eventType="All Types"):
+        print(eventType)
+        self.tree.delete(*self.tree.get_children())
+        for event in self.events:
+            print(self.events)
+            self.insert_to_tree(event)
+
+    def getdata(self, eventType='All Types'):
+        future = False
+        if eventType == "All Types":
+            return self.dbAccess.all_records(future)
+        elif eventType == "Party":
+            return self.dbAccess.all_party(future)
+        elif eventType == "Conference":
+            return self.dbAccess.all_conferences(future)
+        elif eventType == 'Wedding':
+            return self.dbAccess.all_weddings(future)
