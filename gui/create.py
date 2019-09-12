@@ -1,10 +1,12 @@
 from tkinter import *
+import tkinter.ttk as ttk
 
 
 class CreateUI:
-    root = Tk()
 
     def __init__(self, root):
+
+        self.root = root
 
         self.options = [
             "Please select event type",
@@ -69,7 +71,7 @@ class CreateUI:
         self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
 
         self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
-        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.selectedvalue)
+        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
 
         self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
         self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
@@ -83,8 +85,46 @@ class CreateUI:
         self.clearBtn = Button(f1, text="Clear", width=10, height=2)
         self.saveBtn = Button(f1, text="Save", width=10, height=2)
 
+        # Positioning
+        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
+
+        self.eventType.grid(row=2, column=2, sticky=NSEW, pady=(0, 25), padx=(0, 20))
+        self.eventTypeLbl.grid(row=2, column=1, pady=(0, 25))
+
+        self.noGuestsLbl.grid(row=3, column=1)
+        self.noGuestsEntry.grid(row=3, column=2, padx=(0, 20))
+
+        self.nameOfContactLbl.grid(row=4, column=1)
+        self.nameOfContactEntry.grid(row=4, column=2, padx=(0, 20))
+
+        self.addressLbl.grid(row=5, column=1)
+        self.addressEntry.grid(row=5, column=2, padx=(0, 20))
+
+        self.contactNumberLbl.grid(row=6, column=1)
+        self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
+
+        self.roomNoLbl.grid(row=7, column=1)
+        self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
+
+        self.dateOfEventLbl.grid(row=8, column=1)
+        self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
+
+        self.dateOfBookingLbl.grid(row=9, column=1)
+        self.dateOfBookingEntry.grid(row=9, column=2, padx=(0, 20))
+
+        self.costPerHeadLbl.grid(row=13, column=1)
+        self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
+
+        f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
+
+        self.backBtn.pack(side="left", padx=(0, 5))
+        self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
+        self.clearBtn.pack(side="left")
+        self.clearBtn.config(bg='salmon', highlightbackground='salmon', fg='white')
+        self.saveBtn.pack(side="left", padx=(5, 0))
+        self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
     #  Band selection options
-    def boptions(self):
+    def boptions(self, *args):
         self.bandNameLbl.grid(row=10, column=1)
         self.bandName.grid(row=10, column=2, padx=(0, 20), sticky=NSEW)
 
@@ -167,43 +207,4 @@ class CreateUI:
 
 
 
-        # Positioning
-        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
 
-        self.eventType.grid(row=2, column=2, sticky=NSEW, pady=(0, 25), padx=(0, 20))
-        self.eventTypeLbl.grid(row=2, column=1, pady=(0, 25))
-
-        self.noGuestsLbl.grid(row=3, column=1)
-        self.noGuestsEntry.grid(row=3, column=2, padx=(0, 20))
-
-        self.nameOfContactLbl.grid(row=4, column=1)
-        self.nameOfContactEntry.grid(row=4, column=2, padx=(0, 20))
-
-        self.addressLbl.grid(row=5, column=1)
-        self.addressEntry.grid(row=5, column=2, padx=(0, 20))
-
-        self.contactNumberLbl.grid(row=6, column=1)
-        self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
-
-        self.roomNoLbl.grid(row=7, column=1)
-        self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
-
-        self.dateOfEventLbl.grid(row=8, column=1)
-        self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
-
-        self.dateOfBookingLbl.grid(row=9, column=1)
-        self.dateOfBookingEntry.grid(row=9, column=2, padx=(0, 20))
-
-        self.costPerHeadLbl.grid(row=13, column=1)
-        self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
-
-        self.f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
-
-        self.backBtn.pack(side="left", padx=(0, 5))
-        self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
-        self.clearBtn.pack(side="left")
-        self.clearBtn.config(bg='salmon', highlightbackground='salmon', fg='white')
-        self.saveBtn.pack(side="left", padx=(5, 0))
-        self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
-
-    root.mainloop()

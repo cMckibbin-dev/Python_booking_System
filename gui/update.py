@@ -2,9 +2,12 @@ from tkinter import *
 
 
 class UpdateConferenceUI:
-    root = Tk()
 
-    def __init__(self, root):
+
+    def __init__(self, root, eventtype):
+
+        self.eventtype = eventtype
+        self.root = root
 
         self.bandOptions = [
             "Please select band",
@@ -16,17 +19,16 @@ class UpdateConferenceUI:
         self.yesno = IntVar()
 
         self.variable = StringVar(self.root)
-        #self.variable.set(self.options[0])  # default value
+
         self.bandVariable = StringVar(self.root)
-        #self.bandVariable.set(self.options[0])  # default value
+        self.bandVariable.set(self.bandOptions[0])  # default value
         self.bc = IntVar()
         self.bcs = StringVar()
+        self.titleString = StringVar()
 
         # Widgets
-        self.label = Label(self.root, text="Create New Booking", font="Ariel, 16", height=2)
 
-        # self.eventTypeLbl = Label(self.root, text="Select Event Type:", font="Ariel, 12", anchor='e', width=20)
-        # self.eventType = OptionMenu(self.root, self.variable, * self.options, command=selectedvalue)
+        self.label = Label(self.root, textvariable=self.titleString, font="Ariel, 16", height=2)
 
         self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20)
         self.noGuestsEntry = Entry(self.root)
@@ -62,7 +64,7 @@ class UpdateConferenceUI:
         self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
 
         self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
-        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=selectedvalue)
+        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
 
         self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
         self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
@@ -70,26 +72,44 @@ class UpdateConferenceUI:
         self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
         self.noOfRoomsEntry = Entry(self.root)
 
-        f1 = Frame(self.root)
+        self.f1 = Frame(self.root)
 
-        self.backBtn = Button(f1, text="Back", width=10, height=2)
-        self.clearBtn = Button(f1, text="Clear", width=10, height=2)
-        self.saveBtn = Button(f1, text="Save", width=10, height=2)
+        self.backBtn = Button(self.f1, text="Back", width=10, height=2)
+        self.clearBtn = Button(self.f1, text="Clear", width=10, height=2)
+        self.saveBtn = Button(self.f1, text="Save", width=10, height=2)
+
+        self.mainui()
+        if self.eventtype == 'conference':
+            self.conferenceui()
+
+        elif self.eventtype == 'party':
+            self.partyui()
+
+        elif self.eventtype == 'wedding':
+            self.weddingui()
+
+
+
 
         #  Band selection options
-    def boptions(self):
+    def boptions(self, *args):
+        print("loaded boptions")
         self.bandNameLbl.grid(row=10, column=1)
         self.bandName.grid(row=10, column=2, padx=(0, 20), sticky=NSEW)
 
         self.bandCostLbl.grid(row=11, column=1)
         self.bandCostDisplay.grid(row=11, column=2, padx=(0, 20), sticky='w')
-
+        print(str(self.bandVariable))
         if self.bandVariable.get() == "Lil' Febrezey":
+
             self.bcs.set("£{0}".format(100))
+            print(str(self.bcs))
         elif self.bandVariable.get() == 'Prawn Mendes':
             self.bcs.set("£{0}".format(250))
+            print(str(self.bcs))
         elif self.bandVariable.get() == 'AB/CD':
             self.bcs.set("£{0}".format(500))
+            print(str(self.bcs))
         else:
             self.bcs.set("£{0}".format(0))
 
@@ -99,15 +119,15 @@ class UpdateConferenceUI:
             self.saveBtn.config(state='normal')
 
     # Function to hide widgets(1 = conference, 2=party, 3=wedding)
-    def hidewidgets(self, int):
-        if int == 1:
+    def hidewidgets(self, eventtype):
+        if eventtype == 'conference':
             self.bandNameLbl.grid_remove()
             self.bandName.grid_remove()
             self.bandCostLbl.grid_remove()
             self.bandCostDisplay.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
-        elif int == 2:
+        elif eventtype == 'party':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
             self.noOfDaysLbl.grid_remove()
@@ -116,38 +136,13 @@ class UpdateConferenceUI:
             self.projectorCheck.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
-        elif int == 3:
+        elif eventtype == 'wedding':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
             self.noOfDaysLbl.grid_remove()
             self.noOfDaysEntry.grid_remove()
             self.projectorLbl.grid_remove()
             self.projectorCheck.grid_remove()
-
-    #  Function to detect which option is selected in event list
-    def selectedvalue(self):
-        if self.bandVariable.get() == 'Please select band':
-            self.saveBtn.config(state=DISABLED)
-        elif self.variable.get() == 'Conference':
-            self.enablesavebtn()
-
-            self.hidewidgets(1)
-
-        elif self.variable.get() == 'Party':
-            self.enablesavebtn()
-            self.boptions()
-
-            self.hidewidgets(2)
-
-        elif self.variable.get() == 'Wedding':
-            self.enablesavebtn()
-            self.boptions()
-
-            self.noOfRoomsLbl.grid(row=12, column=1)
-            self.noOfRoomsEntry.grid(row=12, column=2)
-
-            self.hidewidgets(3)
-
 
     def mainui (self):
         self.noGuestsLbl.grid(row=3, column=1)
@@ -184,6 +179,9 @@ class UpdateConferenceUI:
         self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
 
     def conferenceui(self):
+        self.titleString.set("Update Conference")
+
+        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
 
         self.enablesavebtn()
 
@@ -196,24 +194,26 @@ class UpdateConferenceUI:
         self.projectorLbl.grid(row=12, column=1)
         self.projectorCheck.grid(row=12, column=2, padx=(0, 20), sticky='w')
 
-        self.hidewidgets(1)
+        self.hidewidgets('conference')
 
     def partyui(self):
+        self.titleString.set("Update Party")
+        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
+
         self.enablesavebtn()
         self.boptions()
 
-        self.hidewidgets(2)
+        self.hidewidgets('party')
+
     def weddingui(self):
+        self.titleString.set("Update Wedding")
+        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
+
         self.enablesavebtn()
         self.boptions()
 
         self.noOfRoomsLbl.grid(row=12, column=1)
         self.noOfRoomsEntry.grid(row=12, column=2)
 
-        self.hidewidgets(3)
-
-    root.mainloop()
-
-
-
+        self.hidewidgets('wedding')
 
