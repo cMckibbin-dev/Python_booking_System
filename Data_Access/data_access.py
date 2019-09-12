@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 def create_database(db):
+    """Function to create database tables if the database is being created"""
     createTablesCommands = ["""Create Table wedding(numberGuests integer, name_of_contact text, address text,
                             contactNumber text, eventRoom text, dateOfEvent text, dateOfBooking text, costPerHead 
                             integer, bandName text, bandPrice integer, numberOfRooms integer );""",
@@ -82,7 +83,7 @@ class DBAccess:
                            , dateofBooking=datetime.strptime(row[6], '%Y-%m-%d'), costPerhead=convert_pound(row[7]),
                            companyName=row[8],
                            noOfDays=row[9],
-                           projectorRequired=convert_pound(row[10]))
+                           projectorRequired=bool(row[10]))
             listConferences.append(c)
         return listConferences
 

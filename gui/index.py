@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 from Data_Access import data_access as dBA
 from classes import *
+from gui.top_level_functions import view_details_popup
 
 
 def get_event_type(event):
@@ -12,6 +13,12 @@ def get_event_type(event):
         return 'Wedding'
     elif isinstance(event, Party):
         return 'Party'
+
+
+def get_selected_index(tree):
+    item = tree.focus()
+    if item:
+        return tree.get_children().index(item)
 
 
 class IndexUI:
@@ -48,7 +55,8 @@ class IndexUI:
 
         # These buttons only become active when options selected in tree view
         self.buttonBack = Button(master, text='Back', font=self.textNormal)
-        self.buttonViewDetails = Button(master, text='View Details', font=self.textNormal, state=DISABLED)
+        self.buttonViewDetails = Button(master, text='View Details', font=self.textNormal, state=DISABLED,
+                                        command=lambda: view_details_popup(self.events[get_selected_index(self.tree)]))
         self.buttonEdit = Button(master, text='Edit', font=self.textNormal, state=DISABLED)
 
         # tree view for form where bookings are displayed
@@ -86,11 +94,6 @@ class IndexUI:
         self.buttonBack.grid(row=5, column=0, sticky=NSEW, columnspan=1, padx=10, pady=10)
         self.buttonViewDetails.grid(row=5, column=1, sticky=NSEW, columnspan=1, padx=10, pady=10)
         self.buttonEdit.grid(row=5, column=2, sticky=NSEW, columnspan=1, padx=10, pady=10)
-
-        # setting weight and uniform for and column in grid
-        self.master.grid_columnconfigure(0, weight=0, uniform='fred')
-        self.master.grid_columnconfigure(1, weight=0, uniform='fred')
-        self.master.grid_columnconfigure(2, weight=0, uniform='fred')
 
         self.TotalLabel['text'] = len(self.events)
         self.refresh_eventlist()

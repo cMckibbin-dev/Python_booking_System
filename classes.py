@@ -37,7 +37,8 @@ class Conference(Event):
 class Party(Event):
     def __init__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, bandName,
                 bandPrice, dateofBooking=None, costPerhead=None):
-        super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, dateofBooking, costPerhead)
+        super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead,
+                         dateofBooking)
         self.bandName = bandName
         self.bandPrice = bandPrice
         self.costPerhead = 15 if costPerhead is None else costPerhead

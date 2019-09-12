@@ -149,28 +149,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/gui/view_details.py</url>
-          <line>6</line>
-          <option name="timeStamp" value="8" />
+          <line>115</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/gui/view_details.py</url>
-          <line>7</line>
-          <option name="timeStamp" value="9" />
+          <line>148</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gui/view_details.py</url>
-          <line>10</line>
-          <option name="timeStamp" value="10" />
+          <url>file://$PROJECT_DIR$/Data_Access/data_access.py</url>
+          <line>102</line>
+          <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gui/view_details.py</url>
-          <line>36</line>
-          <option name="timeStamp" value="11" />
+          <url>file://$PROJECT_DIR$/Data_Access/data_access.py</url>
+          <line>105</line>
+          <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gui/view_details.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="12" />
+          <url>file://$PROJECT_DIR$/Data_Access/data_access.py</url>
+          <line>106</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
