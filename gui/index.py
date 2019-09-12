@@ -1,11 +1,25 @@
 from tkinter import *
 import tkinter.ttk as ttk
+from Data_Access import data_access as dBA
+from classes import *
+
+
+def get_event_type(event):
+    """function returns a string representing the type of the event"""
+    if isinstance(event, Conference):
+        return 'Conference'
+    elif isinstance(event, Wedding):
+        return 'Wedding'
+    elif isinstance(event, Party):
+        return 'Party'
 
 
 class IndexUI:
     def __init__(self, master):
         # variables
         self.buttonActive = False
+        self.dbAccess = dBA.DBAccess()
+        self.events = self.getdata()
 
         # window configure
         self.master = master
@@ -22,12 +36,15 @@ class IndexUI:
         # combo boxes for form search options
         self.comboEventType = ttk.Combobox(master, values=['All Types', 'Conference', 'Party', 'Wedding'],
                                            font=self.textNormal, state='readonly')
-        self.comboEventType.current(1)
+        self.comboEventType.current(0)
 
         # Future dates only checkbox
-        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", font=self.textNormal)
+        self.isChecked = BooleanVar()
+        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", font=self.textNormal,
+                                              var=self.isChecked)
         # buttons for form
         self.buttonSearch = Button(master, text='Search', font=self.textNormal)
+        self.buttonSearch.bind('<Button-1>', self.updateEvents)
 
         # These buttons only become active when options selected in tree view
         self.buttonBack = Button(master, text='Back', font=self.textNormal)
@@ -43,7 +60,7 @@ class IndexUI:
         self.tree.heading('#4', text='Type of Event')
         self.tree.heading('#5', text='Date of Event')
         self.tree['show'] = 'headings'
-        self.tree.bind('<Button-1>', self.active_buttons)
+        self.tree.bind('<ButtonRelease-1>', self.active_buttons)
 
         # total events label
         self.EventTotal = Label(self.master, text='Number of Events:', font=self.textNormal)
@@ -75,12 +92,10 @@ class IndexUI:
         self.master.grid_columnconfigure(1, weight=0, uniform='fred')
         self.master.grid_columnconfigure(2, weight=0, uniform='fred')
 
-        self.TotalLabel['text'] = self.total_treeview()
+        self.TotalLabel['text'] = len(self.events)
+        self.refresh_eventlist()
 
-    def total_treeview(self):
-        itemCount = len(self.tree.get_children())
-        return itemCount
-
+    # function to active buttons
     def active_buttons(self, event):
         if not self.buttonActive:
             item = self.tree.focus()
@@ -90,3 +105,37 @@ class IndexUI:
                 self.buttonActive = True
             else:
                 print('Select option')
+
+    def deactive_buttons(self):
+        if self.buttonActive:
+            self.buttonEdit['state'] = "disable"
+            self.buttonViewDetails['state'] = "disable"
+            self.buttonActive = False
+
+    def insert_to_tree(self, data):
+        """Insert data in to tree view"""
+        self.tree.insert('', 'end', values=(data.nameofContact, data.noGuests, data.eventRoomNo,
+                                            get_event_type(data), data.dateOfEvent))
+
+    def refresh_eventlist(self):
+        self.TotalLabel['text'] = len(self.events)
+        self.tree.delete(*self.tree.get_children())
+        for event in self.events:
+            print(self.events)
+            self.insert_to_tree(event)
+
+    def getdata(self, eventType='All Types', future=False):
+        future = future
+        if eventType == "All Types":
+            return self.dbAccess.all_records(future)
+        elif eventType == "Party":
+            return self.dbAccess.all_party(future)
+        elif eventType == "Conference":
+            return self.dbAccess.all_conferences(future)
+        elif eventType == 'Wedding':
+            return self.dbAccess.all_weddings(future)
+
+    def updateEvents(self, event):
+        self.events = self.getdata(self.comboEventType.get(), self.isChecked.get())
+        self.refresh_eventlist()
+        self.deactive_buttons()
