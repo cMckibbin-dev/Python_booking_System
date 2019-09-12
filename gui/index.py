@@ -8,10 +8,10 @@ def get_event_type(event):
     """function returns a string representing the type of the event"""
     if isinstance(event, Conference):
         return 'Conference'
+    elif isinstance(event, Wedding):
+        return 'Wedding'
     elif isinstance(event, Party):
         return 'Party'
-    else:
-        return 'Wedding'
 
 
 class IndexUI:
@@ -44,6 +44,7 @@ class IndexUI:
                                               var=self.isChecked)
         # buttons for form
         self.buttonSearch = Button(master, text='Search', font=self.textNormal)
+        self.buttonSearch.bind('<Button-1>', self.updateEvents)
 
         # These buttons only become active when options selected in tree view
         self.buttonBack = Button(master, text='Back', font=self.textNormal)
@@ -59,7 +60,7 @@ class IndexUI:
         self.tree.heading('#4', text='Type of Event')
         self.tree.heading('#5', text='Date of Event')
         self.tree['show'] = 'headings'
-        self.tree.bind('<Button-1>', self.active_buttons)
+        self.tree.bind('<ButtonRelease-1>', self.active_buttons)
 
         # total events label
         self.EventTotal = Label(self.master, text='Number of Events:', font=self.textNormal)
@@ -91,13 +92,8 @@ class IndexUI:
         self.master.grid_columnconfigure(1, weight=0, uniform='fred')
         self.master.grid_columnconfigure(2, weight=0, uniform='fred')
 
-        self.TotalLabel['text'] = self.total_treeview()
+        self.TotalLabel['text'] = len(self.events)
         self.refresh_eventlist()
-
-    # function get total of events in function
-    def total_treeview(self):
-        itemCount = len(self.tree.get_children())
-        return itemCount
 
     # function to active buttons
     def active_buttons(self, event):
@@ -110,20 +106,26 @@ class IndexUI:
             else:
                 print('Select option')
 
+    def deactive_buttons(self):
+        if self.buttonActive:
+            self.buttonEdit['state'] = "disable"
+            self.buttonViewDetails['state'] = "disable"
+            self.buttonActive = False
+
     def insert_to_tree(self, data):
         """Insert data in to tree view"""
-        self.tree.insert('', 'end', values=(data.nameofContact, data.noGuests, data.eventRoomNumber,
-                                            get_event_type(data), data.dateofEvent))
+        self.tree.insert('', 'end', values=(data.nameofContact, data.noGuests, data.eventRoomNo,
+                                            get_event_type(data), data.dateOfEvent))
 
-    def refresh_eventlist(self, eventType="All Types"):
-        print(eventType)
+    def refresh_eventlist(self):
+        self.TotalLabel['text'] = len(self.events)
         self.tree.delete(*self.tree.get_children())
         for event in self.events:
             print(self.events)
             self.insert_to_tree(event)
 
-    def getdata(self, eventType='All Types'):
-        future = False
+    def getdata(self, eventType='All Types', future=False):
+        future = future
         if eventType == "All Types":
             return self.dbAccess.all_records(future)
         elif eventType == "Party":
@@ -132,3 +134,8 @@ class IndexUI:
             return self.dbAccess.all_conferences(future)
         elif eventType == 'Wedding':
             return self.dbAccess.all_weddings(future)
+
+    def updateEvents(self, event):
+        self.events = self.getdata(self.comboEventType.get(), self.isChecked.get())
+        self.refresh_eventlist()
+        self.deactive_buttons()
