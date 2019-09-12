@@ -22,12 +22,34 @@ class CreateUI:
             "AB/CD"
         ]
 
+        self.conferenceRooms = [
+            "Please select room",
+            "A",
+            "B",
+            "C"
+        ]
+
+        self.partyRooms = [
+            "Please select room",
+            "D",
+            "E",
+            "F",
+            "G"
+        ]
+
+        self.weddingRooms = [
+            "Please select room",
+            "H",
+            "I"
+        ]
         self.yesno = IntVar()
 
         self.variable = StringVar(self.root)
         self.variable.set(self.options[0])  # default value
         self.bandVariable = StringVar(self.root)
         self.bandVariable.set(self.options[0])  # default value
+        self.roomVariable = StringVar(self.root)
+        self.roomVariable.set(self.options[0])  # default value
         self.bc = IntVar()
         self.bcs = StringVar()
 
@@ -50,13 +72,16 @@ class CreateUI:
         self.contactNumberEntry = Entry(self.root)
 
         self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
-        self.roomNoEntry = Entry(self.root)
+        # TODO Finish the room logic and selection options.
+        self.roomNoEntry = OptionMenu(self.root, self.roomVariable, command=self.boptions)
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
+        # TODO Make this a popup calendar entry.
         self.dateOfEventEntry = Entry(self.root)
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfBookingEntry = Entry(self.root)
+        # TODO Change lbl2 to pull the date from system.
+        self.dateOfBookingLbl2 = Label(self.root, text="Date will go here", font="Ariel, 12", anchor='e', width=20)
 
         self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
         self.companyEntry = Entry(self.root)

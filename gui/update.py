@@ -1,13 +1,13 @@
 from tkinter import *
-
+import gui.top_level_functions as tlf
 
 class UpdateConferenceUI:
-
 
     def __init__(self, root, eventtype):
 
         self.eventtype = eventtype
         self.root = root
+        root.title("Update Booking")
 
         self.bandOptions = [
             "Please select band",
@@ -47,6 +47,7 @@ class UpdateConferenceUI:
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
         self.dateOfEventEntry = Entry(self.root)
+        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
         self.dateOfBookingEntry = Entry(self.root)
@@ -77,6 +78,7 @@ class UpdateConferenceUI:
         self.backBtn = Button(self.f1, text="Back", width=10, height=2)
         self.clearBtn = Button(self.f1, text="Clear", width=10, height=2)
         self.saveBtn = Button(self.f1, text="Save", width=10, height=2)
+        # TODO The if statements below need changed to look for the instance of record being click on.
 
         self.mainui()
         if self.eventtype == 'conference':
