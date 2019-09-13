@@ -148,7 +148,6 @@ class DBAccess:
     def disconnect_db(self):
         """Disconnect the database and the cursor"""
         self.dbCon.close()
-        self.dbCon.close()
 
     # def __del__(self):
     #     self.dbCon.close()

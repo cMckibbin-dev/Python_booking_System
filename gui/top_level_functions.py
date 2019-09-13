@@ -4,17 +4,21 @@ from classes import *
 from gui import view_details as vD
 
 
-def date_top_level(event, entry):
+def date_top_level(event, master, entry):
     """function to call calender widget and insert selected value into entry box"""
     top = Toplevel()
     top.title('Selected Date')
     # calender widget
     calendar = ttkcalendar.Calendar(top)
+    # master releasing control of program
+    master.grab_release()
     top.grab_set()
     top.wait_window()
     print(calendar.getselection())
     entry.delete(0, 'end')
     entry.insert(0, calendar.getselection())
+    top.grab_release()
+    master.grab_set()
     top.destroy()
 
 

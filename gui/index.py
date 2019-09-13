@@ -124,7 +124,6 @@ class IndexUI:
         self.TotalLabel['text'] = len(self.events)
         self.tree.delete(*self.tree.get_children())
         for event in self.events:
-            print(self.events)
             self.insert_to_tree(event)
 
     def getdata(self, eventType='All Types', future=False):
