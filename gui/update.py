@@ -1,19 +1,40 @@
 from tkinter import *
-
+import gui.top_level_functions as tlf
 
 class UpdateConferenceUI:
-
 
     def __init__(self, root, eventtype):
 
         self.eventtype = eventtype
         self.root = root
+        root.title("Update Booking")
 
         self.bandOptions = [
             "Please select band",
             "Lil' Febrezey",
             "Prawn Mendes",
             "AB/CD"
+        ]
+
+        self.conferenceRooms = [
+            "Please select room",
+            "A",
+            "B",
+            "C"
+        ]
+
+        self.partyRooms = [
+            "Please select room",
+            "D",
+            "E",
+            "F",
+            "G"
+        ]
+
+        self.weddingRooms = [
+            "Please select room",
+            "H",
+            "I"
         ]
 
         self.yesno = IntVar()
@@ -25,6 +46,8 @@ class UpdateConferenceUI:
         self.bc = IntVar()
         self.bcs = StringVar()
         self.titleString = StringVar()
+        self.roomVariable = StringVar(self.root)
+        self.roomVariable.set(self.conferenceRooms[0])  # default value
 
         # Widgets
 
@@ -43,10 +66,14 @@ class UpdateConferenceUI:
         self.contactNumberEntry = Entry(self.root)
 
         self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
-        self.roomNoEntry = Entry(self.root)
+        # self.roomNoEntry = Entry(self.root)
+        self.roomNoEntryConference = OptionMenu(self.root, self.roomVariable, *self.conferenceRooms)
+        self.roomNoEntryParty = OptionMenu(self.root, self.roomVariable, *self.partyRooms)
+        self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
         self.dateOfEventEntry = Entry(self.root)
+        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
         self.dateOfBookingEntry = Entry(self.root)
@@ -77,6 +104,7 @@ class UpdateConferenceUI:
         self.backBtn = Button(self.f1, text="Back", width=10, height=2)
         self.clearBtn = Button(self.f1, text="Clear", width=10, height=2)
         self.saveBtn = Button(self.f1, text="Save", width=10, height=2)
+        # TODO The if statements below need changed to look for the instance of record being click on.
 
         self.mainui()
         if self.eventtype == 'conference':
@@ -127,6 +155,8 @@ class UpdateConferenceUI:
             self.bandCostDisplay.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
+            self.roomNoEntryParty.grid_remove()
+            self.roomNoEntryWedding.grid_remove()
         elif eventtype == 'party':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
@@ -136,6 +166,8 @@ class UpdateConferenceUI:
             self.projectorCheck.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
+            self.roomNoEntryConference.grid_remove()
+            self.roomNoEntryWedding.grid_remove()
         elif eventtype == 'wedding':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
@@ -143,6 +175,8 @@ class UpdateConferenceUI:
             self.noOfDaysEntry.grid_remove()
             self.projectorLbl.grid_remove()
             self.projectorCheck.grid_remove()
+            self.roomNoEntryParty.grid_remove()
+            self.roomNoEntryConference.grid_remove()
 
     def mainui (self):
         self.noGuestsLbl.grid(row=3, column=1)
@@ -158,7 +192,7 @@ class UpdateConferenceUI:
         self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
 
         self.roomNoLbl.grid(row=7, column=1)
-        self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
+        # self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
 
         self.dateOfEventLbl.grid(row=8, column=1)
         self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
@@ -185,6 +219,8 @@ class UpdateConferenceUI:
 
         self.enablesavebtn()
 
+        self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
+
         self.companyLbl.grid(row=10, column=1)
         self.companyEntry.grid(row=10, column=2, padx=(0, 20))
 
@@ -198,6 +234,8 @@ class UpdateConferenceUI:
 
     def partyui(self):
         self.titleString.set("Update Party")
+
+        self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
 
         self.enablesavebtn()
@@ -207,6 +245,8 @@ class UpdateConferenceUI:
 
     def weddingui(self):
         self.titleString.set("Update Wedding")
+
+        self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
 
         self.enablesavebtn()

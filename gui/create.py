@@ -7,27 +7,52 @@ class CreateUI:
     def __init__(self, root):
 
         self.root = root
-
+        # Event type options
         self.options = [
             "Please select event type",
             "Conference",
             "Party",
             "Wedding"
         ]
-
+        # Band name options
         self.bandOptions = [
             "Please select band",
             "Lil' Febrezey",
             "Prawn Mendes",
             "AB/CD"
         ]
+        # Conference room options
+        self.conferenceRooms = [
+            "Please select room",
+            "A",
+            "B",
+            "C"
+        ]
 
+        # Party room options
+        self.partyRooms = [
+            "Please select room",
+            "D",
+            "E",
+            "F",
+            "G"
+        ]
+
+        # Wedding room options
+        self.weddingRooms = [
+            "Please select room",
+            "H",
+            "I"
+        ]
         self.yesno = IntVar()
 
+        #  
         self.variable = StringVar(self.root)
         self.variable.set(self.options[0])  # default value
         self.bandVariable = StringVar(self.root)
         self.bandVariable.set(self.options[0])  # default value
+        self.roomVariable = StringVar(self.root)
+        self.roomVariable.set(self.options[0])  # default value
         self.bc = IntVar()
         self.bcs = StringVar()
 
@@ -50,13 +75,18 @@ class CreateUI:
         self.contactNumberEntry = Entry(self.root)
 
         self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
-        self.roomNoEntry = Entry(self.root)
+        # TODO Finish the room logic and selection options.
+        self.roomNoEntryConference = OptionMenu(self.root, self.roomVariable, *self.conferenceRooms)
+        self.roomNoEntryParty = OptionMenu(self.root, self.roomVariable, *self.partyRooms)
+        self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
+        # TODO Make this a popup calendar entry.
         self.dateOfEventEntry = Entry(self.root)
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfBookingEntry = Entry(self.root)
+        # TODO Change lbl2 to pull the date from system.
+        self.dateOfBookingLbl2 = Label(self.root, text="Date will go here", font="Ariel, 12", anchor='e', width=20)
 
         self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
         self.companyEntry = Entry(self.root)
@@ -104,13 +134,12 @@ class CreateUI:
         self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
 
         self.roomNoLbl.grid(row=7, column=1)
-        self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
 
         self.dateOfEventLbl.grid(row=8, column=1)
         self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
 
         self.dateOfBookingLbl.grid(row=9, column=1)
-        self.dateOfBookingEntry.grid(row=9, column=2, padx=(0, 20))
+        self.dateOfBookingLbl2.grid(row=9, column=2, padx=(0, 20))
 
         self.costPerHeadLbl.grid(row=13, column=1)
         self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
@@ -146,15 +175,17 @@ class CreateUI:
             self.saveBtn.config(state='normal')
 
     # Funtion to hide widgets(1 = conference, 2=party, 3=wedding)
-    def hidewidgets(self, int):
-        if int == 1:
+    def hidewidgets(self, eventtype):
+        if eventtype == 'conference':
             self.bandNameLbl.grid_remove()
             self.bandName.grid_remove()
             self.bandCostLbl.grid_remove()
             self.bandCostDisplay.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
-        elif int == 2:
+            self.roomNoEntryParty.grid_remove()
+            self.roomNoEntryWedding.grid_remove()
+        elif eventtype == 'party':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
             self.noOfDaysLbl.grid_remove()
@@ -163,13 +194,17 @@ class CreateUI:
             self.projectorCheck.grid_remove()
             self.noOfRoomsLbl.grid_remove()
             self.noOfRoomsEntry.grid_remove()
-        elif int == 3:
+            self.roomNoEntryConference.grid_remove()
+            self.roomNoEntryWedding.grid_remove()
+        elif eventtype == 'wedding':
             self.companyLbl.grid_remove()
             self.companyEntry.grid_remove()
             self.noOfDaysLbl.grid_remove()
             self.noOfDaysEntry.grid_remove()
             self.projectorLbl.grid_remove()
             self.projectorCheck.grid_remove()
+            self.roomNoEntryParty.grid_remove()
+            self.roomNoEntryConference.grid_remove()
 
     #  Function to detect which option is selected in event list
     def selectedvalue(self, *args):
@@ -179,6 +214,7 @@ class CreateUI:
         elif self.variable.get() == 'Conference':
             self.enablesavebtn()
 
+            self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
             self.companyLbl.grid(row=10, column=1)
             self.companyEntry.grid(row=10, column=2, padx=(0, 20))
 
@@ -188,22 +224,24 @@ class CreateUI:
             self.projectorLbl.grid(row=12, column=1)
             self.projectorCheck.grid(row=12, column=2, padx=(0, 20), sticky='w')
 
-            self.hidewidgets(1)
+            self.hidewidgets('conference')
 
         elif self.variable.get() == 'Party':
+
+            self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
-
-            self.hidewidgets(2)
+            self.hidewidgets('party')
 
         elif self.variable.get() == 'Wedding':
+
+            self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
-
             self.noOfRoomsLbl.grid(row=12, column=1)
             self.noOfRoomsEntry.grid(row=12, column=2)
 
-            self.hidewidgets(3)
+            self.hidewidgets('wedding')
 
 
 
