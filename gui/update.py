@@ -8,21 +8,21 @@ class UpdateConferenceUI:
         self.eventtype = eventtype
         self.root = root
         root.title("Update Booking")
-
+        # Band name options
         self.bandOptions = [
             "Please select band",
             "Lil' Febrezey",
             "Prawn Mendes",
             "AB/CD"
         ]
-
+        # Conference room options
         self.conferenceRooms = [
             "Please select room",
             "A",
             "B",
             "C"
         ]
-
+        # Party room options
         self.partyRooms = [
             "Please select room",
             "D",
@@ -30,17 +30,16 @@ class UpdateConferenceUI:
             "F",
             "G"
         ]
-
+        # Wedding room options
         self.weddingRooms = [
             "Please select room",
             "H",
             "I"
         ]
 
+        # Variables for labels, prices and option menus.
         self.yesno = IntVar()
-
         self.variable = StringVar(self.root)
-
         self.bandVariable = StringVar(self.root)
         self.bandVariable.set(self.bandOptions[0])  # default value
         self.bc = IntVar()
@@ -105,7 +104,8 @@ class UpdateConferenceUI:
         self.clearBtn = Button(self.f1, text="Clear", width=10, height=2)
         self.saveBtn = Button(self.f1, text="Save", width=10, height=2)
         # TODO The if statements below need changed to look for the instance of record being click on.
-
+        # Currently takes an input from mainmenu where you pass in the event type as an argument.
+        # Depending on what the string is the program will show different forms.
         self.mainui()
         if self.eventtype == 'conference':
             self.conferenceui()
@@ -116,28 +116,21 @@ class UpdateConferenceUI:
         elif self.eventtype == 'wedding':
             self.weddingui()
 
-
-
-
-        #  Band selection options
+    #  Band selection options
     def boptions(self, *args):
-        print("loaded boptions")
+        # bcs = band cost string, and is used to display the cost of the band selected.
+        # bc = band cost
         self.bandNameLbl.grid(row=10, column=1)
         self.bandName.grid(row=10, column=2, padx=(0, 20), sticky=NSEW)
 
         self.bandCostLbl.grid(row=11, column=1)
         self.bandCostDisplay.grid(row=11, column=2, padx=(0, 20), sticky='w')
-        print(str(self.bandVariable))
         if self.bandVariable.get() == "Lil' Febrezey":
-
             self.bcs.set("£{0}".format(100))
-            print(str(self.bcs))
         elif self.bandVariable.get() == 'Prawn Mendes':
             self.bcs.set("£{0}".format(250))
-            print(str(self.bcs))
         elif self.bandVariable.get() == 'AB/CD':
             self.bcs.set("£{0}".format(500))
-            print(str(self.bcs))
         else:
             self.bcs.set("£{0}".format(0))
 
@@ -178,6 +171,7 @@ class UpdateConferenceUI:
             self.roomNoEntryParty.grid_remove()
             self.roomNoEntryConference.grid_remove()
 
+    # This class houses all the UI elements that are shown on all versions of the update form.
     def mainui (self):
         self.noGuestsLbl.grid(row=3, column=1)
         self.noGuestsEntry.grid(row=3, column=2, padx=(0, 20))
@@ -192,7 +186,6 @@ class UpdateConferenceUI:
         self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
 
         self.roomNoLbl.grid(row=7, column=1)
-        # self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
 
         self.dateOfEventLbl.grid(row=8, column=1)
         self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
@@ -213,6 +206,7 @@ class UpdateConferenceUI:
         self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
 
     def conferenceui(self):
+        # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
         self.titleString.set("Update Conference")
 
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
@@ -233,6 +227,7 @@ class UpdateConferenceUI:
         self.hidewidgets('conference')
 
     def partyui(self):
+        # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
         self.titleString.set("Update Party")
 
         self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
@@ -244,6 +239,8 @@ class UpdateConferenceUI:
         self.hidewidgets('party')
 
     def weddingui(self):
+
+        # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
         self.titleString.set("Update Wedding")
 
         self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
