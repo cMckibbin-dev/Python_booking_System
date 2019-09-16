@@ -198,11 +198,12 @@ class UpdatePartyUI(UpdateUIBase):
             "AB/CD"
         ]
 
-        self.bandChose = StringVar()
+        self.bandChose = StringVar(self.master, self.event.bandPrice)
         self.bandVariable = StringVar()
 
         # window configure
         self.master.title('Update Party')
+        self.title.configure(text='Update Party')
 
         # overriding super room numbers
         self.roomNoCombo.configure(values=self.roomNumbers)
@@ -214,11 +215,10 @@ class UpdatePartyUI(UpdateUIBase):
         self.bandName = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
                                      postcommand=self.band_options)
         self.bandName.current(self.bandOptions.index(self.event.bandName))
-        self.band_options()
-
+        self.bandName.bind('<<ComboboxSelected>>', self.band_options)
         self.bandCostLbl = Label(self.master, text="Band Cost:", font="Ariel, 12", anchor='e', width=20,
                                  bg=self.widgetBG)
-        self.bandCostDisplay = Label(self.master, font="Ariel, 12", textvariable=self.bandChose, anchor='e', width=20,
+        self.bandCostDisplay = Label(self.master, font="Ariel, 12", textvariable=self.bandChose, anchor=W, width=20,
                                      bg=self.widgetBG)
 
         # grid layout for widgets
@@ -228,7 +228,7 @@ class UpdatePartyUI(UpdateUIBase):
         self.bandCostLbl.grid(row=11, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
 
-    def band_options(self):
+    def band_options(self, *args):
         if self.bandName.get() == "Lil' Febrezey":
             self.bandChose.set("£{0}".format(100))
 
@@ -258,6 +258,7 @@ class UpdateWeddingUI(UpdatePartyUI):
 
         # configure window
         self.master.title('Update Wedding')
+        self.title.configure(text='Update Wedding')
 
         # overriding super room number options
         self.roomNumbers = ["H", "I"]
@@ -268,7 +269,7 @@ class UpdateWeddingUI(UpdatePartyUI):
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20,
                                   bg=self.widgetBG)
         self.noOfRoomsEntry = Entry(self.master, bg=self.widgetBG)
-        self.noOfRoomsEntry.insert(0, event.noBedroomsReserved)
+        self.noOfRoomsEntry.insert(0, str(event.noBedroomsReserved))
 
         # grid layout for widgets
         self.noOfRoomsLbl.grid(row=12, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
@@ -278,7 +279,7 @@ class UpdateWeddingUI(UpdatePartyUI):
         w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                     address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                     eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                    dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                    dateOfBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
                     bandPrice=self.bandChose.get(), costPerhead=self.event.costPerhead,
                     noBedroomsReserved=self.noOfRoomsEntry.get())
         save_update(w)

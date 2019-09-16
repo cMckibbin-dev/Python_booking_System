@@ -71,7 +71,7 @@ class DBAccess:
                         dateOfBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
                         costPerhead=convert_pound(row[8]),
                         bandName=row[9]
-                        , bandPrice=convert_pound(row[10]), noBedroomsReserved=row[11])
+                        , bandPrice=(row[10]), noBedroomsReserved=row[11])
             listWeddings.append(w)
         return listWeddings
 
@@ -112,7 +112,7 @@ class DBAccess:
                       dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date()
                       , dateofBooking=datetime.strptime(row[7], '%Y-%m-%d').date(), costPerhead=convert_pound(row[8]),
                       bandName=(row[9]),
-                      bandPrice=convert_pound(row[10]))
+                      bandPrice=(row[10]))
             listParties.append(p)
         return listParties
 
@@ -187,9 +187,9 @@ class DBAccess:
 
     def update_wedding(self, wedding):
         """method to update wedding booking in database"""
-        self.cursor.execute("""update party set numberGuests =?, name_of_contact =?, address = ?, 
+        self.cursor.execute("""update wedding set numberGuests =?, name_of_contact =?, address = ?, 
         contactNumber =?, eventRoom = ?, dateOfEvent =?, dateOfBooking = ?, costPerHead =?, bandName =?, bandPrice=?, 
-        numberOfRooms =? WHERE ID = ?""", (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
+        numberOfRooms=? WHERE ID = ?""", (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                                            wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,
                                            convert_pence(wedding.costPerhead), wedding.bandName, wedding.bandPrice,
                                            wedding.noBedroomsReserved, wedding.id))
