@@ -116,7 +116,7 @@ class DBAccess:
     def insert_wedding(self, wedding):
         """inserts a wedding object to the database"""
         self.cursor.execute("""insert into wedding(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                              wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking, wedding.costPerhead,
@@ -125,19 +125,28 @@ class DBAccess:
 
     def insert_conference(self, conference):
         """inserts a conference object to the database"""
-        self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
-                          costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
+        self.cursor.execute("""INSERT INTO conference(numberGuests, name_of_contact, address,
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
+                          costPerHead, companyName, numberDays, projectorRequired) VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
                             (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
                              conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
                              conference.costPerhead, conference.companyName, conference.noOfDays,
                              conference.projectorRequired))
         self.dbCon.commit()
 
+        # self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
+        #                           contactNumber, eventRoom, dateOfEvent, dateOfBooking
+        #                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
+        #                     (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
+        #                      conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
+        #                      conference.costPerhead, conference.companyName, conference.noOfDays,
+        #                      conference.projectorRequired))
+        # self.dbCon.commit()
+
     def insert_party(self, party):
         """inserts a party object to the database"""
         self.cursor.execute("""Insert into party(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice) values(?,?,?,?,?,?,?,?,?,?)""",
                             (party.noGuests, party.nameofContact, party.address, party.contactNo, party.eventRoomNo,
                              party.dateOfEvent, party.dateOfBooking, party.costPerhead, party.bandName,

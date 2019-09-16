@@ -1,12 +1,12 @@
 from tkinter import *
-import tkinter.ttk as ttk
+import tkinter as tk
 from Data_Access import data_access
+from Data_Access.data_access import DBAccess
 from classes import *
 import gui.top_level_functions as tlf
 
 
 class CreateUI:
-
 
     def __init__(self, root):
 
@@ -59,6 +59,7 @@ class CreateUI:
         self.roomVariable.set(self.options[0])  # default value
         self.bc = IntVar()
         self.bcs = StringVar()
+        self.pCheck = tk.BooleanVar()
 
         # Widgets
         self.label = Label(self.root, text="Create New Booking", font="Ariel, 16", height=2)
@@ -89,8 +90,9 @@ class CreateUI:
         self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
-        # TODO Change lbl2 to pull the date from system.
-        self.dateOfBookingLbl2 = Label(self.root, text="Date will go here", font="Ariel, 12", anchor='e', width=20)
+        self.dateOfBookingLbl2 = tk.Label(self.root, font="Ariel, 12", width=20)
+        self.dt = datetime.datetime.now().date()
+        self.dateOfBookingLbl2.config(text=self.dt)
 
         self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
         self.companyEntry = Entry(self.root)
@@ -99,10 +101,10 @@ class CreateUI:
         self.noOfDaysEntry = Entry(self.root)
 
         self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20)
-        self.projectorCheck = Checkbutton(self.root, variable=self.yesno)
+        self.projectorCheck = tk.Checkbutton(self.root, variable=self.pCheck)
 
         self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
-        self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
+        self.costPerHeadDisplay = tk.Label(self.root, text="£100", font="Ariel, 12", anchor='e', width=20)
 
         self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
         self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
@@ -184,14 +186,52 @@ class CreateUI:
             self.saveBtn.config(state='normal')
 
     def saveconference(self):
-        db = data_access
-        c = Conference(self.noGuestsEntry.get(), self.nameOfContactEntry.get(), self.addressEntry.get(),
-                       # TODO Need to find a way to pull the value from the room drop down list
-                       self.contactNumberEntry.get(), self.roomNoEntryConference.getvar(), self.dateOfEventEntry.get(),
-                       self.companyEntry.get(),
-                       self.noOfDaysEntry.get(), self.projectorCheck.getboolean(self), datetime.date,
-                       self.noGuestsEntry.get())
-        db.DBAccess.insert_conference(c)
+        db = data_access.DBAccess()
+        c = Conference(
+            self.noGuestsEntry.get(),
+            self.nameOfContactEntry.get(),
+            self.addressEntry.get(),
+            self.contactNumberEntry.get(),
+            self.roomVariable.get(),
+            self.dateOfEventEntry.get(),
+            self.companyEntry.get(),
+            self.noOfDaysEntry.get(),
+            self.pCheck.get(),
+            self.dateOfBookingLbl2.cget("text"),
+            '100')
+        db.insert_conference(c)
+
+    def savewedding(self):
+        db = data_access.DBAccess()
+        w = Wedding(
+            self.bandVariable.get(),
+            self.bc.get(),
+            self.noGuestsEntry.get(),
+            self.nameOfContactEntry.get(),
+            self.addressEntry.get(),
+            self.contactNumberEntry.get(),
+            self.roomVariable.get(),
+            self.dateOfEventEntry.get(),
+            self.noOfRoomsEntry.get(),
+            self.dateOfBookingLbl2.cget("text"),
+            '200'
+        )
+        db.insert_wedding(w)
+
+    def saveparty(self):
+        db = data_access.DBAccess()
+        p = Party(
+            self.noGuestsEntry.get(),
+            self.nameOfContactEntry.get(),
+            self.addressEntry.get(),
+            self.contactNumberEntry.get(),
+            self.roomVariable.get(),
+            self.dateOfEventEntry.get(),
+            self.bandVariable.get(),
+            self.bc.get(),
+            self.dateOfBookingLbl2.cget("text"),
+            '100')
+        db.insert_party(p)
 
     # Function to hide widgets(conference, party, wedding)
     def hidewidgets(self, eventtype):
@@ -233,7 +273,7 @@ class CreateUI:
         elif self.variable.get() == 'Conference':
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.enablesavebtn()
-
+            self.saveBtn.config(command=self.saveconference())
             self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
             self.companyLbl.grid(row=10, column=1)
             self.companyEntry.grid(row=10, column=2, padx=(0, 20))
@@ -246,9 +286,8 @@ class CreateUI:
 
             self.hidewidgets('conference')
 
-
-
         elif self.variable.get() == 'Party':
+            self.saveBtn.config(command=self.saveparty())
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
@@ -257,10 +296,11 @@ class CreateUI:
 
         elif self.variable.get() == 'Wedding':
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
+            self.saveBtn.config(command=self.savewedding())
             self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
             self.noOfRoomsLbl.grid(row=12, column=1)
-            self.noOfRoomsEntry.grid(row=12, column=2)
+            self.noOfRoomsEntry.grid(row=12, column=2, padx=(0, 20))
 
             self.hidewidgets('wedding')
