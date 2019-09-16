@@ -231,7 +231,7 @@ class Calendar(ttk.Frame):
             return 'pick date'
 
         year, month = self._date.year, self._date.month
-        return self.datetime(year, month, int(self._selection[0]))
+        return self.datetime(year, month, int(self._selection[0])).date()
 
 
 def test():

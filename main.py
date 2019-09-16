@@ -6,5 +6,6 @@ from tkinter import *
 from Data_Access import data_access as da
 
 root = Tk()
-ui = index.IndexUI(root)
+ui = main_menu.MainMenuUI(root)
+# ui = index.IndexUI(root)
 root.mainloop()

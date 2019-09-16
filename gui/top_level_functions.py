@@ -2,6 +2,10 @@ from tkinter import *
 import ttkcalendar
 from classes import *
 from gui import view_details as vD
+from gui import update
+
+def print1(event, item):
+    print(item)
 
 
 def date_top_level(event, master, entry):
@@ -15,8 +19,10 @@ def date_top_level(event, master, entry):
     top.grab_set()
     top.wait_window()
     print(calendar.getselection())
+    entry.configure(state='normal')
     entry.delete(0, 'end')
     entry.insert(0, calendar.getselection())
+    entry.configure(state='readonly')
     top.grab_release()
     master.grab_set()
     top.destroy()
@@ -32,12 +38,49 @@ def _view_details(event):
         return vD.ViewDetailsParty
 
 
-def view_details_popup(event):
+def _update_form(event):
+    if isinstance(event, Conference):
+        return vD.update.UpdateConferenceUI
+    elif isinstance(event, Wedding):
+        return vD.update.UpdateWeddingUI
+    elif isinstance(event, Party):
+        return vD.update.UpdatePartyUI
+    else:
+        print('error')
+
+
+def view_details_popup(booking, parent):
     """function creates a top level pop up for the view details form of a event"""
     top = Toplevel()
     top.title('View Details')
-    form = _view_details(event)
-    form(top, event)
+    form = _view_details(booking)
+    form(top, booking)
     top.grab_set()
+    top.focus_force()
     top.wait_window()
     top.destroy()
+    parent.focus_force()
+
+
+def update_popup(parent, booking):
+    top = Toplevel()
+    top.title('Update Booking')
+    form = _update_form(booking)
+    form(top, booking)
+    top.grab_set()
+    top.focus_force()
+    top.wait_window()
+    top.destroy()
+    parent.focus_force()
+
+
+def edit_popup(booking, parent):
+    top = Toplevel()
+    top.title('Update')
+    update.UpdateUI(top, booking)
+    top.grab_set()
+    top.focus_force()
+    top.wait_window()
+    top.destroy()
+    parent.focus_force()
+

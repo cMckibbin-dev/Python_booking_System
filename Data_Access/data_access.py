@@ -6,13 +6,18 @@ from datetime import datetime
 
 def create_database(db):
     """Function to create database tables if the database is being created"""
-    createTablesCommands = ["""Create Table wedding(numberGuests integer, name_of_contact text, address text,
+    createTablesCommands = ["""Create Table wedding(ID integer primary key autoincrement not null, numberGuests integer,
+                            name_of_contact text, address text,
                             contactNumber text, eventRoom text, dateOfEvent text, dateOfBooking text, costPerHead 
                             integer, bandName text, bandPrice integer, numberOfRooms integer );""",
-                            """Create Table conference(numberGuests integer, name_of_contact text, address text,
+
+                            """Create Table conference(ID integer primary key autoincrement not null, 
+                            numberGuests integer, name_of_contact text, address text,
                           contactNumber text, eventRoom text, dateOfEvent text, dateOfBooking text,
                           costPerHead integer, companyName text, numberDays integer, projectorRequired integer);""",
-                            """create table party(numberGuests integer, name_of_contact text, address text,
+
+                            """create table party(ID integer primary key autoincrement not null, numberGuests integer,
+                             name_of_contact text, address text,
                           contactNumber text, eventRoom text, dateOfEvent text, dateOfBooking text,
                           costPerHead integer, bandName text, bandPrice integer);"""]
     cursor = db.cursor()
@@ -38,12 +43,16 @@ def convert_pound(value):
     return result
 
 
+def convert_pence(value):
+    """converts money store as pounds and pence into pence to be stored as int in database"""
+    return int(value * 100)
+
+
 class DBAccess:
 
     def __init__(self):
         self.dbCon = _connect_to_database()
         self.cursor = self.dbCon.cursor()
-        self.dbCon.row_factory = sql.Row
 
     def all_weddings(self, future=False):
         """gets all weddings from database"""
@@ -55,14 +64,14 @@ class DBAccess:
         all_rows = self.cursor.fetchall()
         listWeddings = []
         for row in all_rows:
-            w = Wedding(noGuests=row[0], nameofContact=row[1],
-                        address=row[2],
-                        contactNo=row[3], eventRoomNo=row[4]
-                        , dateOfEvent=datetime.strptime(row[5], '%Y-%m-%d'),
-                        dateOfBooking=datetime.strptime(row[6], '%Y-%m-%d'),
-                        costPerhead=convert_pound(row[7]),
-                        bandName=row[8]
-                        , bandPrice=convert_pound(row[9]), noBedroomsReserved=row[10])
+            w = Wedding(ID=row[0], noGuests=row[1], nameofContact=row[2],
+                        address=row[3],
+                        contactNo=row[4], eventRoomNo=row[5]
+                        , dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
+                        dateOfBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
+                        costPerhead=convert_pound(row[8]),
+                        bandName=row[9]
+                        , bandPrice=convert_pound(row[10]), noBedroomsReserved=row[11])
             listWeddings.append(w)
         return listWeddings
 
@@ -77,13 +86,14 @@ class DBAccess:
 
         listConferences = []
         for row in all_rows:
-            c = Conference(noGuests=int(row[0]), nameofContact=row[1],
-                           address=row[2], contactNo=row[3], eventRoomNo=row[4],
-                           dateOfEvent=datetime.strptime(row[5], '%Y-%m-%d')
-                           , dateofBooking=datetime.strptime(row[6], '%Y-%m-%d'), costPerhead=convert_pound(row[7]),
-                           companyName=row[8],
-                           noOfDays=row[9],
-                           projectorRequired=bool(row[10]))
+            c = Conference(ID=row[0], noGuests=int(row[1]), nameofContact=row[2],
+                           address=row[3], contactNo=row[4], eventRoomNo=row[5],
+                           dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
+                           dateofBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
+                           costPerhead=convert_pound(row[8]),
+                           companyName=row[9],
+                           noOfDays=row[10],
+                           projectorRequired=bool(row[11]))
             listConferences.append(c)
         return listConferences
 
@@ -97,12 +107,12 @@ class DBAccess:
         all_rows = self.cursor.fetchall()
         listParties = []
         for row in all_rows:
-            p = Party(noGuests=row[0], nameofContact=row[1], address=row[2],
-                      contactNo=row[3], eventRoomNo=row[4],
-                      dateOfEvent=datetime.strptime(row[5], '%Y-%m-%d')
-                      , dateofBooking=datetime.strptime(row[6], '%Y-%m-%d'), costPerhead=convert_pound(row[7]),
-                      bandName=(row[8]),
-                      bandPrice=convert_pound(row[9]))
+            p = Party(ID=row[0], noGuests=row[1], nameofContact=row[2], address=row[3],
+                      contactNo=row[4], eventRoomNo=row[5],
+                      dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date()
+                      , dateofBooking=datetime.strptime(row[7], '%Y-%m-%d').date(), costPerhead=convert_pound(row[8]),
+                      bandName=(row[9]),
+                      bandPrice=convert_pound(row[10]))
             listParties.append(p)
         return listParties
 
@@ -117,7 +127,7 @@ class DBAccess:
     def insert_wedding(self, wedding):
         """inserts a wedding object to the database"""
         self.cursor.execute("""insert into wedding(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                              wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking, wedding.costPerhead,
@@ -127,22 +137,62 @@ class DBAccess:
     def insert_conference(self, conference):
         """inserts a conference object to the database"""
         self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
-                             conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
-                             conference.costPerhead, conference.companyName, conference.noOfDays,
+                             conference.eventRoomNo, conference.dateOfEvent.date(), conference.dateOfBooking.date(),
+                             convert_pence(conference.costPerhead), conference.companyName, conference.noOfDays,
                              conference.projectorRequired))
         self.dbCon.commit()
 
     def insert_party(self, party):
         """inserts a party object to the database"""
         self.cursor.execute("""Insert into party(numberGuests, name_of_contact, address,
-                          contactNumber, eventRoom, dateOfEvent, dateOfBooking
+                          contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice) values(?,?,?,?,?,?,?,?,?,?)""",
                             (party.noGuests, party.nameofContact, party.address, party.contactNo, party.eventRoomNo,
-                             party.dateOfEvent, party.dateOfBooking, party.costPerhead, party.bandName,
+                             party.dateOfEvent, party.dateOfBooking, convert_pence(party.costPerhead), party.bandName,
                              party.bandPrice))
+        self.dbCon.commit()
+
+    def update_conference(self, conference):
+        """method update a conference booking in database"""
+        values = (conference.noGuests, conference.nameofContact,
+                  conference.address, conference.contactNo,
+                  conference.eventRoomNo, conference.dateOfEvent,
+                  conference.dateOfBooking, convert_pence(conference.costPerhead),
+                  conference.companyName,
+                  conference.noOfDays, int(conference.projectorRequired),
+                  conference.id)
+        self.cursor.execute("""update conference SET numberGuests =?, name_of_contact =?, address = ?, 
+        contactNumber =?, eventRoom = ?, dateOfEvent =?, dateOfBooking = ?, costPerHead =?, companyName = ?,
+        numberDays=?, projectorRequired = ? WHERE ID = ?""", (conference.noGuests, conference.nameofContact,
+                                                              conference.address, conference.contactNo,
+                                                              conference.eventRoomNo, conference.dateOfEvent,
+                                                              conference.dateOfBooking,
+                                                              convert_pence(conference.costPerhead),
+                                                              conference.companyName,
+                                                              conference.noOfDays, int(conference.projectorRequired),
+                                                              conference.id))
+        self.dbCon.commit()
+
+    def update_party(self, party):
+        """method to update party booking in database"""
+        self.cursor.execute("""update party SET numberGuests =?, name_of_contact =?, address = ?, 
+        contactNumber =?, eventRoom = ?, dateOfEvent =?, dateOfBooking = ?, costPerHead =?, bandName =?, bandPrice=? 
+        WHERE ID = ?""", (party.noGuests, party.nameofContact, party.address, party.contactNo, party.eventRoomNo,
+                          party.dateOfEvent, party.dateOfBooking, convert_pence(party.costPerhead), party.bandName,
+                          party.bandPrice, party.id))
+        self.dbCon.commit()
+
+    def update_wedding(self, wedding):
+        """method to update wedding booking in database"""
+        self.cursor.execute("""update party set numberGuests =?, name_of_contact =?, address = ?, 
+        contactNumber =?, eventRoom = ?, dateOfEvent =?, dateOfBooking = ?, costPerHead =?, bandName =?, bandPrice=?, 
+        numberOfRooms =? WHERE ID = ?""", (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
+                                           wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,
+                                           convert_pence(wedding.costPerhead), wedding.bandName, wedding.bandPrice,
+                                           wedding.noBedroomsReserved, wedding.id))
         self.dbCon.commit()
 
     def disconnect_db(self):

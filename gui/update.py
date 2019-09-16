@@ -1,259 +1,284 @@
+from abc import abstractmethod
 from tkinter import *
 import gui.top_level_functions as tlf
+from classes import *
+import tkinter.ttk as ttk
+from Data_Access import data_access as da
 
-class UpdateConferenceUI:
 
-    def __init__(self, root, eventtype):
+def save_update(booking):
+    db = da.DBAccess()
+    if isinstance(booking, Conference):
+        db.update_conference(booking)
+        print('updating conference')
+    elif isinstance(booking, Wedding):
+        db.update_wedding(booking)
+    elif isinstance(booking, Party):
+        db.update_party(booking)
+    db.disconnect_db()
 
-        self.eventtype = eventtype
-        self.root = root
-        root.title("Update Booking")
 
-        self.bandOptions = [
-            "Please select band",
-            "Lil' Febrezey",
-            "Prawn Mendes",
-            "AB/CD"
-        ]
+class UpdateUIBase:
+    def __init__(self, master, event):
+        self.master = master
+        self.event = event
 
-        self.conferenceRooms = [
-            "Please select room",
+        # configure master
+        self.master.configure(background='white')
+        # vars
+        # self.yesno = IntVar()
+        self.roomNumbers = ['select option']
+
+        # widget padding
+        self.paddingX = 5
+        self.paddingY = 5
+
+        # button sizes
+        self.buttonWidth = 10
+        self.buttonHeight = 2
+        # widget background colour
+        self.widgetBG = 'white'
+
+        # widget
+        self.title = Label(self.master, text='Heading', font="Ariel, 16", height=2, bg=self.widgetBG)
+
+        self.noGuestsLbl = Label(self.master, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20,
+                                 bg=self.widgetBG)
+        self.noGuestsEntry = Entry(self.master, bg=self.widgetBG)
+        self.noGuestsEntry.insert(0, event.noGuests)
+
+        self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font="Ariel, 12", anchor='e', width=20,
+                                      bg=self.widgetBG)
+        self.nameOfContactEntry = Entry(self.master, bg=self.widgetBG)
+        self.nameOfContactEntry.insert(0, event.nameofContact)
+
+        self.addressLbl = Label(self.master, text="Full Address of Contact:", font="Ariel, 12", anchor='e', width=20,
+                                bg=self.widgetBG)
+        self.addressEntry = Entry(self.master, bg=self.widgetBG)
+        self.addressEntry.insert(0, event.address)
+
+        self.contactNumberLbl = Label(self.master, text="Contact Number:", font="Ariel, 12", anchor='e', width=20,
+                                      bg=self.widgetBG)
+        self.contactNumberEntry = Entry(self.master, bg=self.widgetBG)
+        self.contactNumberEntry.insert(0, event.contactNo)
+
+        self.roomNoLbl = Label(self.master, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20,
+                               bg=self.widgetBG)
+        self.roomNoCombo = ttk.Combobox(self.master, value=self.roomNumbers, state='readonly')
+
+        self.dateOfEventLbl = Label(self.master, text="Date of Event:", font="Ariel, 12", anchor='e', width=20,
+                                    bg=self.widgetBG)
+
+        self.dateOfEventEntry = Entry(self.master, bg=self.widgetBG)
+        self.dateOfEventEntry.configure(disabledbackground="white", disabledforeground="black")
+        self.dateOfEventEntry.insert(0, event.dateOfEvent)
+        self.dateOfEventEntry.configure(state='readonly')
+
+        self.dateOfEventEntry.bind('<Button-1>', lambda e: tlf.date_top_level(e, self.master, self.dateOfEventEntry))
+
+        self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20,
+                                    bg=self.widgetBG)
+        self.costPerHeadDisplay = Label(self.master, font="Ariel, 12", anchor=W, width=20,
+                                        text=self.event.costPerhead, bg=self.widgetBG)
+
+        # frame for buttons
+        self.frame = Frame(self.master, bg=self.widgetBG)
+
+        # buttons for bottom of form
+        self.buttonBack = Button(self.frame, text='Back', bg='snow', width=self.buttonWidth, height=self.buttonHeight,
+                                 command=self.master.destroy)
+        self.buttonDelete = Button(self.frame, text='Delete', bg='salmon1', width=self.buttonWidth,
+                                   height=self.buttonHeight)
+
+        self.buttonSave = Button(self.frame, text='Save', bg='deep sky blue', width=self.buttonWidth,
+                                 height=self.buttonHeight, command=self.create_booking)
+
+        # layout for widget
+        # heading
+        self.title.grid(columnspan=5)
+
+        self.noGuestsLbl.grid(row=1, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.noGuestsEntry.grid(row=1, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.nameOfContactLbl.grid(row=2, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.nameOfContactEntry.grid(row=2, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.addressLbl.grid(row=3, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.addressEntry.grid(row=3, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.contactNumberLbl.grid(row=4, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.contactNumberEntry.grid(row=4, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.roomNoLbl.grid(row=5, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.roomNoCombo.grid(row=5, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.dateOfEventLbl.grid(row=6, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.dateOfEventEntry.grid(row=6, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.costPerHeadLbl.grid(row=100, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.costPerHeadDisplay.grid(row=100, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.frame.grid(row=101, columnspan=2)
+
+        self.buttonBack.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
+        self.buttonDelete.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
+        self.buttonSave.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
+
+    @abstractmethod
+    def create_booking(self):
+        pass
+
+
+class UpdateConferenceUI(UpdateUIBase):
+    def __init__(self, master, event):
+        super().__init__(master, event)
+
+        self.roomNumbers = [
             "A",
             "B",
             "C"
         ]
+        self.title.configure(text='Update Conference')
+        self.yesno = BooleanVar(self.master, event.projectorRequired)
+        # overriding room numbers from super
+        self.roomNoCombo.configure(values=self.roomNumbers)
+        self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
 
-        self.partyRooms = [
-            "Please select room",
+        self.companyLbl = Label(self.master, text="Company Name:", font="Ariel, 12", anchor='e', width=20,
+                                bg=self.widgetBG)
+        self.companyEntry = Entry(self.master, bg=self.widgetBG)
+        self.companyEntry.insert(0, event.companyName)
+
+        self.noOfDaysLbl = Label(self.master, text="Number of Days:", font="Ariel, 12", anchor='e', width=20,
+                                 bg=self.widgetBG)
+        self.noOfDaysEntry = Entry(self.master, bg=self.widgetBG)
+        self.noOfDaysEntry.insert(0, event.noOfDays)
+
+        self.projectorLbl = Label(self.master, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20,
+                                  bg=self.widgetBG)
+        self.projectorCheck = Checkbutton(self.master, variable=self.yesno, bg=self.widgetBG)
+
+        # layout for from
+        self.companyLbl.grid(row=10, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.companyEntry.grid(row=10, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.noOfDaysLbl.grid(row=11, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.noOfDaysEntry.grid(row=11, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+        self.projectorLbl.grid(row=12, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.projectorCheck.grid(row=12, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
+
+    def create_booking(self):
+        c = Conference(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                       address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                       eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                       companyName=self.companyEntry.get(), noOfDays=self.noOfDaysEntry.get(),
+                       projectorRequired=self.yesno.get(), dateofBooking=self.event.dateOfBooking,
+                       costPerhead=self.event.costPerhead)
+        save_update(c)
+        print('updated booking')
+
+
+class UpdatePartyUI(UpdateUIBase):
+    def __init__(self, master, event):
+        super().__init__(master, event)
+        self.master = master
+        self.event = event
+
+        # vars
+        self.roomNumbers = [
             "D",
             "E",
             "F",
             "G"
         ]
-
-        self.weddingRooms = [
-            "Please select room",
-            "H",
-            "I"
+        self.bandOptions = [
+            "Lil' Febrezey",
+            "Prawn Mendes",
+            "AB/CD"
         ]
 
-        self.yesno = IntVar()
+        self.bandChose = StringVar()
+        self.bandVariable = StringVar()
 
-        self.variable = StringVar(self.root)
+        # window configure
+        self.master.title('Update Party')
 
-        self.bandVariable = StringVar(self.root)
-        self.bandVariable.set(self.bandOptions[0])  # default value
-        self.bc = IntVar()
-        self.bcs = StringVar()
-        self.titleString = StringVar()
-        self.roomVariable = StringVar(self.root)
-        self.roomVariable.set(self.conferenceRooms[0])  # default value
+        # overriding super room numbers
+        self.roomNoCombo.configure(values=self.roomNumbers)
+        if not isinstance(event, Wedding):
+            self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
+        # window Labels
+        self.bandNameLbl = Label(self.master, text="Select Band:", font="Ariel, 12", anchor='e', width=20,
+                                 bg=self.widgetBG)
+        self.bandName = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
+                                     postcommand=self.band_options)
+        self.bandName.current(self.bandOptions.index(self.event.bandName))
+        self.band_options()
 
-        # Widgets
+        self.bandCostLbl = Label(self.master, text="Band Cost:", font="Ariel, 12", anchor='e', width=20,
+                                 bg=self.widgetBG)
+        self.bandCostDisplay = Label(self.master, font="Ariel, 12", textvariable=self.bandChose, anchor='e', width=20,
+                                     bg=self.widgetBG)
 
-        self.label = Label(self.root, textvariable=self.titleString, font="Ariel, 16", height=2)
+        # grid layout for widgets
+        self.bandNameLbl.grid(row=10, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.bandName.grid(row=10, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
 
-        self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20)
-        self.noGuestsEntry = Entry(self.root)
+        self.bandCostLbl.grid(row=11, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
 
-        self.nameOfContactLbl = Label(self.root, text="Name of Contact:", font="Ariel, 12", anchor='e', width=20)
-        self.nameOfContactEntry = Entry(self.root)
+    def band_options(self):
+        if self.bandName.get() == "Lil' Febrezey":
+            self.bandChose.set("£{0}".format(100))
 
-        self.addressLbl = Label(self.root, text="Full Address of Contact:", font="Ariel, 12", anchor='e', width=20)
-        self.addressEntry = Entry(self.root)
+        elif self.bandName.get() == "Prawn Mendes":
+            self.bandChose.set("£{0}".format(250))
 
-        self.contactNumberLbl = Label(self.root, text="Contact Number:", font="Ariel, 12", anchor='e', width=20)
-        self.contactNumberEntry = Entry(self.root)
+        elif self.bandName.get() == "AB/CD":
+            self.bandChose.set("£{0}".format(500))
 
-        self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
-        # self.roomNoEntry = Entry(self.root)
-        self.roomNoEntryConference = OptionMenu(self.root, self.roomVariable, *self.conferenceRooms)
-        self.roomNoEntryParty = OptionMenu(self.root, self.roomVariable, *self.partyRooms)
-        self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
-
-        self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfEventEntry = Entry(self.root)
-        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
-
-        self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfBookingEntry = Entry(self.root)
-
-        self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
-        self.companyEntry = Entry(self.root)
-
-        self.noOfDaysLbl = Label(self.root, text="Number of Days:", font="Ariel, 12", anchor='e', width=20)
-        self.noOfDaysEntry = Entry(self.root)
-
-        self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20)
-        self.projectorCheck = Checkbutton(self.root, variable=self.yesno)
-
-        self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
-        self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
-
-        self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
-        self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
-
-        self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
-        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
-
-        self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
-        self.noOfRoomsEntry = Entry(self.root)
-
-        self.f1 = Frame(self.root)
-
-        self.backBtn = Button(self.f1, text="Back", width=10, height=2)
-        self.clearBtn = Button(self.f1, text="Clear", width=10, height=2)
-        self.saveBtn = Button(self.f1, text="Save", width=10, height=2)
-        # TODO The if statements below need changed to look for the instance of record being click on.
-
-        self.mainui()
-        if self.eventtype == 'conference':
-            self.conferenceui()
-
-        elif self.eventtype == 'party':
-            self.partyui()
-
-        elif self.eventtype == 'wedding':
-            self.weddingui()
-
-
-
-
-        #  Band selection options
-    def boptions(self, *args):
-        print("loaded boptions")
-        self.bandNameLbl.grid(row=10, column=1)
-        self.bandName.grid(row=10, column=2, padx=(0, 20), sticky=NSEW)
-
-        self.bandCostLbl.grid(row=11, column=1)
-        self.bandCostDisplay.grid(row=11, column=2, padx=(0, 20), sticky='w')
-        print(str(self.bandVariable))
-        if self.bandVariable.get() == "Lil' Febrezey":
-
-            self.bcs.set("£{0}".format(100))
-            print(str(self.bcs))
-        elif self.bandVariable.get() == 'Prawn Mendes':
-            self.bcs.set("£{0}".format(250))
-            print(str(self.bcs))
-        elif self.bandVariable.get() == 'AB/CD':
-            self.bcs.set("£{0}".format(500))
-            print(str(self.bcs))
         else:
-            self.bcs.set("£{0}".format(0))
+            self.bandChose.set("£{0}".format(0))
 
-    #  Enable save button function
-    def enablesavebtn(self, *args):
-        if True:
-            self.saveBtn.config(state='normal')
+    def create_booking(self):
+        p = Party(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                  address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                  eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                  dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                  bandPrice=self.bandChose.get(), costPerhead=self.event.costPerhead)
+        save_update(p)
 
-    # Function to hide widgets(1 = conference, 2=party, 3=wedding)
-    def hidewidgets(self, eventtype):
-        if eventtype == 'conference':
-            self.bandNameLbl.grid_remove()
-            self.bandName.grid_remove()
-            self.bandCostLbl.grid_remove()
-            self.bandCostDisplay.grid_remove()
-            self.noOfRoomsLbl.grid_remove()
-            self.noOfRoomsEntry.grid_remove()
-            self.roomNoEntryParty.grid_remove()
-            self.roomNoEntryWedding.grid_remove()
-        elif eventtype == 'party':
-            self.companyLbl.grid_remove()
-            self.companyEntry.grid_remove()
-            self.noOfDaysLbl.grid_remove()
-            self.noOfDaysEntry.grid_remove()
-            self.projectorLbl.grid_remove()
-            self.projectorCheck.grid_remove()
-            self.noOfRoomsLbl.grid_remove()
-            self.noOfRoomsEntry.grid_remove()
-            self.roomNoEntryConference.grid_remove()
-            self.roomNoEntryWedding.grid_remove()
-        elif eventtype == 'wedding':
-            self.companyLbl.grid_remove()
-            self.companyEntry.grid_remove()
-            self.noOfDaysLbl.grid_remove()
-            self.noOfDaysEntry.grid_remove()
-            self.projectorLbl.grid_remove()
-            self.projectorCheck.grid_remove()
-            self.roomNoEntryParty.grid_remove()
-            self.roomNoEntryConference.grid_remove()
 
-    def mainui (self):
-        self.noGuestsLbl.grid(row=3, column=1)
-        self.noGuestsEntry.grid(row=3, column=2, padx=(0, 20))
+class UpdateWeddingUI(UpdatePartyUI):
+    def __init__(self, master, event):
+        super().__init__(master, event)
+        self.master = master
+        self.event = event
 
-        self.nameOfContactLbl.grid(row=4, column=1)
-        self.nameOfContactEntry.grid(row=4, column=2, padx=(0, 20))
+        # configure window
+        self.master.title('Update Wedding')
 
-        self.addressLbl.grid(row=5, column=1)
-        self.addressEntry.grid(row=5, column=2, padx=(0, 20))
+        # overriding super room number options
+        self.roomNumbers = ["H", "I"]
+        self.roomNoCombo.configure(values=self.roomNumbers)
+        self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
 
-        self.contactNumberLbl.grid(row=6, column=1)
-        self.contactNumberEntry.grid(row=6, column=2, padx=(0, 20))
+        # widgets for form
+        self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20,
+                                  bg=self.widgetBG)
+        self.noOfRoomsEntry = Entry(self.master, bg=self.widgetBG)
+        self.noOfRoomsEntry.insert(0, event.noBedroomsReserved)
 
-        self.roomNoLbl.grid(row=7, column=1)
-        # self.roomNoEntry.grid(row=7, column=2, padx=(0, 20))
+        # grid layout for widgets
+        self.noOfRoomsLbl.grid(row=12, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
+        self.noOfRoomsEntry.grid(row=12, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
 
-        self.dateOfEventLbl.grid(row=8, column=1)
-        self.dateOfEventEntry.grid(row=8, column=2, padx=(0, 20))
-
-        self.dateOfBookingLbl.grid(row=9, column=1)
-        self.dateOfBookingEntry.grid(row=9, column=2, padx=(0, 20))
-
-        self.costPerHeadLbl.grid(row=13, column=1)
-        self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
-
-        self.f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
-
-        self.backBtn.pack(side="left", padx=(0, 5))
-        self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
-        self.clearBtn.pack(side="left")
-        self.clearBtn.config(bg='salmon', highlightbackground='salmon', fg='white')
-        self.saveBtn.pack(side="left", padx=(5, 0))
-        self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
-
-    def conferenceui(self):
-        self.titleString.set("Update Conference")
-
-        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
-
-        self.enablesavebtn()
-
-        self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
-
-        self.companyLbl.grid(row=10, column=1)
-        self.companyEntry.grid(row=10, column=2, padx=(0, 20))
-
-        self.noOfDaysLbl.grid(row=11, column=1)
-        self.noOfDaysEntry.grid(row=11, column=2, padx=(0, 20))
-
-        self.projectorLbl.grid(row=12, column=1)
-        self.projectorCheck.grid(row=12, column=2, padx=(0, 20), sticky='w')
-
-        self.hidewidgets('conference')
-
-    def partyui(self):
-        self.titleString.set("Update Party")
-
-        self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
-        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
-
-        self.enablesavebtn()
-        self.boptions()
-
-        self.hidewidgets('party')
-
-    def weddingui(self):
-        self.titleString.set("Update Wedding")
-
-        self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
-        self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
-
-        self.enablesavebtn()
-        self.boptions()
-
-        self.noOfRoomsLbl.grid(row=12, column=1)
-        self.noOfRoomsEntry.grid(row=12, column=2)
-
-        self.hidewidgets('wedding')
-
+    def create_booking(self):
+        w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                    address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                    eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                    dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                    bandPrice=self.bandChose.get(), costPerhead=self.event.costPerhead,
+                    noBedroomsReserved=self.noOfRoomsEntry.get())
+        save_update(w)

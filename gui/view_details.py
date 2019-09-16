@@ -1,5 +1,7 @@
 from tkinter import *
 from classes import *
+from gui import top_level_functions as tl
+from gui import update
 
 
 class BaseViewDetail:
@@ -65,8 +67,7 @@ class BaseViewDetail:
         # these buttons are user on each child class and should be placed at the bottom
         self.buttonBack = Button(self.buttonFrame, text='Back', font=self.textNormal, bg='snow', width=self.buttonWidth
                                  , height=self.buttonHeight, command=self.master.destroy)
-        self.buttonEdit = Button(self.buttonFrame, text='Edit', font=self.textNormal, bg='salmon1',
-                                 width=self.buttonWidth, height=self.buttonHeight)
+
         self.buttonInvoice = Button(self.buttonFrame, text='Invoice', font=self.textNormal, bg='deep sky blue',
                                     width=self.buttonWidth, height=self.buttonHeight)
 
@@ -102,7 +103,6 @@ class BaseViewDetail:
         self.buttonFrame.grid(row=101, column=0, columnspan=2)
 
         self.buttonBack.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
-        self.buttonEdit.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
         self.buttonInvoice.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
 
 
@@ -127,6 +127,7 @@ class ViewDetailsConference(BaseViewDetail):
                                             bg=self.widgetBG)
         self.projectorRequiredInfo = Label(self.master, text='Yes' if event.projectorRequired else 'No',
                                            font=self.textNormal, bg=self.widgetBG)
+
         # layout for labels
         self.companyNameTitle.grid(row=8, column=0, sticky=E, padx=self.paddingX, pady=self.paddingY)
         self.companyNameInfo.grid(row=8, column=1, sticky=W, padx=self.paddingX, pady=self.paddingY)
@@ -143,6 +144,7 @@ class ViewDetailsConference(BaseViewDetail):
 
 class ViewDetailsParty(BaseViewDetail):
     """Class for the view details UI for Party Class based of the BaseViewDetails class"""
+
     def __init__(self, master, event):
         super().__init__(master, event)
         # overriding default heading
@@ -164,6 +166,7 @@ class ViewDetailsParty(BaseViewDetail):
 
 class ViewDetailsWedding(ViewDetailsParty):
     """Class for the view details UI for Wedding Class based of the ViewDetailsParty class"""
+
     def __init__(self, master, event):
         super().__init__(master, event)
         # overriding the default heading

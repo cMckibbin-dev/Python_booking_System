@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 from Data_Access import data_access as dBA
 from classes import *
-from gui.top_level_functions import view_details_popup
+from gui.top_level_functions import view_details_popup, edit_popup, update_popup
 
 
 def get_event_type(event):
@@ -27,10 +27,12 @@ class IndexUI:
         self.buttonActive = False
         self.dbAccess = dBA.DBAccess()
         self.events = self.getdata()
+        self.focusOut = False
 
         # window configure
         self.master = master
         self.master.title('View Bookings')
+        self.master.bind('<FocusIn>', self.refresh_onfocus)
 
         # setting text formatting vars
         self.textHeading = 'Helvetica 18 bold'
@@ -56,8 +58,8 @@ class IndexUI:
         # These buttons only become active when options selected in tree view
         self.buttonBack = Button(master, text='Back', font=self.textNormal)
         self.buttonViewDetails = Button(master, text='View Details', font=self.textNormal, state=DISABLED,
-                                        command=lambda: view_details_popup(self.events[get_selected_index(self.tree)]))
-        self.buttonEdit = Button(master, text='Edit', font=self.textNormal, state=DISABLED)
+                                        command=lambda: self.open_view_details())
+        self.buttonEdit = Button(master, text='Edit', font=self.textNormal, state=DISABLED, command=self.open_edit)
 
         # tree view for form where bookings are displayed
         self.tree = ttk.Treeview(master, columns=('Name of Contact', 'No.Guests', 'Room Number', 'Type of Event',
@@ -141,3 +143,19 @@ class IndexUI:
         self.events = self.getdata(self.comboEventType.get(), self.isChecked.get())
         self.refresh_eventlist()
         self.deactive_buttons()
+
+    def refresh_onfocus(self, event):
+        """function ran when window gains focus"""
+        if self.focusOut:
+            self.events = self.getdata(self.comboEventType.get(), self.isChecked.get())
+            self.refresh_eventlist()
+            self.focusOut = False
+            print('focus')
+            self.deactive_buttons()
+
+    def open_view_details(self):
+        view_details_popup(self.events[get_selected_index(self.tree)], self.master)
+
+    def open_edit(self):
+        self.focusOut = True
+        update_popup(self.master, self.events[get_selected_index(self.tree)])
