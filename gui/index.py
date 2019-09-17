@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk
 from Data_Access import data_access as dBA
 from classes import *
+from gui import main_menu
 from gui.top_level_functions import view_details_popup, edit_popup, update_popup
 
 
@@ -33,6 +34,7 @@ class IndexUI:
         self.master = master
         self.master.title('View Bookings')
         self.master.bind('<FocusIn>', self.refresh_onfocus)
+        self.master.protocol('WM_DELETE_WINDOW', self.back_to_main_menu)
 
         # setting text formatting vars
         self.textHeading = 'Helvetica 18 bold'
@@ -56,7 +58,7 @@ class IndexUI:
         self.buttonSearch.bind('<Button-1>', self.updateEvents)
 
         # These buttons only become active when options selected in tree view
-        self.buttonBack = Button(master, text='Back', font=self.textNormal)
+        self.buttonBack = Button(master, text='Back', font=self.textNormal, command=self.back_to_main_menu)
         self.buttonViewDetails = Button(master, text='View Details', font=self.textNormal, state=DISABLED,
                                         command=lambda: self.open_view_details())
         self.buttonEdit = Button(master, text='Edit', font=self.textNormal, state=DISABLED, command=self.open_edit)
@@ -159,3 +161,10 @@ class IndexUI:
     def open_edit(self):
         self.focusOut = True
         update_popup(self.master, self.events[get_selected_index(self.tree)])
+
+    def back_to_main_menu(self):
+        """method close index window and opens a new window to display the main menu"""
+        self.master.destroy()
+        root = Tk()
+        main_menu.MainMenuUI(root)
+        root.mainloop()

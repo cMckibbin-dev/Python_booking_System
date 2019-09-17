@@ -1,5 +1,7 @@
 from abc import abstractmethod
 from tkinter import *
+from tkinter import messagebox
+
 import gui.top_level_functions as tlf
 from classes import *
 import tkinter.ttk as ttk
@@ -10,7 +12,6 @@ def save_update(booking):
     db = da.DBAccess()
     if isinstance(booking, Conference):
         db.update_conference(booking)
-        print('updating conference')
     elif isinstance(booking, Wedding):
         db.update_wedding(booking)
     elif isinstance(booking, Party):
@@ -88,7 +89,7 @@ class UpdateUIBase:
         self.buttonBack = Button(self.frame, text='Back', bg='snow', width=self.buttonWidth, height=self.buttonHeight,
                                  command=self.master.destroy)
         self.buttonDelete = Button(self.frame, text='Delete', bg='salmon1', width=self.buttonWidth,
-                                   height=self.buttonHeight)
+                                   height=self.buttonHeight, command=self.delete_booking)
 
         self.buttonSave = Button(self.frame, text='Save', bg='deep sky blue', width=self.buttonWidth,
                                  height=self.buttonHeight, command=self.create_booking)
@@ -123,6 +124,17 @@ class UpdateUIBase:
         self.buttonBack.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
         self.buttonDelete.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
         self.buttonSave.pack(side=LEFT, padx=self.paddingX, pady=self.paddingY)
+
+    def delete_booking(self):
+        result = messagebox.askquestion('Delete Booking', 'Deleting booking cannot be undone', icon='warning')
+        if result == 'yes':
+            db = da.DBAccess()
+            print(str(self.event.__class__.__name__))
+            db.delete_booking(self.event, str(self.event.__class__.__name__))
+            self.master.destroy()
+            print('delete')
+        else:
+            print('not deleted')
 
     @abstractmethod
     def create_booking(self):

@@ -195,10 +195,17 @@ class DBAccess:
                                            wedding.noBedroomsReserved, wedding.id))
         self.dbCon.commit()
 
+    def delete_booking(self, event, tableName):
+        """method to delete a booking from the database"""
+        sqlString = """Delete from {} WHERE ID = ?""".format(tableName)
+        print(sqlString)
+        self.cursor.execute(sqlString, (event.id,))
+        self.dbCon.commit()
+
     def disconnect_db(self):
         """Disconnect the database and the cursor"""
         self.dbCon.close()
 
-    # def __del__(self):
-    #     self.dbCon.close()
-    #     self.cursor.close()
+    def __del__(self):
+        self.dbCon.close()
+        print('closed connection')
