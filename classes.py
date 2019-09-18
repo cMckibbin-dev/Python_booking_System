@@ -59,6 +59,6 @@ class Wedding(Party):
         self.costPerhead = 30 if costPerhead is None else costPerhead
 
     def total(self):
-        subtotal = (self.costPerhead * self.noGuests) + self.bandPrice
+        subtotal = (self.costPerhead * self.noGuests) + float(self.bandPrice)
         vat = subtotal / 5
         return subtotal + vat

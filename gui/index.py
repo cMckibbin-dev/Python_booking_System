@@ -58,10 +58,12 @@ class IndexUI:
         self.buttonSearch.bind('<Button-1>', self.updateEvents)
 
         # These buttons only become active when options selected in tree view
-        self.buttonBack = Button(master, text='Back', font=self.textNormal, command=self.back_to_main_menu)
-        self.buttonViewDetails = Button(master, text='View Details', font=self.textNormal, state=DISABLED,
+        # frame for buttons
+        self.buttonFrame = Frame(self.master)
+        self.buttonBack = Button(self.buttonFrame, text='Back', font=self.textNormal, command=self.back_to_main_menu)
+        self.buttonViewDetails = Button(self.buttonFrame, text='View Details', font=self.textNormal, state=DISABLED,
                                         command=lambda: self.open_view_details())
-        self.buttonEdit = Button(master, text='Edit', font=self.textNormal, state=DISABLED, command=self.open_edit)
+        self.buttonEdit = Button(self.buttonFrame, text='Edit', font=self.textNormal, state=DISABLED, command=self.open_edit)
 
         # tree view for form where bookings are displayed
         self.tree = ttk.Treeview(master, columns=('Name of Contact', 'No.Guests', 'Room Number', 'Type of Event',
@@ -95,6 +97,7 @@ class IndexUI:
         self.TotalLabel.grid(row=4, column=1, sticky=W, padx=10, pady=10)
 
         # option buttons at bottom of window
+        self.buttonFrame.grid(row=5, column=0, columnspan=3)
         self.buttonBack.grid(row=5, column=0, sticky=NSEW, columnspan=1, padx=10, pady=10)
         self.buttonViewDetails.grid(row=5, column=1, sticky=NSEW, columnspan=1, padx=10, pady=10)
         self.buttonEdit.grid(row=5, column=2, sticky=NSEW, columnspan=1, padx=10, pady=10)

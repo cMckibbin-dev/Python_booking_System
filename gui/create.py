@@ -61,56 +61,56 @@ class CreateUI:
         self.bcs = StringVar()
 
         # Widgets
-        self.label = Label(self.root, text="Create New Booking", font="Ariel, 16", height=2)
+        self.label = Label(self.root, text="Create New Booking", font=style.textHeading, height=2)
 
-        self.eventTypeLbl = Label(self.root, text="Select Event Type:", font="Ariel, 12", anchor='e', width=20)
+        self.eventTypeLbl = Label(self.root, text="Select Event Type:", font=style.textNormal, anchor='e', width=20)
         self.eventType = OptionMenu(self.root, self.variable, *self.options, command=self.selectedvalue)
 
-        self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20)
+        self.noGuestsLbl = Label(self.root, text="Number of Guests:", font=style.textNormal, anchor='e', width=20)
         self.noGuestsEntry = Entry(self.root)
 
-        self.nameOfContactLbl = Label(self.root, text="Name of Contact:", font="Ariel, 12", anchor='e', width=20)
+        self.nameOfContactLbl = Label(self.root, text="Name of Contact:", font=style.textNormal, anchor='e', width=20)
         self.nameOfContactEntry = Entry(self.root)
 
-        self.addressLbl = Label(self.root, text="Full Address of Contact:", font="Ariel, 12", anchor='e', width=20)
+        self.addressLbl = Label(self.root, text="Full Address of Contact:", font=style.textNormal, anchor='e', width=20)
         self.addressEntry = Entry(self.root)
 
-        self.contactNumberLbl = Label(self.root, text="Contact Number:", font="Ariel, 12", anchor='e', width=20)
+        self.contactNumberLbl = Label(self.root, text="Contact Number:", font=style.textNormal, anchor='e', width=20)
         self.contactNumberEntry = Entry(self.root)
 
-        self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
+        self.roomNoLbl = Label(self.root, text="Event Room Number:", font=style.textNormal, anchor='e', width=20)
         # TODO Finish the room logic and selection options.
         self.roomNoEntryConference = OptionMenu(self.root, self.roomVariable, *self.conferenceRooms)
         self.roomNoEntryParty = OptionMenu(self.root, self.roomVariable, *self.partyRooms)
         self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
 
-        self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
+        self.dateOfEventLbl = Label(self.root, text="Date of Event:", font=style.textNormal, anchor='e', width=20)
         self.dateOfEventEntry = Entry(self.root)
         self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
 
-        self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
+        self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font=style.textNormal, anchor='e', width=20)
         # TODO Change lbl2 to pull the date from system.
-        self.dateOfBookingLbl2 = Label(self.root, text="Date will go here", font="Ariel, 12", anchor='e', width=20)
+        self.dateOfBookingLbl2 = Label(self.root, text="Date will go here", font=style.textNormal, anchor='e', width=20)
 
-        self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
+        self.companyLbl = Label(self.root, text="Company Name:", font=style.textNormal, anchor='e', width=20)
         self.companyEntry = Entry(self.root)
 
-        self.noOfDaysLbl = Label(self.root, text="Number of Days:", font="Ariel, 12", anchor='e', width=20)
+        self.noOfDaysLbl = Label(self.root, text="Number of Days:", font=style.textNormal, anchor='e', width=20)
         self.noOfDaysEntry = Entry(self.root)
 
-        self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20)
+        self.projectorLbl = Label(self.root, text="Projector Required?:", font=style.textNormal, anchor='e', width=20)
         self.projectorCheck = Checkbutton(self.root, variable=self.yesno)
 
-        self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
-        self.costPerHeadDisplay = Label(self.root, text="£000", font="Ariel, 12", anchor='e', width=20)
+        self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20)
+        self.costPerHeadDisplay = Label(self.root, text="£000", font=style.textNormal, anchor='e', width=20)
 
-        self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
+        self.bandNameLbl = Label(self.root, text="Select Band:", font=style.textNormal, anchor='e', width=20)
         self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
 
-        self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
-        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
+        self.bandCostLbl = Label(self.root, text="Band Cost:", font=style.textNormal, anchor='e', width=20)
+        self.bandCostDisplay = Label(self.root, font=style.textNormal, textvariable=self.bcs, anchor='e', width=20)
 
-        self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
+        self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20)
         self.noOfRoomsEntry = Entry(self.root)
 
         # This frame houses the buttons at the bottom of the form
