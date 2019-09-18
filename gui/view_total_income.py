@@ -19,6 +19,7 @@ class ViewTotalIncomeUI:
         self.variable.set(self.options[0])  # default value
 
         root.title("View Total Income")
+        self.root.configure(background='white')
 
         self.label = Label(self.root, text="View Total Income (Per Event Type)", font="Ariel, 16", height=2,
                            anchor='center', width=40)
@@ -28,7 +29,7 @@ class ViewTotalIncomeUI:
 
         self.dateFrame = Frame(self.root)
         self.fromLbl = Label(self.dateFrame, text="From: ", font="Ariel, 12", anchor='e', width=20)
-        self.fromEntry = Entry(self.dateFrame)
+        self.fromEntry = Entry(self.dateFrame, state='readonly')
         self.fromEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.fromEntry))
 
         self.toLbl = Label(self.dateFrame, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)

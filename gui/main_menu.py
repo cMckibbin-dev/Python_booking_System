@@ -1,5 +1,5 @@
 from tkinter import *
-from gui import index, view_income
+from gui import index, view_total_income
 import tkinter.ttk as ttk
 
 
@@ -34,5 +34,5 @@ class MainMenuUI:
     def load_income(self):
         self.root.destroy()
         root = Tk()
-        view_income.ViewIncome(root)
+        view_total_income.ViewTotalIncomeUI(root)
         root.mainloop()
