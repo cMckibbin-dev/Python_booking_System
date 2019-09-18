@@ -66,8 +66,8 @@ class DBAccess:
         for row in all_rows:
             w = Wedding(ID=row[0], noGuests=row[1], nameofContact=row[2],
                         address=row[3],
-                        contactNo=row[4], eventRoomNo=row[5]
-                        , dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
+                        contactNo=row[4], eventRoomNo=row[5],
+                        dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
                         dateOfBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
                         costPerhead=convert_pound(row[8]),
                         bandName=row[9]
