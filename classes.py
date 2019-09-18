@@ -21,6 +21,8 @@ class Event:
 
 
 class Conference(Event):
+    # costPerhead = 20
+
     def __init__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, companyName, noOfDays,
                  projectorRequired, dateofBooking=None, costPerhead=None, ID=None):
         super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead, dateofBooking, ID)

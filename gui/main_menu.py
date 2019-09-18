@@ -36,3 +36,4 @@ class MainMenuUI:
         root = Tk()
         view_total_income.ViewTotalIncomeUI(root)
         root.mainloop()
+

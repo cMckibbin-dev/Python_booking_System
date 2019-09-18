@@ -131,11 +131,12 @@ class DBAccess:
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                              wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking, wedding.costPerhead,
-                             wedding.bandPrice, wedding.bandName, wedding.bandPrice, wedding.noBedroomsReserved))
+                             wedding.bandName, wedding.bandPrice, wedding.noBedroomsReserved))
         self.dbCon.commit()
 
     def insert_conference(self, conference):
         """inserts a conference object to the database"""
+
         self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
