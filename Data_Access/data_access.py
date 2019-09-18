@@ -120,7 +120,7 @@ class DBAccess:
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                              wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking, wedding.costPerhead,
-                             wedding.bandPrice, wedding.bandName, wedding.bandPrice, wedding.noBedroomsReserved))
+                             wedding.bandName, wedding.bandPrice, wedding.noBedroomsReserved))
         self.dbCon.commit()
 
     def insert_conference(self, conference):
@@ -133,15 +133,6 @@ class DBAccess:
                              conference.costPerhead, conference.companyName, conference.noOfDays,
                              conference.projectorRequired))
         self.dbCon.commit()
-
-        # self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
-        #                           contactNumber, eventRoom, dateOfEvent, dateOfBooking
-        #                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
-        #                     (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
-        #                      conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
-        #                      conference.costPerhead, conference.companyName, conference.noOfDays,
-        #                      conference.projectorRequired))
-        # self.dbCon.commit()
 
     def insert_party(self, party):
         """inserts a party object to the database"""

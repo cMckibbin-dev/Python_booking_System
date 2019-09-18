@@ -20,13 +20,16 @@ class Event:
 
 
 class Conference(Event):
+    # costPerhead = 20
+
     def __init__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, companyName, noOfDays,
                  projectorRequired, dateofBooking=None, costPerhead=None):
+
         super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead, dateofBooking)
         self.companyName = companyName
         self.noOfDays = noOfDays
         self.projectorRequired = projectorRequired
-        self.costPerhead = costPerhead
+        self.costPerhead = 20 if costPerhead is None else costPerhead
 
     def total(self):
         subtotal = self.noGuests * self.costPerhead
@@ -37,7 +40,7 @@ class Conference(Event):
 class Party(Event):
     def __init__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, bandName,
                 bandPrice, dateofBooking=None, costPerhead=None):
-        super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, dateofBooking, costPerhead)
+        super().__init__(noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead, dateofBooking)
         self.bandName = bandName
         self.bandPrice = bandPrice
         self.costPerhead = 15 if costPerhead is None else costPerhead

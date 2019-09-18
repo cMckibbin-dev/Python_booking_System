@@ -1,5 +1,7 @@
 from tkinter import *
 import tkinter as tk
+
+import classes
 from Data_Access import data_access
 from Data_Access.data_access import DBAccess
 from classes import *
@@ -104,7 +106,7 @@ class CreateUI:
         self.projectorCheck = tk.Checkbutton(self.root, variable=self.pCheck)
 
         self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
-        self.costPerHeadDisplay = tk.Label(self.root, text="£100", font="Ariel, 12", anchor='e', width=20)
+        self.costPerHeadDisplay = tk.Label(self.root, text="£-", font="Ariel, 12", anchor='e', width=20)
 
         self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
         self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
@@ -197,8 +199,8 @@ class CreateUI:
             self.companyEntry.get(),
             self.noOfDaysEntry.get(),
             self.pCheck.get(),
-            self.dateOfBookingLbl2.cget("text"),
-            '100')
+            self.dt
+        )
         db.insert_conference(c)
 
     def savewedding(self):
@@ -213,8 +215,7 @@ class CreateUI:
             self.roomVariable.get(),
             self.dateOfEventEntry.get(),
             self.noOfRoomsEntry.get(),
-            self.dateOfBookingLbl2.cget("text"),
-            '200'
+            self.dt
         )
         db.insert_wedding(w)
 
@@ -229,8 +230,8 @@ class CreateUI:
             self.dateOfEventEntry.get(),
             self.bandVariable.get(),
             self.bc.get(),
-            self.dateOfBookingLbl2.cget("text"),
-            '100')
+            self.dt,
+        )
         db.insert_party(p)
 
     # Function to hide widgets(conference, party, wedding)
@@ -270,10 +271,12 @@ class CreateUI:
 
         if self.variable.get() == 'Please select event type' or self.bandVariable.get() == 'Please select band':
             self.saveBtn.config(state=DISABLED)
+            self.costPerHeadDisplay.config(text="£-")
         elif self.variable.get() == 'Conference':
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.enablesavebtn()
-            self.saveBtn.config(command=self.saveconference())
+            self.costPerHeadDisplay.config(text="£20")
+            self.saveBtn.config(command=self.saveconference)
             self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
             self.companyLbl.grid(row=10, column=1)
             self.companyEntry.grid(row=10, column=2, padx=(0, 20))
@@ -287,7 +290,8 @@ class CreateUI:
             self.hidewidgets('conference')
 
         elif self.variable.get() == 'Party':
-            self.saveBtn.config(command=self.saveparty())
+            self.costPerHeadDisplay.config(text="£15")
+            self.saveBtn.config(command=self.saveparty)
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
@@ -295,8 +299,9 @@ class CreateUI:
             self.hidewidgets('party')
 
         elif self.variable.get() == 'Wedding':
+            self.costPerHeadDisplay.config(text="£30")
             # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
-            self.saveBtn.config(command=self.savewedding())
+            self.saveBtn.config(command=self.savewedding)
             self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
