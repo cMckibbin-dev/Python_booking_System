@@ -1,8 +1,12 @@
 from tkinter import *
 import tkinter.ttk as ttk
+from Data_Access import data_access
+from classes import *
+import gui.top_level_functions as tlf
 
 
 class CreateUI:
+
 
     def __init__(self, root):
 
@@ -46,7 +50,7 @@ class CreateUI:
         ]
         self.yesno = IntVar()
 
-        #  
+        # Variables for labels, prices and option menus.
         self.variable = StringVar(self.root)
         self.variable.set(self.options[0])  # default value
         self.bandVariable = StringVar(self.root)
@@ -81,8 +85,8 @@ class CreateUI:
         self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
 
         self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
-        # TODO Make this a popup calendar entry.
         self.dateOfEventEntry = Entry(self.root)
+        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
 
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
         # TODO Change lbl2 to pull the date from system.
@@ -109,11 +113,12 @@ class CreateUI:
         self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
         self.noOfRoomsEntry = Entry(self.root)
 
+        # This frame houses the buttons at the bottom of the form
         f1 = Frame(self.root)
 
         self.backBtn = Button(f1, text="Back", width=10, height=2)
         self.clearBtn = Button(f1, text="Clear", width=10, height=2)
-        self.saveBtn = Button(f1, text="Save", width=10, height=2)
+        self.saveBtn = Button(f1, text="Save", width=10, height=2, command=self.saveconference)
 
         # Positioning
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
@@ -145,15 +150,19 @@ class CreateUI:
         self.costPerHeadDisplay.grid(row=13, column=2, padx=(0, 20), sticky='w')
 
         f1.grid(row=14, columnspan=3, column=1, pady=(40, 40))
-
+        # The buttons are packed into the frame and they have a "highlightbackground" field so they will work on a Mac.
+        # "highlightbackground" is not needed for windows.
         self.backBtn.pack(side="left", padx=(0, 5))
         self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
         self.clearBtn.pack(side="left")
         self.clearBtn.config(bg='salmon', highlightbackground='salmon', fg='white')
         self.saveBtn.pack(side="left", padx=(5, 0))
         self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
+
     #  Band selection options
     def boptions(self, *args):
+        # bcs = band cost string, and is used to display the cost of the band selected.
+        # bc = band cost
         self.bandNameLbl.grid(row=10, column=1)
         self.bandName.grid(row=10, column=2, padx=(0, 20), sticky=NSEW)
 
@@ -174,7 +183,17 @@ class CreateUI:
         if True:
             self.saveBtn.config(state='normal')
 
-    # Funtion to hide widgets(1 = conference, 2=party, 3=wedding)
+    def saveconference(self):
+        db = data_access
+        c = Conference(self.noGuestsEntry.get(), self.nameOfContactEntry.get(), self.addressEntry.get(),
+                       # TODO Need to find a way to pull the value from the room drop down list
+                       self.contactNumberEntry.get(), self.roomNoEntryConference.getvar(), self.dateOfEventEntry.get(),
+                       self.companyEntry.get(),
+                       self.noOfDaysEntry.get(), self.projectorCheck.getboolean(self), datetime.date,
+                       self.noGuestsEntry.get())
+        db.DBAccess.insert_conference(c)
+
+    # Function to hide widgets(conference, party, wedding)
     def hidewidgets(self, eventtype):
         if eventtype == 'conference':
             self.bandNameLbl.grid_remove()
@@ -212,6 +231,7 @@ class CreateUI:
         if self.variable.get() == 'Please select event type' or self.bandVariable.get() == 'Please select band':
             self.saveBtn.config(state=DISABLED)
         elif self.variable.get() == 'Conference':
+            # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.enablesavebtn()
 
             self.roomNoEntryConference.grid(row=7, column=2, padx=(0, 20))
@@ -226,15 +246,17 @@ class CreateUI:
 
             self.hidewidgets('conference')
 
-        elif self.variable.get() == 'Party':
 
+
+        elif self.variable.get() == 'Party':
+            # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.roomNoEntryParty.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
             self.hidewidgets('party')
 
         elif self.variable.get() == 'Wedding':
-
+            # This displays all necessary widgets and calls the function to hide the ones that aren't needed.
             self.roomNoEntryWedding.grid(row=7, column=2, padx=(0, 20))
             self.enablesavebtn()
             self.boptions()
@@ -242,7 +264,3 @@ class CreateUI:
             self.noOfRoomsEntry.grid(row=12, column=2)
 
             self.hidewidgets('wedding')
-
-
-
-
