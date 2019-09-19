@@ -20,7 +20,7 @@ class ViewTotalIncomeUI:
 
         root.title("View Total Income")
         self.root.configure(background='white')
-
+        # Widget Creation
         self.label = Label(self.root, text="View Total Income (Per Event Type)", font="Ariel, 16", height=2,
                            anchor='center', width=40)
 
@@ -42,6 +42,7 @@ class ViewTotalIncomeUI:
         self.totalIncomeLbl = Label(self.root, text="Total income from Events: ", font="Ariel, 16", height=2)
         self.totalIncomeValueLbl = Label(self.root, text="£0000", font="Ariel, 16", height=2)
 
+        # Widget Positioning
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20), padx=(120, 0), sticky=NSEW)
         self.eventType.grid(row=2, column=3, sticky=NSEW, pady=(0, 25), padx=(0, 20))
         self.eventTypeLbl.grid(row=2, column=2, pady=(0, 25))

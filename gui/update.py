@@ -140,7 +140,7 @@ class UpdateUIBase:
     def create_booking(self):
         pass
 
-
+# Update UI for conference
 class UpdateConferenceUI(UpdateUIBase):
     def __init__(self, master, event):
         super().__init__(master, event)
@@ -190,7 +190,7 @@ class UpdateConferenceUI(UpdateUIBase):
         save_update(c)
         print('updated booking')
 
-
+# update UI for party
 class UpdatePartyUI(UpdateUIBase):
     def __init__(self, master, event):
         super().__init__(master, event)
@@ -261,7 +261,7 @@ class UpdatePartyUI(UpdateUIBase):
                   bandPrice=self.bandChose.get(), costPerhead=self.event.costPerhead)
         save_update(p)
 
-
+# Update UI for wedding
 class UpdateWeddingUI(UpdatePartyUI):
     def __init__(self, master, event):
         super().__init__(master, event)

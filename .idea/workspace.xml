@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c58a724d-dff2-4b09-a3c0-dbbabefae2c6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Python_Booking_System.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Python_Booking_System.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Access/data_access.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Access/data_access.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Access/database" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Access/database" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/create.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/create.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/main_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/main_menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/update.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/update.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/view_total_income.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/view_total_income.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,6 +30,7 @@
   <component name="ProjectId" id="1QbYbt4RsGF3wxc9Kb6f3cfpU6L" />
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="full.screen.before.presentation.mode" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
