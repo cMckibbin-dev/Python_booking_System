@@ -3,7 +3,7 @@ import tkinter.ttk as ttk
 from Data_Access import data_access as dBA
 from classes import *
 from gui import main_menu
-from gui.top_level_functions import view_details_popup, edit_popup, update_popup
+from gui.top_level_functions import view_details_popup, update_popup
 
 
 def get_event_type(event):

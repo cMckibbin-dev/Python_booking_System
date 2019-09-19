@@ -71,7 +71,8 @@ class BaseViewDetail:
                                  , height=style.buttonHeight, command=self.master.destroy)
 
         self.buttonInvoice = Button(self.buttonFrame, text='Invoice', font=self.textNormal, bg='deep sky blue',
-                                    width=style.buttonWidth, height=style.buttonHeight)
+                                    width=style.buttonWidth, height=style.buttonHeight, command=
+                                    lambda: tl.invoice_popup(self.event, self.master))
 
         # placing widgets on grid layout
         # placing heading title
@@ -99,10 +100,10 @@ class BaseViewDetail:
         self.dateOfEventTitle.grid(row=7, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.dateOfEventInfo.grid(row=7, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.costPerHeadTitle.grid(row=100, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
-        self.costPerHeadInfo.grid(row=100, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
+        self.costPerHeadTitle.grid(row=19, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
+        self.costPerHeadInfo.grid(row=19, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.buttonFrame.grid(row=101, column=0, columnspan=2)
+        self.buttonFrame.grid(row=20, column=0, columnspan=2)
 
         self.buttonBack.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.buttonInvoice.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
