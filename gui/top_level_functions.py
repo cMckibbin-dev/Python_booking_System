@@ -2,6 +2,7 @@ from tkinter import *
 import ttkcalendar
 from classes import *
 from gui import view_details as vD
+from gui import update
 
 
 def date_top_level(event, master, entry):
@@ -37,11 +38,11 @@ def _view_details(event):
 def _update_form(event):
     """function returns correct update UI class for given event"""
     if isinstance(event, Conference):
-        return vD.update.UpdateConferenceUI
+        return update.UpdateConferenceUI
     elif isinstance(event, Wedding):
-        return vD.update.UpdateWeddingUI
+        return update.UpdateWeddingUI
     elif isinstance(event, Party):
-        return vD.update.UpdatePartyUI
+        return update.UpdatePartyUI
     else:
         print('error')
 

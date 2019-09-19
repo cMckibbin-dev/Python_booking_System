@@ -90,7 +90,8 @@ class CreateUI:
         # Date of event entry has a calendar function bound to it. This creates a popup where the user is able
         # to select a date.
         self.dateOfEventEntry = Entry(self.root)
-        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.dateOfEventEntry))
+        self.dateOfEventEntry.bind('<Button-1>', lambda event: tlf.date_top_level(event, self.root,
+                                                                                  self.dateOfEventEntry))
 
         # the date of booking is set to the current date of the computer.
         self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
@@ -162,13 +163,13 @@ class CreateUI:
         # based on what option is selected, the band cost string and the band cost is set to the correct values.
         if self.bandVariable.get() == "Lil' Febrezey":
             self.bc.set(100)
-            self.bcs.set("£{0}".format(self.bc))
+            self.bcs.set("£{0}".format(100))
         elif self.bandVariable.get() == 'Prawn Mendes':
             self.bc.set(250)
-            self.bcs.set("£{0}".format(self.bc))
+            self.bcs.set("£{0}".format(250))
         elif self.bandVariable.get() == 'AB/CD':
             self.bc.set(500)
-            self.bcs.set("£{0}".format(self.bc))
+            self.bcs.set("£{0}".format(500))
         else:
             self.bc.set(0)
             self.bcs.set("£{0}".format(self.bc))

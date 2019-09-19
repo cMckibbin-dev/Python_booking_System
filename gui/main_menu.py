@@ -21,7 +21,7 @@ class MainMenuUI:
         self.label = Label(self.root, text="Main Menu", font=style.textHeading, height=2)
 
         self.createNewBookingBtn = Button(self.root, text="Create New Booking", font=style.textNormal, width=20,
-                                          height=3)
+                                          height=3, command=self.load_create)
         self.ViewAllBookingsBtn = Button(self.root, text="View All Bookings", font=style.textNormal, width=20, height=3,
                                          command=lambda: load_index(self.root))
         self.ViewTotalIncomeBtn = Button(self.root, text="View Total Income", font=style.textNormal, width=20, height=3,

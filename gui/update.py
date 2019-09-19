@@ -80,7 +80,7 @@ class UpdateUIBase:
         self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
         self.costPerHeadDisplay = Label(self.master, font=style.textNormal, anchor=W, width=20,
-                                        text=self.event.costPerhead, bg=style.widgetBG)
+                                        text=mc.pound_string(self.event.costPerhead), bg=style.widgetBG)
 
         # frame for buttons
         self.frame = Frame(self.master, bg=style.widgetBG)
@@ -140,6 +140,7 @@ class UpdateUIBase:
     def create_booking(self):
         pass
 
+
 # Update UI for conference
 class UpdateConferenceUI(UpdateUIBase):
     def __init__(self, master, event):
@@ -189,6 +190,7 @@ class UpdateConferenceUI(UpdateUIBase):
                        costPerhead=self.event.costPerhead)
         save_update(c)
         print('updated booking')
+
 
 # update UI for party
 class UpdatePartyUI(UpdateUIBase):
@@ -266,6 +268,7 @@ class UpdatePartyUI(UpdateUIBase):
                   dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
                   bandPrice=self.bandCost, costPerhead=self.event.costPerhead)
         save_update(p)
+
 
 # Update UI for wedding
 class UpdateWeddingUI(UpdatePartyUI):
