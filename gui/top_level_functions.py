@@ -2,11 +2,6 @@ from tkinter import *
 import ttkcalendar
 from classes import *
 from gui import view_details as vD
-from gui import invoice
-
-
-def print1(event, item):
-    print(item)
 
 
 def date_top_level(event, master, entry):
@@ -69,28 +64,6 @@ def update_popup(parent, booking):
     top.title('Update Booking')
     form = _update_form(booking)
     form(top, booking)
-    top.grab_set()
-    top.focus_force()
-    top.wait_window()
-    top.destroy()
-    parent.focus_force()
-
-
-def _Invoice_Form_Selection(event):
-    """function returns correct Invoice UI class for a given event"""
-    if isinstance(event, Conference):
-        return invoice.InvoiceConference
-    elif isinstance(event, Wedding):
-        return invoice.InvoiceWedding
-    elif isinstance(event, Party):
-        return invoice.InvoiceParty
-
-
-def invoice_popup(booking, parent):
-    top = Toplevel()
-    top.title('Invoice')
-    UI = _Invoice_Form_Selection(booking)
-    UI(top, booking)
     top.grab_set()
     top.focus_force()
     top.wait_window()

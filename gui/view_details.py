@@ -1,9 +1,32 @@
 from tkinter import *
-from classes import *
-from gui import top_level_functions as tl
-from gui import update
 import money_convert as mc
 from gui import tkinter_styling as style
+
+
+def CostBreakDownUI(master, booking):
+    """function creates the UI for the cost breakdown section on the invoice Section of the window"""
+    # widgets for invoice form
+    CostBreakHeading = Label(master, text='Cost Break Down', font=style.textHeading, bg=style.widgetBG)
+    totalExVATLabel = Label(master, text='Total ex VAT:', font=style.textNormal, bg=style.widgetBG)
+    totalExVATInfo = Label(master, text=mc.pound_string(booking.subTotal()), font=style.textNormal, bg=style.widgetBG)
+
+    VATTotalLabel = Label(master, text='VAT:', font=style.textNormal, bg=style.widgetBG)
+    VATTotalInfo = Label(master, text=mc.pound_string(booking.VAT()), font=style.textNormal, bg=style.widgetBG)
+
+    TotalLabel = Label(master, text='Total:', font=style.textNormal, bg=style.widgetBG)
+    TotalInfo = Label(master, text=mc.pound_string(booking.total()), font=style.textNormal, bg=style.widgetBG)
+
+    # grid layout for widgets
+    CostBreakHeading.grid(row=20, column=0, columnspan=2, sticky=NSEW, padx=style.paddingX, pady=style.paddingY)
+
+    totalExVATLabel.grid(row=21, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
+    totalExVATInfo.grid(row=21, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
+
+    VATTotalLabel.grid(row=22, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
+    VATTotalInfo.grid(row=22, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
+
+    TotalLabel.grid(row=23, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
+    TotalInfo.grid(row=23, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
 
 class BaseViewDetail:
@@ -61,7 +84,8 @@ class BaseViewDetail:
 
         # cost per head labels
         self.costPerHeadTitle = Label(self.master, text='Cost Per Head:', font=self.textNormal, bg=style.widgetBG)
-        self.costPerHeadInfo = Label(self.master, text=mc.pound_string(event.costPerhead), font=self.textNormal, bg=style.widgetBG)
+        self.costPerHeadInfo = Label(self.master, text=mc.pound_string(event.costPerhead), font=self.textNormal,
+                                     bg=style.widgetBG)
 
         # frame for packing buttons at bottom of form
         self.buttonFrame = Frame(self.master, bg=style.widgetBG)
@@ -70,9 +94,8 @@ class BaseViewDetail:
         self.buttonBack = Button(self.buttonFrame, text='Back', font=self.textNormal, bg='snow', width=style.buttonWidth
                                  , height=style.buttonHeight, command=self.master.destroy)
 
-        self.buttonInvoice = Button(self.buttonFrame, text='Invoice', font=self.textNormal, bg='deep sky blue',
-                                    width=style.buttonWidth, height=style.buttonHeight, command=
-                                    lambda: tl.invoice_popup(self.event, self.master))
+        self.buttonInvoice = Button(self.buttonFrame, text='Save Invoice', font=self.textNormal, bg='deep sky blue',
+                                    width=style.buttonWidth, height=style.buttonHeight)
 
         # placing widgets on grid layout
         # placing heading title
@@ -103,7 +126,9 @@ class BaseViewDetail:
         self.costPerHeadTitle.grid(row=19, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.costPerHeadInfo.grid(row=19, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.buttonFrame.grid(row=20, column=0, columnspan=2)
+        CostBreakDownUI(self.master, self.event)
+
+        self.buttonFrame.grid(row=24, column=0, columnspan=2)
 
         self.buttonBack.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.buttonInvoice.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
@@ -158,7 +183,8 @@ class ViewDetailsParty(BaseViewDetail):
 
         # labels for band cost
         self.bandCostTitle = Label(self.master, text='Band Cost:', font=self.textNormal, bg=style.widgetBG)
-        self.bandCostInfo = Label(self.master, text=mc.pound_string(event.bandPrice), font=self.textNormal, bg=style.widgetBG)
+        self.bandCostInfo = Label(self.master, text=mc.pound_string(event.bandPrice), font=self.textNormal,
+                                  bg=style.widgetBG)
 
         # layout for labels
         self.bandSelectedTitle.grid(row=8, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
@@ -177,7 +203,8 @@ class ViewDetailsWedding(ViewDetailsParty):
         # labels for Number of Bed rooms Reserved
         self.NumberRoomsTitle = Label(self.master, text='Number of Rooms\nReserved:', font=self.textNormal,
                                       bg=style.widgetBG)
-        self.NumberRoomsInfo = Label(self.master, text=event.noBedroomsReserved, font=self.textNormal, bg=style.widgetBG)
+        self.NumberRoomsInfo = Label(self.master, text=event.noBedroomsReserved, font=self.textNormal,
+                                     bg=style.widgetBG)
         # layout for labels
         self.NumberRoomsTitle.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.NumberRoomsInfo.grid(row=10, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
