@@ -2,10 +2,6 @@ from tkinter import *
 import ttkcalendar
 from classes import *
 from gui import view_details as vD
-from gui import update
-
-def print1(event, item):
-    print(item)
 
 
 def date_top_level(event, master, entry):
@@ -39,6 +35,7 @@ def _view_details(event):
 
 
 def _update_form(event):
+    """function returns correct update UI class for given event"""
     if isinstance(event, Conference):
         return vD.update.UpdateConferenceUI
     elif isinstance(event, Wedding):
@@ -72,15 +69,3 @@ def update_popup(parent, booking):
     top.wait_window()
     top.destroy()
     parent.focus_force()
-
-
-def edit_popup(booking, parent):
-    top = Toplevel()
-    top.title('Update')
-    update.UpdateUI(top, booking)
-    top.grab_set()
-    top.focus_force()
-    top.wait_window()
-    top.destroy()
-    parent.focus_force()
-

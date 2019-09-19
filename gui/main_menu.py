@@ -1,6 +1,7 @@
 from tkinter import *
-from gui import index, view_total_income, create
-import tkinter.ttk as ttk
+from gui import create
+from gui import index, view_income
+from gui import tkinter_styling as style
 
 
 def load_index(parent_root):
@@ -17,15 +18,16 @@ class MainMenuUI:
         self.root.title("Main Menu")
 
         # Widget creation
-        self.label = Label(self.root, text="Main Menu", font="Ariel, 16", height=2)
+        self.label = Label(self.root, text="Main Menu", font=style.textHeading, height=2)
 
-        self.createNewBookingBtn = Button(self.root, text="Create New Booking", font="Ariel, 12", width=20, height=3,
-                                          command=self.load_create)
-        self.ViewAllBookingsBtn = Button(self.root, text="View All Bookings", font="Ariel, 12", width=20, height=3,
+        self.createNewBookingBtn = Button(self.root, text="Create New Booking", font=style.textNormal, width=20,
+                                          height=3)
+        self.ViewAllBookingsBtn = Button(self.root, text="View All Bookings", font=style.textNormal, width=20, height=3,
                                          command=lambda: load_index(self.root))
-        self.ViewTotalIncomeBtn = Button(self.root, text="View Total Income", font="Ariel, 12", width=20, height=3,
+        self.ViewTotalIncomeBtn = Button(self.root, text="View Total Income", font=style.textNormal, width=20, height=3,
                                          command=self.load_income)
-        self.ExitBtn = Button(self.root, text="Exit", font="Ariel, 12", width=20, height=3, command=self.root.destroy)
+        self.ExitBtn = Button(self.root, text="Exit", font=style.textNormal, width=20, height=3,
+                              command=self.root.destroy)
 
         # Widget positioning
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))
@@ -38,7 +40,7 @@ class MainMenuUI:
     def load_income(self):
         self.root.destroy()
         root = Tk()
-        view_total_income.ViewTotalIncomeUI(root)
+        view_income.ViewIncome(root)
         root.mainloop()
 
     # function to load the create form

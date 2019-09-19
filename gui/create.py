@@ -193,7 +193,7 @@ class CreateUI:
             self.pCheck.get(),
             self.dt
         )
-        db.insert_conference(c)
+        db.insert_(c)
 
     # This function assigns all the values necessary to save a wedding and then pushes it to the database.
     def savewedding(self):
