@@ -1,6 +1,7 @@
 from tkinter import *
 import money_convert as mc
 from gui import tkinter_styling as style
+from invoice_templates import invoice_generator as ig
 
 
 def CostBreakDownUI(master, booking):
@@ -155,6 +156,8 @@ class ViewDetailsConference(BaseViewDetail):
                                             bg=style.widgetBG)
         self.projectorRequiredInfo = Label(self.master, text='Yes' if event.projectorRequired else 'No',
                                            font=self.textNormal, bg=style.widgetBG)
+
+        self.buttonInvoice.configure(command=ig.Conference_Invoice(self.event))
 
         # layout for labels
         self.companyNameTitle.grid(row=8, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)

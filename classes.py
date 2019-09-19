@@ -1,5 +1,6 @@
 import datetime
 
+
 # Base class
 class Event:
     def __init__(self, noGuests, nameofContact, address, contactNo, eventRoomNo, dateOfEvent, costPerhead,
@@ -19,6 +20,10 @@ class Event:
         vat = subtotal / 5
         return subtotal + vat
 
+    def costPerHead(self):
+        return self.costPerhead * self.noGuests
+
+
 # Conference class which extends event
 class Conference(Event):
 
@@ -35,10 +40,11 @@ class Conference(Event):
         return float(self.subTotal() + self.VAT())
 
     def subTotal(self):
-        return float(self.noGuests * self.costPerhead)
+        return float(self.noGuests * self.costPerhead) * self.noOfDays
 
     def VAT(self):
         return float(self.subTotal() / 5)
+
 
 # Party class which extends event
 class Party(Event):
@@ -58,6 +64,7 @@ class Party(Event):
 
     def VAT(self):
         return self.subTotal() / 5
+
 
 # Wedding class which extends party
 class Wedding(Party):
