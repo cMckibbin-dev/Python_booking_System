@@ -5,6 +5,7 @@ from Data_Access import data_access
 from Data_Access.data_access import DBAccess
 from classes import *
 import gui.top_level_functions as tlf
+from gui import dialogs, main_menu
 
 
 class CreateUI:
@@ -194,7 +195,11 @@ class CreateUI:
             self.pCheck.get(),
             self.dt
         )
-        db.insert_(c)
+        db.insert_conference(c)
+        #displays message to user that details are saved
+        dialogs.saved()
+        #closes the form and returns to main menu
+        self.backToMainMenuCreate()
 
     # This function assigns all the values necessary to save a wedding and then pushes it to the database.
     def savewedding(self):
@@ -212,6 +217,10 @@ class CreateUI:
             self.dt
         )
         db.insert_wedding(w)
+        #displays message to user that details are saved
+        dialogs.saved()
+        #closes the form and returns to main menu
+        self.backToMainMenuCreate()
 
     # This function assigns all the values necessary to save a party and then pushes it to the database.
     def saveparty(self):
@@ -228,6 +237,18 @@ class CreateUI:
             self.dt,
         )
         db.insert_party(p)
+        #displays message to user that details are saved
+        dialogs.saved()
+        #closes the form and returns to main menu
+        self.backToMainMenuCreate()
+
+
+#function that closes the current form and reloads the main menu
+    def backToMainMenuCreate(self):
+        self.root.destroy()
+        root = Tk()
+        main_menu.MainMenuUI(root)
+        root.mainloop()
 
     # Function to hide widgets. This can be called using self.hidewidgets('conference'). Replace conference
     # with the event you are wanting to create a display for.

@@ -140,10 +140,11 @@ class DBAccess:
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
-                             wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,convert_pence(wedding.costPerhead),
-                             convert_pence(wedding.bandPrice), wedding.bandName, convert_pence(wedding.bandPrice),
+                             wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,
+                             convert_pence(wedding.costPerhead), wedding.bandName, convert_pence(wedding.bandPrice),
                              wedding.noBedroomsReserved))
         self.dbCon.commit()
+
 
     def insert_conference(self, conference):
         """inserts a conference object to the database"""
@@ -152,7 +153,7 @@ class DBAccess:
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
-                             conference.eventRoomNo, conference.dateOfEvent.date(), conference.dateOfBooking.date(),
+                             conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
                              convert_pence(conference.costPerhead), conference.companyName, conference.noOfDays,
                              conference.projectorRequired))
         self.dbCon.commit()
