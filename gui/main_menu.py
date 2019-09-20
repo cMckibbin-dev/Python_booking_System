@@ -16,18 +16,19 @@ class MainMenuUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Main Menu")
+        self.root.config(background="#C1FFEA")
 
         # Widget creation
-        self.label = Label(self.root, text="Main Menu", font=style.textHeading, height=2)
+        self.label = Label(self.root, text="Main Menu", font=style.textHeading, bg="#C1FFEA", height=2)
 
         self.createNewBookingBtn = Button(self.root, text="Create New Booking", font=style.textNormal, width=20,
-                                          height=3, command=self.load_create)
+                                          height=3, command=self.load_create, bg=style.buttonColour1)
         self.ViewAllBookingsBtn = Button(self.root, text="View All Bookings", font=style.textNormal, width=20, height=3,
-                                         command=lambda: load_index(self.root))
+                                         command=lambda: load_index(self.root), bg=style.buttonColour2)
         self.ViewTotalIncomeBtn = Button(self.root, text="View Total Income", font=style.textNormal, width=20, height=3,
-                                         command=self.load_income)
+                                         command=self.load_income, bg=style.buttonColour2)
         self.ExitBtn = Button(self.root, text="Exit", font=style.textNormal, width=20, height=3,
-                              command=self.root.destroy)
+                              command=self.root.destroy, bg=style.buttonColour1)
 
         # Widget positioning
         self.label.grid(row=0, column=0, columnspan=5, pady=(10, 20))

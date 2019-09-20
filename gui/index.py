@@ -4,6 +4,7 @@ from Data_Access import data_access as dBA
 from classes import *
 from gui import main_menu
 from gui.top_level_functions import view_details_popup, update_popup
+from gui import tkinter_styling as style
 
 
 def get_event_type(event):
@@ -33,37 +34,36 @@ class IndexUI:
         # window configure
         self.master = master
         self.master.title('View Bookings')
+        self.master.config(background=style.windowBG)
         self.master.bind('<FocusIn>', self.refresh_onfocus)
         self.master.protocol('WM_DELETE_WINDOW', self.back_to_main_menu)
 
         # setting text formatting vars
-        self.textHeading = 'Helvetica 18 bold'
-        self.textNormal = 'Helvetica 12'
-        self.textTreeHeading = 'Helvetica 14 bold'
+
 
         # window Title Label
-        self.titleLabel = Label(master, text='View Bookings', font=self.textHeading)
+        self.titleLabel = Label(master, text='View Bookings', bg=style.widgetBG, font=style.textHeading)
 
         # combo boxes for form search options
         self.comboEventType = ttk.Combobox(master, values=['All Types', 'Conference', 'Party', 'Wedding'],
-                                           font=self.textNormal, state='readonly')
+                                           font=style.textNormal, state='readonly')
         self.comboEventType.current(0)
 
         # Future dates only checkbox
         self.isChecked = BooleanVar()
-        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", font=self.textNormal,
+        self.futureDateCheckBox = Checkbutton(self.master, text="Future Dates only", bg=style.widgetBG, font=style.textNormal,
                                               var=self.isChecked)
         # buttons for form
-        self.buttonSearch = Button(master, text='Search', font=self.textNormal)
+        self.buttonSearch = Button(master, text='Search', font=style.textNormal)
         self.buttonSearch.bind('<Button-1>', self.updateEvents)
 
         # These buttons only become active when options selected in tree view
         # frame for buttons
-        self.buttonFrame = Frame(self.master)
-        self.buttonBack = Button(self.buttonFrame, text='Back', font=self.textNormal, command=self.back_to_main_menu)
-        self.buttonViewDetails = Button(self.buttonFrame, text='View Details', font=self.textNormal, state=DISABLED,
-                                        command=lambda: self.open_view_details())
-        self.buttonEdit = Button(self.buttonFrame, text='Edit', font=self.textNormal, state=DISABLED, command=self.open_edit)
+        self.buttonFrame = Frame(self.master , bg=style.widgetBG)
+        self.buttonBack = Button(self.buttonFrame, text='Back', font=style.textNormal, bg="snow", height= 2 , width = 10, command=self.back_to_main_menu)
+        self.buttonViewDetails = Button(self.buttonFrame, text='View Details', font=style.textNormal, state=DISABLED, bg=style.buttonColour1,
+                                         height= 2 , width = 10, command=lambda: self.open_view_details())
+        self.buttonEdit = Button(self.buttonFrame, text='Edit', font=style.textNormal, state=DISABLED, bg=style.buttonColour2, height= 2 , width = 10, command=self.open_edit)
 
         # tree view for form where bookings are displayed
         self.tree = ttk.Treeview(master, columns=('Name of Contact', 'No.Guests', 'Room Number', 'Type of Event',
@@ -77,8 +77,8 @@ class IndexUI:
         self.tree.bind('<ButtonRelease-1>', self.active_buttons)
 
         # total events label
-        self.EventTotal = Label(self.master, text='Number of Events:', font=self.textNormal)
-        self.TotalLabel = Label(self.master, text='0', font=self.textNormal)
+        self.EventTotal = Label(self.master, text='Number of Events:', bg=style.widgetBG, font=style.textNormal)
+        self.TotalLabel = Label(self.master, text='0', bg=style.widgetBG, font=style.textNormal)
 
         # setting grid layout for window
         # title of form

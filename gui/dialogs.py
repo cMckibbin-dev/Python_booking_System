@@ -12,7 +12,5 @@ def not_saved():
 def saved():
     messagebox.showinfo("Successful", "These details have been successfully saved!")
 
-# table refreshed dialog message box
-def table_refreshed():
-    messagebox.showinfo("Successful", "The table has been refreshed and is now up to date.")
-
+def deleted():
+    messagebox.showinfo("Successful", "These details have been successfully deleted!")

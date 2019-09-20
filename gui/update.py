@@ -6,7 +6,7 @@ import gui.top_level_functions as tlf
 from classes import *
 import tkinter.ttk as ttk
 from Data_Access import data_access as da
-from gui import tkinter_styling as style
+from gui import tkinter_styling as style, dialogs
 import validation
 
 
@@ -19,6 +19,13 @@ def save_update(booking):
     elif isinstance(booking, Party):
         db.update_party(booking)
     db.disconnect_db()
+    dialogs.updated()
+
+
+
+
+
+
 
 
 def number_only(value, event):
@@ -34,7 +41,7 @@ class UpdateUIBase:
         self.event = event
 
         # configure master
-        self.master.configure(background='white')
+        self.master.configure(background=style.windowBG)
         self.roomNumbers = ['select option']
 
         # widget
@@ -42,23 +49,23 @@ class UpdateUIBase:
 
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
-        self.noGuestsEntry = Entry(self.master, bg=style.widgetBG)
+        self.noGuestsEntry = Entry(self.master)
         self.noGuestsEntry.insert(0, event.noGuests)
 
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
-        self.nameOfContactEntry = Entry(self.master, bg=style.widgetBG)
+        self.nameOfContactEntry = Entry(self.master)
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20,
                                 bg=style.widgetBG)
-        self.addressEntry = Entry(self.master, bg=style.widgetBG)
+        self.addressEntry = Entry(self.master)
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
-        self.contactNumberEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.contactNumberEntry = Entry(self.master, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
                                                       '%P', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
@@ -70,7 +77,7 @@ class UpdateUIBase:
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
 
-        self.dateOfEventEntry = Entry(self.master, bg=style.widgetBG)
+        self.dateOfEventEntry = Entry(self.master)
         self.dateOfEventEntry.configure(disabledbackground="white", disabledforeground="black")
         self.dateOfEventEntry.insert(0, event.dateOfEvent)
         self.dateOfEventEntry.configure(state='readonly')
@@ -88,11 +95,11 @@ class UpdateUIBase:
         # buttons for bottom of form
         self.buttonBack = Button(self.frame, text='Back', bg='snow', width=style.buttonWidth, height=style.buttonHeight,
                                  command=self.master.destroy)
-        self.buttonDelete = Button(self.frame, text='Delete', bg='salmon1', width=style.buttonWidth,
+        self.buttonDelete = Button(self.frame, text='Delete', bg=style.buttonColour1, width=style.buttonWidth,
                                    height=style.buttonHeight, command=self.delete_booking)
 
-        self.buttonSave = Button(self.frame, text='Save', bg='deep sky blue', width=style.buttonWidth,
-                                 height=style.buttonHeight, command=self.create_booking)
+        self.buttonSave = Button(self.frame, text='Save', bg=style.buttonColour2, width=style.buttonWidth,
+                                 height=style.buttonHeight, command=self.create_booking )
 
         # layout for widget
         # heading
@@ -131,6 +138,7 @@ class UpdateUIBase:
             db = da.DBAccess()
             print(str(self.event.__class__.__name__))
             db.delete_booking(self.event, str(self.event.__class__.__name__))
+            dialogs.deleted()
             self.master.destroy()
             print('delete')
         else:
@@ -139,6 +147,8 @@ class UpdateUIBase:
     @abstractmethod
     def create_booking(self):
         pass
+
+
 
 
 # Update UI for conference
@@ -159,12 +169,12 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
-        self.companyEntry = Entry(self.master, bg=style.widgetBG)
+        self.companyEntry = Entry(self.master)
         self.companyEntry.insert(0, event.companyName)
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
-        self.noOfDaysEntry = Entry(self.master, bg=style.widgetBG)
+        self.noOfDaysEntry = Entry(self.master)
         self.noOfDaysEntry.insert(0, event.noOfDays)
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
@@ -189,6 +199,7 @@ class UpdateConferenceUI(UpdateUIBase):
                        projectorRequired=self.yesno.get(), dateofBooking=self.event.dateOfBooking,
                        costPerhead=self.event.costPerhead)
         save_update(c)
+        self.master.destroy()
         print('updated booking')
 
 
@@ -268,6 +279,7 @@ class UpdatePartyUI(UpdateUIBase):
                   dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
                   bandPrice=self.bandCost, costPerhead=self.event.costPerhead)
         save_update(p)
+        self.master.destroy()
 
 
 # Update UI for wedding
@@ -289,7 +301,7 @@ class UpdateWeddingUI(UpdatePartyUI):
         # widgets for form
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
-        self.noOfRoomsEntry = Entry(self.master, bg=style.widgetBG)
+        self.noOfRoomsEntry = Entry(self.master)
         self.noOfRoomsEntry.insert(0, str(event.noBedroomsReserved))
 
         # grid layout for widgets
@@ -304,3 +316,4 @@ class UpdateWeddingUI(UpdatePartyUI):
                     bandPrice=self.bandCost, costPerhead=self.event.costPerhead,
                     noBedroomsReserved=self.noOfRoomsEntry.get())
         save_update(w)
+        self.master.destroy()
