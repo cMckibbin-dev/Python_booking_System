@@ -157,7 +157,7 @@ class ViewDetailsConference(BaseViewDetail):
         self.projectorRequiredInfo = Label(self.master, text='Yes' if event.projectorRequired else 'No',
                                            font=self.textNormal, bg=style.widgetBG)
 
-        self.buttonInvoice.configure(command=ig.Conference_Invoice(self.event))
+        self.buttonInvoice.configure(command=lambda: ig.Conference_Invoice(self.event))
 
         # layout for labels
         self.companyNameTitle.grid(row=8, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
@@ -180,6 +180,7 @@ class ViewDetailsParty(BaseViewDetail):
         super().__init__(master, event)
         # overriding default heading
         self.Heading.configure(text='View Details Party')
+        self.buttonInvoice.configure(command=lambda: ig.party_invoice(self.event))
         # labels for Band Selected
         self.bandSelectedTitle = Label(self.master, text='Band Selected:', font=self.textNormal, bg=style.widgetBG)
         self.bandSelectedInfo = Label(self.master, text=event.bandName, font=self.textNormal, bg=style.widgetBG)
@@ -203,6 +204,7 @@ class ViewDetailsWedding(ViewDetailsParty):
         super().__init__(master, event)
         # overriding the default heading
         self.Heading.configure(text='View Details Wedding')
+        self.buttonInvoice.configure(command=lambda: ig.wedding_invoice(self.event))
         # labels for Number of Bed rooms Reserved
         self.NumberRoomsTitle = Label(self.master, text='Number of Rooms\nReserved:', font=self.textNormal,
                                       bg=style.widgetBG)

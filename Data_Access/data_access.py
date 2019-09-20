@@ -140,7 +140,8 @@ class DBAccess:
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
-                             wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,convert_pence(wedding.costPerhead),
+                             wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,
+                             convert_pence(wedding.costPerhead),
                              convert_pence(wedding.bandPrice), wedding.bandName, convert_pence(wedding.bandPrice),
                              wedding.noBedroomsReserved))
         self.dbCon.commit()
@@ -235,9 +236,48 @@ class DBAccess:
 
         return results
 
-    def disconnect_db(self):
-        """Disconnect the database and the cursor"""
-        self.dbCon.close()
+    def getBookedRooms(self, tableName, date, ID=None):
+        """method to return a list of all rooms booked for a certain date for an event type.  If ID is given for the
+        bookings then the room booked with the provided ID will not be counted"""
+        if ID is None:
+            sqlQuery = "select eventRoom from {} where date(dateOfEvent) == date('{}')".format(tableName, date)
+        else:
+            sqlQuery = "select eventRoom from {} where date(dateOfEvent) == date('{}') and ID != {}".format(tableName,
+                                                                                                            date, ID)
+        self.cursor.execute(sqlQuery)
+        all_rows = self.cursor.fetchall()
+        results = []
+        if all_rows:
+            for row in all_rows:
+                print(type(row))
+                results.append(str(row[0]))
+        return results
+
+    def getBookedBands(self, date, eventType, ID=None):
+        """method to return a list of all bands booked for a certain date for an event type"""
+        sqlQueries = []
+        if ID is None:
+            sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}')".format(date)
+            sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}')".format(date)
+        elif eventType.lower() == 'party':
+            sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}') and ID != {}".format(date, ID)
+            sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}')".format(date)
+        elif eventType.lower() == 'wedding':
+            sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}')".format(date)
+            sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}') and ID != {}".format(date, ID)
+        else:
+            raise ValueError('eventType must be party or wedding')
+        sqlQueries.append(sqlQueryParty)
+        sqlQueries.append(sqlQueryWedding)
+
+        results = []
+        for query in sqlQueries:
+            self.cursor.execute(query)
+            all_rows = self.cursor.fetchall()
+            for row in all_rows:
+                results.append(row[0])
+        print(list(set(results)))
+        return list(set(results))
 
     def __del__(self):
         self.dbCon.close()

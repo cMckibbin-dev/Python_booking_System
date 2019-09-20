@@ -18,7 +18,6 @@ def save_update(booking):
         db.update_wedding(booking)
     elif isinstance(booking, Party):
         db.update_party(booking)
-    db.disconnect_db()
 
 
 def number_only(value, event):
@@ -26,6 +25,26 @@ def number_only(value, event):
         if not value.isdigit():
             return False
     return True
+
+
+def getFreeRooms(listRooms, event):
+    db = da.DBAccess()
+    usedRooms = db.getBookedRooms(event.__class__.__name__, event.dateOfEvent, event.id)
+    freeRooms = []
+    for room in listRooms:
+        if room not in list(usedRooms):
+            freeRooms.append(room)
+    return freeRooms
+
+
+def getFreeBands(bandNames, event):
+    db = da.DBAccess()
+    userBands = db.getBookedBands(event.dateOfEvent, str(event.__class__.__name__).lower(), event.id)
+    freeBands = []
+    for band in bandNames:
+        if band not in userBands:
+            freeBands.append(band)
+    return freeBands
 
 
 class UpdateUIBase:
@@ -42,25 +61,29 @@ class UpdateUIBase:
 
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
-        self.noGuestsEntry = Entry(self.master, bg=style.widgetBG)
+        self.noGuestsEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.noGuestsEntry.configure(validatecommand=(self.noGuestsEntry.register(validation.NumbersOnly), '%S', '%d'))
         self.noGuestsEntry.insert(0, event.noGuests)
 
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
-        self.nameOfContactEntry = Entry(self.master, bg=style.widgetBG)
+        self.nameOfContactEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
+                                                           '%S', '%d'))
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20,
                                 bg=style.widgetBG)
-        self.addressEntry = Entry(self.master, bg=style.widgetBG)
+        self.addressEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.addressEntry.configure(validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, bg=style.widgetBG, validate='key')
-        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
-                                                      '%P', '%d')
+        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.NumbersOnly),
+                                                      '%S', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
 
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
@@ -151,6 +174,7 @@ class UpdateConferenceUI(UpdateUIBase):
             "B",
             "C"
         ]
+        # todo add conference room validation
         self.title.configure(text='Update Conference')
         self.yesno = BooleanVar(self.master, event.projectorRequired)
         # overriding room numbers from super
@@ -164,7 +188,8 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
-        self.noOfDaysEntry = Entry(self.master, bg=style.widgetBG)
+        self.noOfDaysEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
         self.noOfDaysEntry.insert(0, event.noOfDays)
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
@@ -211,6 +236,8 @@ class UpdatePartyUI(UpdateUIBase):
             "Prawn Mendes",
             "AB/CD"
         ]
+        self.bandOptions = getFreeBands(self.bandOptions, self.event)
+        self.roomNumbers = getFreeRooms(self.roomNumbers, self.event)
 
         self.bandChose = StringVar(self.master, mc.pound_string(event.bandPrice))
         self.bandVariable = StringVar()
@@ -283,6 +310,7 @@ class UpdateWeddingUI(UpdatePartyUI):
 
         # overriding super room number options
         self.roomNumbers = ["H", "I"]
+        self.roomNumbers = getFreeRooms(self.roomNumbers, self.event)
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
 
