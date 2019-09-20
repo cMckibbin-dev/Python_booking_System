@@ -16,6 +16,7 @@ class MainMenuUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Main Menu")
+        self.root.resizable(0, 0)
         self.root.config(background="#C1FFEA")
 
         # Widget creation
