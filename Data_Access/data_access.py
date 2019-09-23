@@ -2,6 +2,7 @@ import sqlite3 as sql
 from os import path as os
 from classes import *
 from datetime import datetime
+import datetime
 
 
 def create_database(db):
@@ -52,8 +53,8 @@ def _create_wedding(row):
     w = Wedding(ID=row[0], noGuests=row[1], nameofContact=row[2],
                 address=row[3],
                 contactNo=row[4], eventRoomNo=row[5],
-                dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
-                dateOfBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
+                dateOfEvent=datetime.datetime.strptime(row[6], '%Y-%m-%d').date(),
+                dateOfBooking=datetime.datetime.strptime(row[7], '%Y-%m-%d').date(),
                 costPerhead=convert_pound(row[8]),
                 bandName=row[9], bandPrice=convert_pound(row[10]), noBedroomsReserved=row[11])
     return w
@@ -63,8 +64,8 @@ def _create_party(row):
     """function will construct a instance of party class from a row selected from the database"""
     p = Party(ID=row[0], noGuests=row[1], nameofContact=row[2], address=row[3],
               contactNo=row[4], eventRoomNo=row[5],
-              dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date()
-              , dateofBooking=datetime.strptime(row[7], '%Y-%m-%d').date(), costPerhead=convert_pound(row[8]),
+              dateOfEvent=datetime.datetime.strptime(row[6], '%Y-%m-%d').date()
+              , dateofBooking=datetime.datetime.strptime(row[7], '%Y-%m-%d').date(), costPerhead=convert_pound(row[8]),
               bandName=(row[9]), bandPrice=convert_pound(row[10]))
     return p
 
@@ -73,8 +74,8 @@ def _create_conference(row):
     """function will construct a instance of conference class from a row selected from the database"""
     c = Conference(ID=row[0], noGuests=int(row[1]), nameofContact=row[2],
                    address=row[3], contactNo=row[4], eventRoomNo=row[5],
-                   dateOfEvent=datetime.strptime(row[6], '%Y-%m-%d').date(),
-                   dateofBooking=datetime.strptime(row[7], '%Y-%m-%d').date(),
+                   dateOfEvent=datetime.datetime.strptime(row[6], '%Y-%m-%d').date(),
+                   dateofBooking=datetime.datetime.strptime(row[7], '%Y-%m-%d').date(),
                    costPerhead=convert_pound(row[8]), companyName=row[9], noOfDays=row[10],
                    projectorRequired=bool(row[11]))
     return c
@@ -249,8 +250,9 @@ class DBAccess:
         results = []
         if all_rows:
             for row in all_rows:
-                print(type(row))
-                results.append(str(row[0]))
+                results.append((row[0]))
+        print('booked rooms')
+        print(results)
         return results
 
     def getBookedBands(self, date, eventType, ID=None):
@@ -276,7 +278,24 @@ class DBAccess:
             all_rows = self.cursor.fetchall()
             for row in all_rows:
                 results.append(row[0])
+        print('booked bands')
         print(list(set(results)))
+        return list(set(results))
+
+    def booked_conference_rooms(self, date, number_of_days, ID=None):
+        """method to return booked rooms from the conference table given a date of event and number of days the
+        conference will last. If ID is passed then the query will not included room booked for that given ID"""
+        if ID is None:
+            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
+            from conference where endDate BETWEEN date(?) and date(?)""", (date, date + datetime.timedelta(days=number_of_days)))
+        else:
+            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
+                       from conference where endDate BETWEEN date(?) and date(?) and id != ?""",
+                                (date, date + datetime.timedelta(days=number_of_days), ID))
+        all_rows = self.cursor.fetchall()
+        results = []
+        for row in all_rows:
+            results.append(row[0])
         return list(set(results))
 
     def __del__(self):
