@@ -142,8 +142,8 @@ class DBAccess:
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (wedding.noGuests, wedding.nameofContact, wedding.address, wedding.contactNo,
                              wedding.eventRoomNo, wedding.dateOfEvent, wedding.dateOfBooking,
-                             convert_pence(wedding.costPerhead),
-                             convert_pence(wedding.bandPrice), wedding.bandName, convert_pence(wedding.bandPrice),
+                             convert_pence(wedding.costPerhead), wedding.bandName,
+                             convert_pence(wedding.bandPrice),
                              wedding.noBedroomsReserved))
         self.dbCon.commit()
 
@@ -154,7 +154,7 @@ class DBAccess:
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, companyName, numberDays, projectorRequired) values(?,?,?,?,?,?,?,?,?,?,?)""",
                             (conference.noGuests, conference.nameofContact, conference.address, conference.contactNo,
-                             conference.eventRoomNo, conference.dateOfEvent.date(), conference.dateOfBooking.date(),
+                             conference.eventRoomNo, conference.dateOfEvent, conference.dateOfBooking,
                              convert_pence(conference.costPerhead), conference.companyName, conference.noOfDays,
                              conference.projectorRequired))
         self.dbCon.commit()
@@ -262,11 +262,13 @@ class DBAccess:
             sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}')".format(date)
             sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}')".format(date)
         elif eventType.lower() == 'party':
-            sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}') and ID != {}".format(date, ID)
+            sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}') and ID != {}".format(date,
+                                                                                                                   ID)
             sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}')".format(date)
         elif eventType.lower() == 'wedding':
             sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}')".format(date)
-            sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}') and ID != {}".format(date, ID)
+            sqlQueryWedding = "select bandName from wedding where date(dateOfEvent) == date('{}') and ID != {}".format(
+                date, ID)
         else:
             raise ValueError('eventType must be party or wedding')
         sqlQueries.append(sqlQueryParty)
@@ -287,7 +289,8 @@ class DBAccess:
         conference will last. If ID is passed then the query will not included room booked for that given ID"""
         if ID is None:
             self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
-            from conference where endDate BETWEEN date(?) and date(?)""", (date, date + datetime.timedelta(days=number_of_days)))
+            from conference where endDate BETWEEN date(?) and date(?)""",
+                                (date, date + datetime.timedelta(days=number_of_days)))
         else:
             self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
                        from conference where endDate BETWEEN date(?) and date(?) and id != ?""",

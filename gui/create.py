@@ -5,6 +5,8 @@ from Data_Access import data_access
 from Data_Access.data_access import DBAccess
 from classes import *
 import gui.top_level_functions as tlf
+from gui import dialogs, main_menu
+from gui import tkinter_styling as style
 
 
 class CreateUI:
@@ -12,6 +14,9 @@ class CreateUI:
     def __init__(self, root):
 
         self.root = root
+        self.root.title("Create a Booking")
+        self.root.config(background="#C1FFEA")
+
         # Event type options
         self.options = [
             "Please select event type",
@@ -66,26 +71,26 @@ class CreateUI:
         self.pCheck = tk.BooleanVar()
 
         # Widgets - All widgets are listed with their label and their input together.
-        self.label = Label(self.root, text="Create New Booking", font="Ariel, 16", height=2)
+        self.label = Label(self.root, text="Create New Booking", font=style.textHeading, bg=style.widgetBG, height=2)
 
         # Below is the event type lbl
         # And below that again is the event type option menu
-        self.eventTypeLbl = Label(self.root, text="Select Event Type:", font="Ariel, 12", anchor='e', width=20)
+        self.eventTypeLbl = Label(self.root, text="Select Event Type:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.eventType = OptionMenu(self.root, self.variable, *self.options, command=self.selectedvalue)
 
-        self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", anchor='e', width=20)
+        self.noGuestsLbl = Label(self.root, text="Number of Guests:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.noGuestsEntry = Entry(self.root)
-        self.nameOfContactLbl = Label(self.root, text="Name of Contact:", font="Ariel, 12", anchor='e', width=20)
+        self.nameOfContactLbl = Label(self.root, text="Name of Contact:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.nameOfContactEntry = Entry(self.root)
-        self.addressLbl = Label(self.root, text="Full Address of Contact:", font="Ariel, 12", anchor='e', width=20)
+        self.addressLbl = Label(self.root, text="Full Address of Contact:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.addressEntry = Entry(self.root)
-        self.contactNumberLbl = Label(self.root, text="Contact Number:", font="Ariel, 12", anchor='e', width=20)
+        self.contactNumberLbl = Label(self.root, text="Contact Number:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.contactNumberEntry = Entry(self.root)
-        self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", anchor='e', width=20)
+        self.roomNoLbl = Label(self.root, text="Event Room Number:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.roomNoEntryConference = OptionMenu(self.root, self.roomVariable, *self.conferenceRooms)
         self.roomNoEntryParty = OptionMenu(self.root, self.roomVariable, *self.partyRooms)
         self.roomNoEntryWedding = OptionMenu(self.root, self.roomVariable, *self.weddingRooms)
-        self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", anchor='e', width=20)
+        self.dateOfEventLbl = Label(self.root, text="Date of Event:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
 
         # Date of event entry has a calendar function bound to it. This creates a popup where the user is able
         # to select a date.
@@ -94,30 +99,30 @@ class CreateUI:
                                                                                   self.dateOfEventEntry))
 
         # the date of booking is set to the current date of the computer.
-        self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", anchor='e', width=20)
-        self.dateOfBookingLbl2 = tk.Label(self.root, font="Ariel, 12", width=20)
+        self.dateOfBookingLbl = Label(self.root, text="Date of Booking:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
+        self.dateOfBookingLbl2 = tk.Label(self.root, font="Ariel, 12", bg=style.widgetBG, width=20)
         self.dt = datetime.datetime.now().date()
         self.dateOfBookingLbl2.config(text=self.dt)
 
-        self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", anchor='e', width=20)
+        self.companyLbl = Label(self.root, text="Company Name:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.companyEntry = Entry(self.root)
-        self.noOfDaysLbl = Label(self.root, text="Number of Days:", font="Ariel, 12", anchor='e', width=20)
+        self.noOfDaysLbl = Label(self.root, text="Number of Days:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.noOfDaysEntry = Entry(self.root)
-        self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", anchor='e', width=20)
-        self.projectorCheck = tk.Checkbutton(self.root, variable=self.pCheck)
-        self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", anchor='e', width=20)
-        self.costPerHeadDisplay = tk.Label(self.root, text="£-", font="Ariel, 12", anchor='e', width=20)
-        self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", anchor='e', width=20)
+        self.projectorLbl = Label(self.root, text="Projector Required?:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
+        self.projectorCheck = tk.Checkbutton(self.root, variable=self.pCheck, bg=style.widgetBG)
+        self.costPerHeadLbl = Label(self.root, text="Cost Per Head:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
+        self.costPerHeadDisplay = tk.Label(self.root, text="£-", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
+        self.bandNameLbl = Label(self.root, text="Select Band:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.bandName = OptionMenu(self.root, self.bandVariable, *self.bandOptions, command=self.boptions)
-        self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", anchor='e', width=20)
-        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20)
-        self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", anchor='e', width=20)
+        self.bandCostLbl = Label(self.root, text="Band Cost:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
+        self.bandCostDisplay = Label(self.root, font="Ariel, 12", textvariable=self.bcs, anchor='e', width=20, bg=style.widgetBG)
+        self.noOfRoomsLbl = Label(self.root, text="Number of Rooms:", font="Ariel, 12", bg=style.widgetBG, anchor='e', width=20)
         self.noOfRoomsEntry = Entry(self.root)
 
         # This frame houses the buttons at the bottom of the form
         f1 = Frame(self.root)
-        self.backBtn = Button(f1, text="Back", width=10, height=2)
-        self.clearBtn = Button(f1, text="Clear", width=10, height=2)
+        self.backBtn = Button(f1, text="Back", width=10, height=2, command=self.backToMainMenuCreate)
+        self.clearBtn = Button(f1, text="Clear", width=10, height=2, command=lambda: clear(self.root, self))
         # The default command is "saveconference", this is then changed based on what event type is selected.
         self.saveBtn = Button(f1, text="Save", width=10, height=2, command=self.saveconference)
 
@@ -144,11 +149,11 @@ class CreateUI:
         # The buttons are packed into the frame and they have a "highlightbackground" field so they will work on a Mac.
         # "highlightbackground" is not needed for windows.
         self.backBtn.pack(side="left", padx=(0, 5))
-        self.backBtn.config(bg='snow', highlightbackground='snow', state=DISABLED)
+        self.backBtn.config(bg='snow', highlightbackground='snow')
         self.clearBtn.pack(side="left")
-        self.clearBtn.config(bg='salmon', highlightbackground='salmon', fg='white')
+        self.clearBtn.config(bg=style.buttonColour1, highlightbackground='salmon', fg='white')
         self.saveBtn.pack(side="left", padx=(5, 0))
-        self.saveBtn.config(bg='SteelBlue1', highlightbackground='SteelBlue1', fg='white')
+        self.saveBtn.config(bg=style.buttonColour2, highlightbackground='SteelBlue1', fg='white')
 
     #  Band selection options
     def boptions(self, *args):
@@ -194,7 +199,9 @@ class CreateUI:
             self.pCheck.get(),
             self.dt
         )
-        db.insert_(c)
+        db.insert_conference(c)  # passes these values through to the insert_conference function
+        dialogs.saved()  # displays message to user that details are saved
+        self.backToMainMenuCreate()  # closes the form and returns to main menu
 
     # This function assigns all the values necessary to save a wedding and then pushes it to the database.
     def savewedding(self):
@@ -211,7 +218,9 @@ class CreateUI:
             self.noOfRoomsEntry.get(),
             self.dt
         )
-        db.insert_wedding(w)
+        db.insert_wedding(w)  # passes these values through to the insert_wedding function
+        dialogs.saved()  # displays message to user that details are saved
+        self.backToMainMenuCreate()  # closes the form and returns to main menu
 
     # This function assigns all the values necessary to save a party and then pushes it to the database.
     def saveparty(self):
@@ -227,11 +236,24 @@ class CreateUI:
             self.bc.get(),
             self.dt,
         )
-        db.insert_party(p)
+        db.insert_party(p)  # passes these values through to the insert_party function
+        dialogs.saved()  # displays message to user that details are saved
+        self.backToMainMenuCreate()  # closes the form and returns to main menu
 
-    # Function to hide widgets. This can be called using self.hidewidgets('conference'). Replace conference
-    # with the event you are wanting to create a display for.
+
+
+    def backToMainMenuCreate(self):
+        """ function that closes the current form and reloads the main menu"""
+        self.root.destroy()
+        root = Tk()
+        main_menu.MainMenuUI(root)
+        root.mainloop()
+
+
     def hidewidgets(self, eventtype):
+        """ Function to hide widgets. This can be called using self.hidewidgets('conference'). Replace conference
+         with the event you are wanting to create a display for."""
+
         # Hides all widgets not related to the conference input. Called using self.hidewidgets('conference')
         if eventtype == 'conference':
             self.bandNameLbl.grid_remove()
@@ -265,9 +287,9 @@ class CreateUI:
             self.roomNoEntryParty.grid_remove()
             self.roomNoEntryConference.grid_remove()
 
-    #  Function to detect which option is selected in event list
-    def selectedvalue(self, *args):
 
+    def selectedvalue(self, *args):
+        """method to do shit"""
         if self.variable.get() == 'Please select event type' or self.bandVariable.get() == 'Please select band':
             self.saveBtn.config(state=DISABLED)
             self.costPerHeadDisplay.config(text="£-")
@@ -310,3 +332,37 @@ class CreateUI:
             self.noOfRoomsEntry.grid(row=12, column=2, padx=(0, 20))
 
             self.hidewidgets('wedding')
+
+
+    def clear_date(self):
+        """function to clear the date entry and set it back to readonly"""
+        self.dateOfEventEntry.configure(state='normal')
+        self.dateOfEventEntry.delete(0, 'end')
+        self.dateOfEventEntry.configure(state='readonly')
+
+    def set_default(self):
+        """function to set the option menus back to default"""
+        self.roomVariable.set(self.options[0])
+        self.bandVariable.set(self.options[0])
+
+    def clear_check(self):
+        """function to set the checkbox value back to false"""
+        self.pCheck.set(False)
+
+def clear(master, context):
+    """function that clears all the entry boxes, option menus and date of event"""
+    widgets = master.winfo_children()
+    for widget in widgets:
+        if type(widget) == Entry:
+             widget.delete(0, 'end')  # clears all entry boxes
+        elif type(widget) == Frame:
+              clear(widget, context)
+
+        CreateUI.set_default(context)  # calls the function to reset option menu
+        CreateUI.clear_date(context)  # calls the function to clear the date
+        CreateUI.clear_check(context)  # calls the function to clear the checkbox
+
+
+
+
+

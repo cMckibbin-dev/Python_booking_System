@@ -39,63 +39,55 @@ class BaseViewDetail:
 
         # window configure
         self.master.title('View Details')
-        self.master.configure(background='white')
+        self.master.configure(bg=style.widgetBG)
         # setting text formatting vars and padding vars
-        self.textHeading = 'Helvetica 18 bold'
-        self.textNormal = 'Helvetica 12'
-        style.paddingX = 5
-        style.paddingY = 5
-        # button sizes
-        style.buttonWidth = 10
-        style.buttonHeight = 2
-        # widget background colour
-        style.widgetBG = 'white'
+
 
         # labels for form
         # heading label is given text value by child classes
-        self.Heading = Label(self.master, text='heading', font=self.textHeading, bg=style.widgetBG)
+        self.Heading = Label(self.master, text='heading', font=style.textHeading, bg=style.widgetBG)
 
         # Number of Guests labels
-        self.noGuestsTitle = Label(self.master, text='Number of Guests:', font=self.textNormal, bg=style.widgetBG)
-        self.noGuestsInfo = Label(self.master, text=event.noGuests, font=self.textNormal, bg=style.widgetBG)
+        self.noGuestsTitle = Label(self.master, text='Number of Guests:', font=style.textNormal, bg=style.widgetBG)
+        self.noGuestsInfo = Label(self.master, text=event.noGuests, font=style.textNormal, bg=style.widgetBG)
 
         # Name of Contact Labels
-        self.nameContactTitle = Label(self.master, text='Name of Contact:', font=self.textNormal, bg=style.widgetBG)
-        self.nameContactInfo = Label(self.master, text=event.nameofContact, font=self.textNormal, bg=style.widgetBG)
+        self.nameContactTitle = Label(self.master, text='Name of Contact:', font=style.textNormal, bg=style.widgetBG)
+        self.nameContactInfo = Label(self.master, text=event.nameofContact, font=style.textNormal, bg=style.widgetBG)
 
         # Address Labels
-        self.addressTitle = Label(self.master, text='Full Address of Contact:', font=self.textNormal, bg=style.widgetBG)
-        self.addressInfo = Label(self.master, text=event.address, font=self.textNormal, bg=style.widgetBG)
+        self.addressTitle = Label(self.master, text='Full Address of Contact:', font=style.textNormal, bg=style.widgetBG)
+        self.addressInfo = Label(self.master, text=event.address, font=style.textNormal, bg=style.widgetBG)
 
         # Contact Number Labels
-        self.contactNumberTitle = Label(self.master, text='Contact Number:', font=self.textNormal, bg=style.widgetBG)
-        self.contactNumberInfo = Label(self.master, text=event.contactNo, font=self.textNormal, bg=style.widgetBG)
+        self.contactNumberTitle = Label(self.master, text='Contact Number:', font=style.textNormal, bg=style.widgetBG)
+        self.contactNumberInfo = Label(self.master, text=event.contactNo, font=style.textNormal, bg=style.widgetBG)
 
         # Event Room Number Label
-        self.roomNumberTitle = Label(self.master, text='Event Room Number:', font=self.textNormal, bg=style.widgetBG)
-        self.roomNumberInfo = Label(self.master, text=event.eventRoomNo, font=self.textNormal, bg=style.widgetBG)
+        self.roomNumberTitle = Label(self.master, text='Event Room Number:', font=style.textNormal, bg=style.widgetBG)
+        self.roomNumberInfo = Label(self.master, text=event.eventRoomNo, font=style.textNormal, bg=style.widgetBG)
 
         # Date of Booking Labels
-        self.dateOfBookingTitle = Label(self.master, text='Date of Booking:', font=self.textNormal, bg=style.widgetBG)
-        self.dateOfBookingInfo = Label(self.master, text=event.dateOfBooking, font=self.textNormal, bg=style.widgetBG)
+        self.dateOfBookingTitle = Label(self.master, text='Date of Booking:', font=style.textNormal, bg=style.widgetBG)
+        self.dateOfBookingInfo = Label(self.master, text=event.dateOfBooking, font=style.textNormal, bg=style.widgetBG)
 
         # Date of Event Labels
-        self.dateOfEventTitle = Label(self.master, text='Date of Event', font=self.textNormal, bg=style.widgetBG)
-        self.dateOfEventInfo = Label(self.master, text=event.dateOfEvent, font=self.textNormal, bg=style.widgetBG)
+        self.dateOfEventTitle = Label(self.master, text='Date of Event', font=style.textNormal, bg=style.widgetBG)
+        self.dateOfEventInfo = Label(self.master, text=event.dateOfEvent, font=style.textNormal, bg=style.widgetBG)
 
         # cost per head labels
-        self.costPerHeadTitle = Label(self.master, text='Cost Per Head:', font=self.textNormal, bg=style.widgetBG)
-        self.costPerHeadInfo = Label(self.master, text=mc.pound_string(event.costPerhead), font=self.textNormal,
+        self.costPerHeadTitle = Label(self.master, text='Cost Per Head:', font=style.textNormal, bg=style.widgetBG)
+        self.costPerHeadInfo = Label(self.master, text=mc.pound_string(event.costPerhead), font=style.textNormal,
                                      bg=style.widgetBG)
 
         # frame for packing buttons at bottom of form
         self.buttonFrame = Frame(self.master, bg=style.widgetBG)
         # buttons
         # these buttons are user on each child class and should be placed at the bottom
-        self.buttonBack = Button(self.buttonFrame, text='Back', font=self.textNormal, bg='snow', width=style.buttonWidth
+        self.buttonBack = Button(self.buttonFrame, text='Back', font=style.textNormal, bg=style.buttonColour1, width=style.buttonWidth
                                  , height=style.buttonHeight, command=self.master.destroy)
 
-        self.buttonInvoice = Button(self.buttonFrame, text='Save Invoice', font=self.textNormal, bg='deep sky blue',
+        self.buttonInvoice = Button(self.buttonFrame, text='Save Invoice', font=style.textNormal, bg=style.buttonColour2,
                                     width=style.buttonWidth, height=style.buttonHeight)
 
         # placing widgets on grid layout
@@ -144,18 +136,18 @@ class ViewDetailsConference(BaseViewDetail):
         # overriding the default heading
         self.Heading.configure(text='View Details Conference')
         # Company Name labels
-        self.companyNameTitle = Label(self.master, text='Company Name:', font=self.textNormal, bg=style.widgetBG)
-        self.companyNameInfo = Label(self.master, text=self.event.companyName, font=self.textNormal, bg=style.widgetBG)
+        self.companyNameTitle = Label(self.master, text='Company Name:', font=style.textNormal, bg=style.widgetBG)
+        self.companyNameInfo = Label(self.master, text=self.event.companyName, font=style.textNormal, bg=style.widgetBG)
 
         # Number of Days Labels
-        self.numberOfDaysTitle = Label(self.master, text='Number of Days:', font=self.textNormal, bg=style.widgetBG)
-        self.numberOfDaysInfo = Label(self.master, text=self.event.noOfDays, font=self.textNormal, bg=style.widgetBG)
+        self.numberOfDaysTitle = Label(self.master, text='Number of Days:', font=style.textNormal, bg=style.widgetBG)
+        self.numberOfDaysInfo = Label(self.master, text=self.event.noOfDays, font=style.textNormal, bg=style.widgetBG)
 
         # Projector Required Labels
-        self.projectorRequiredTitle = Label(self.master, text='Projector Required:', font=self.textNormal,
+        self.projectorRequiredTitle = Label(self.master, text='Projector Required:', font=style.textNormal,
                                             bg=style.widgetBG)
         self.projectorRequiredInfo = Label(self.master, text='Yes' if event.projectorRequired else 'No',
-                                           font=self.textNormal, bg=style.widgetBG)
+                                           font=style.textNormal, bg=style.widgetBG)
 
         self.buttonInvoice.configure(command=lambda: ig.Conference_Invoice(self.event))
 
@@ -182,12 +174,12 @@ class ViewDetailsParty(BaseViewDetail):
         self.Heading.configure(text='View Details Party')
         self.buttonInvoice.configure(command=lambda: ig.party_invoice(self.event))
         # labels for Band Selected
-        self.bandSelectedTitle = Label(self.master, text='Band Selected:', font=self.textNormal, bg=style.widgetBG)
-        self.bandSelectedInfo = Label(self.master, text=event.bandName, font=self.textNormal, bg=style.widgetBG)
+        self.bandSelectedTitle = Label(self.master, text='Band Selected:', font=style.textNormal, bg=style.widgetBG)
+        self.bandSelectedInfo = Label(self.master, text=event.bandName, font=style.textNormal, bg=style.widgetBG)
 
         # labels for band cost
-        self.bandCostTitle = Label(self.master, text='Band Cost:', font=self.textNormal, bg=style.widgetBG)
-        self.bandCostInfo = Label(self.master, text=mc.pound_string(event.bandPrice), font=self.textNormal,
+        self.bandCostTitle = Label(self.master, text='Band Cost:', font=style.textNormal, bg=style.widgetBG)
+        self.bandCostInfo = Label(self.master, text=mc.pound_string(event.bandPrice), font=style.textNormal,
                                   bg=style.widgetBG)
 
         # layout for labels
@@ -206,9 +198,9 @@ class ViewDetailsWedding(ViewDetailsParty):
         self.Heading.configure(text='View Details Wedding')
         self.buttonInvoice.configure(command=lambda: ig.wedding_invoice(self.event))
         # labels for Number of Bed rooms Reserved
-        self.NumberRoomsTitle = Label(self.master, text='Number of Rooms\nReserved:', font=self.textNormal,
+        self.NumberRoomsTitle = Label(self.master, text='Number of Rooms\nReserved:', font=style.textNormal,
                                       bg=style.widgetBG)
-        self.NumberRoomsInfo = Label(self.master, text=event.noBedroomsReserved, font=self.textNormal,
+        self.NumberRoomsInfo = Label(self.master, text=event.noBedroomsReserved, font=style.textNormal,
                                      bg=style.widgetBG)
         # layout for labels
         self.NumberRoomsTitle.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
