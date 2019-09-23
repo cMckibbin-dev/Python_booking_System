@@ -20,8 +20,8 @@ class Event:
         vat = subtotal / 5
         return subtotal + vat
 
-    def costPerHead(self):
-        return self.costPerhead * self.noGuests
+    def costPerHeadTotal(self):
+        return float(self.costPerhead * self.noGuests)
 
 
 # Conference class which extends event

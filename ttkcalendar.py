@@ -227,11 +227,11 @@ class Calendar(ttk.Frame):
         return self.datetime(year, month, int(self._selection[0]))
 
     def getselection(self):
-        if not self.selection:
-            return 'pick date'
+        if self.selection:
+            # return 'pick date'
 
-        year, month = self._date.year, self._date.month
-        return self.datetime(year, month, int(self._selection[0])).date()
+            year, month = self._date.year, self._date.month
+            return self.datetime(year, month, int(self._selection[0])).date()
 
 
 def test():
