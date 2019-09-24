@@ -72,7 +72,6 @@ class UpdateUIBase:
         self.noGuestsEntry = Entry(self.master, bg=style.widgetBG, validate='key')
         self.noGuestsEntry.configure(validatecommand=(self.noGuestsEntry.register(validation.NumbersOnly), '%S', '%d'))
 
-        self.noGuestsEntry = Entry(self.master)
         self.noGuestsEntry.insert(0, event.noGuests)
 
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
@@ -82,7 +81,6 @@ class UpdateUIBase:
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
                                                            '%S', '%d'))
 
-        self.nameOfContactEntry = Entry(self.master)
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
@@ -91,7 +89,6 @@ class UpdateUIBase:
         self.addressEntry = Entry(self.master, bg=style.widgetBG, validate='key')
         self.addressEntry.configure(
             validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%d'))
-        self.addressEntry = Entry(self.master)
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
@@ -99,9 +96,6 @@ class UpdateUIBase:
         self.contactNumberEntry = Entry(self.master, bg=style.widgetBG, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.NumbersOnly),
                                                       '%S', '%d')
-        self.contactNumberEntry = Entry(self.master, validate='key')
-        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
-                                                      '%P', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
 
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
@@ -113,7 +107,6 @@ class UpdateUIBase:
                                     bg=style.widgetBG)
 
         self.dateOfEventEntry = Entry(self.master, bg=style.widgetBG, textvariable=self.dateOfEventValue)
-        self.dateOfEventEntry = Entry(self.master)
         self.dateOfEventEntry.configure(disabledbackground="white", disabledforeground="black")
         self.dateOfEventEntry.insert(0, event.dateOfEvent)
         self.dateOfEventEntry.configure(state='readonly')
@@ -200,7 +193,7 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
-        self.companyEntry = Entry(self.master)
+        self.companyEntry = Entry(self.master, bg=style.widgetBG)
         self.companyEntry.insert(0, event.companyName)
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
@@ -208,7 +201,6 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.noOfDaysEntry = Entry(self.master, bg=style.widgetBG, validate='key')
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
-        self.noOfDaysEntry = Entry(self.master)
         self.noOfDaysEntry.insert(0, event.noOfDays)
         self.noOfDaysEntry.bind('<Leave>', self.conference_room_check)
         self.noOfDaysEntry.bind('<FocusOut>', self.conference_room_check)
