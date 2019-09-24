@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import re
 
 
@@ -6,7 +7,7 @@ def EntriesNotEmpty(master):
     """function will return True if all entry widgets in an given root are not empty"""
     widgets = master.winfo_children()
     for widget in widgets:
-        if type(widget) == Entry:
+        if type(widget) == Entry or type(widget) == ttk.Combobox:
             if widget.get() == "":
                 return False
         elif type(widget) == Frame:

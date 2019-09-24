@@ -13,14 +13,14 @@ import constvalues as CONST
 db = da.DBAccess()
 
 
-def save_update(booking):
+def save_update(booking, master):
     if isinstance(booking, Conference):
         db.update_conference(booking)
     elif isinstance(booking, Wedding):
         db.update_wedding(booking)
     elif isinstance(booking, Party):
         db.update_party(booking)
-    dialogs.updated()
+    dialogs.updated(master)
 
 
 def number_only(value, event):
@@ -57,7 +57,7 @@ class UpdateUIBase:
         self.roomComboText = StringVar()
 
         # string to track value of date of event
-        self.dateOfEventValue = StringVar()
+        self.dateOfEventValue = StringVar(self.master, self.event.dateOfEvent)
 
         # configure master
         self.master.configure(background=style.windowBG)
@@ -69,7 +69,7 @@ class UpdateUIBase:
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
-        self.noGuestsEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.noGuestsEntry = Entry(self.master, validate='key')
         self.noGuestsEntry.configure(validatecommand=(self.noGuestsEntry.register(validation.NumbersOnly), '%S', '%d'))
 
         self.noGuestsEntry.insert(0, event.noGuests)
@@ -77,7 +77,7 @@ class UpdateUIBase:
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
 
-        self.nameOfContactEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.nameOfContactEntry = Entry(self.master, validate='key')
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
                                                            '%S', '%d'))
 
@@ -86,14 +86,14 @@ class UpdateUIBase:
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20,
                                 bg=style.widgetBG)
-        self.addressEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
             validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
-        self.contactNumberEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.contactNumberEntry = Entry(self.master, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.NumbersOnly),
                                                       '%S', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
@@ -106,12 +106,13 @@ class UpdateUIBase:
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
 
-        self.dateOfEventEntry = Entry(self.master, bg=style.widgetBG, textvariable=self.dateOfEventValue)
+        self.dateOfEventEntry = Entry(self.master, textvariable=self.dateOfEventValue)
         self.dateOfEventEntry.configure(disabledbackground="white", disabledforeground="black")
-        self.dateOfEventEntry.insert(0, event.dateOfEvent)
         self.dateOfEventEntry.configure(state='readonly')
 
-        self.dateOfEventEntry.bind('<Button-1>', lambda e: tlf.date_top_level(e, self.master, self.dateOfEventEntry))
+        if not self.event.dateOfEvent < datetime.datetime.now().date():
+            self.dateOfEventEntry.bind('<Button-1>', lambda e: tlf.calendar_popup(e, self.master, self.dateOfEventValue,
+                                                                                  self.dateOfEventValue.get()))
 
         self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
@@ -167,7 +168,7 @@ class UpdateUIBase:
             db = da.DBAccess()
             print(str(self.event.__class__.__name__))
             db.delete_booking(self.event, str(self.event.__class__.__name__))
-            dialogs.deleted()
+            dialogs.deleted(self.master)
             self.master.destroy()
             print('delete')
         else:
@@ -176,6 +177,11 @@ class UpdateUIBase:
     @abstractmethod
     def create_booking(self):
         pass
+
+    def guests_entered(self):
+        if int(self.noGuestsEntry.get()) > 0:
+            return True
+        return False
 
 
 # Update UI for conference
@@ -190,16 +196,17 @@ class UpdateConferenceUI(UpdateUIBase):
         # overriding room numbers from super
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.conference_room_check(event=NONE))
 
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
-        self.companyEntry = Entry(self.master, bg=style.widgetBG)
+        self.companyEntry = Entry(self.master, font=style.textNormal)
         self.companyEntry.insert(0, event.companyName)
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
-        self.noOfDaysEntry = Entry(self.master, bg=style.widgetBG, validate='key')
+        self.noOfDaysEntry = Entry(self.master, validate='key')
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
         self.noOfDaysEntry.insert(0, event.noOfDays)
         self.noOfDaysEntry.bind('<Leave>', self.conference_room_check)
@@ -222,19 +229,26 @@ class UpdateConferenceUI(UpdateUIBase):
         self.conference_room_check(None)
 
     def create_booking(self):
-        c = Conference(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
-                       address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
-                       eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                       companyName=self.companyEntry.get(), noOfDays=self.noOfDaysEntry.get(),
-                       projectorRequired=self.yesno.get(), dateofBooking=self.event.dateOfBooking,
-                       costPerhead=self.event.costPerhead)
-        save_update(c)
-        self.master.destroy()
-        print('updated booking')
+        if not validation.EntriesNotEmpty(self.master):
+            dialogs.not_completed(self.master)
+        elif not self.guests_entered():
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        elif not self.number_days_entered():
+            dialogs.not_completed(self.master, 'Number of days must be greater than 0')
+        else:
+            c = Conference(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                           address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                           eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                           companyName=self.companyEntry.get(), noOfDays=self.noOfDaysEntry.get(),
+                           projectorRequired=self.yesno.get(), dateofBooking=self.event.dateOfBooking,
+                           costPerhead=self.event.costPerhead)
+            save_update(c, self.master)
+            self.master.destroy()
+            print('updated booking')
 
     def conference_room_check(self, event):
-        if self.dateOfEventEntry.get() != '' and self.noOfDaysEntry.get() != '':
-            bookedRooms = db.booked_conference_rooms(datetime.datetime.strptime(self.dateOfEventEntry.get(), '%Y-%m-%d')
+        if self.dateOfEventValue.get() != '' and self.noOfDaysEntry.get() != '':
+            bookedRooms = db.booked_conference_rooms(datetime.datetime.strptime(self.dateOfEventValue.get(), '%Y-%m-%d')
                                                      , int(self.noOfDaysEntry.get()), self.event.id)
             freeRooms = []
             for rooms in CONST.CONFERENCE_ROOMS:
@@ -245,6 +259,11 @@ class UpdateConferenceUI(UpdateUIBase):
             if self.roomNoCombo.get() not in freeRooms:
                 self.roomNoCombo.delete(0, 'end')
                 self.roomComboText.set('please select room')
+
+    def number_days_entered(self):
+        if int(self.noOfDaysEntry.get()) > 0:
+            return True
+        return False
 
 
 # update UI for party
@@ -296,12 +315,15 @@ class UpdatePartyUI(UpdateUIBase):
         self.bandCostLbl.grid(row=11, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.freeRooms()
-        self.freeBands()
+        if type(self.event) == Party:
+            self.freeRooms()
+            self.freeBands()
+            self.band_options()
 
     def band_options(self, *args):
 
         bandPrice = CONST.BANDS.get(self.bandName.get())
+        print(bandPrice)
         if bandPrice:
             self.bandChose.set(mc.pound_string(bandPrice))
             self.bandCost = bandPrice
@@ -310,17 +332,27 @@ class UpdatePartyUI(UpdateUIBase):
             self.bandChose.set(mc.pound_string(0))
 
     def create_booking(self):
-        p = Party(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
-                  address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
-                  eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                  dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
-                  bandPrice=self.bandCost, costPerhead=self.event.costPerhead)
-        save_update(p)
-        self.master.destroy()
+        if not validation.EntriesNotEmpty(self.master):
+            dialogs.not_completed(self.master)
+        elif not self.band_selected():
+            dialogs.not_completed(self.master, 'Band must be selected')
+        elif not self.guests_entered():
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        else:
+            p = Party(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                      address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                      eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                      dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                      bandPrice=self.bandCost, costPerhead=self.event.costPerhead)
+            save_update(p, self.master)
+            self.master.destroy()
+
+    def band_selected(self):
+        return True if self.bandName.get() in self.bandOptions else False
 
     def freeRooms(self, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedRooms = db.getBookedRooms('party', self.dateOfEventEntry.get(), self.event.id)
+            bookedRooms = db.getBookedRooms('party', self.dateOfEventValue.get(), self.event.id)
             freeRooms = []
             for room in CONST.PARTY_ROOMS:
                 if room not in bookedRooms:
@@ -333,7 +365,7 @@ class UpdatePartyUI(UpdateUIBase):
 
     def freeBands(self, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedBands = db.getBookedBands(self.dateOfEventEntry.get(), 'party', self.event.id)
+            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), 'party', self.event.id)
             freeBands = []
             for band in list(CONST.BANDS.keys()):
                 if band not in bookedBands:
@@ -366,7 +398,8 @@ class UpdateWeddingUI(UpdatePartyUI):
         # widgets for form
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
-        self.noOfRoomsEntry = Entry(self.master)
+        self.noOfRoomsEntry = Entry(self.master, font=style.textNormal, validate='key')
+        self.noOfRoomsEntry.configure(validatecommand=(self.noOfRoomsEntry.register(validation.NumbersOnly), '%S', '%d'))
         self.noOfRoomsEntry.insert(0, str(event.noBedroomsReserved))
 
         # grid layout for widgets
@@ -377,18 +410,25 @@ class UpdateWeddingUI(UpdatePartyUI):
         self.freeBands()
 
     def create_booking(self):
-        w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
-                    address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
-                    eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                    dateOfBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
-                    bandPrice=self.bandCost, costPerhead=self.event.costPerhead,
-                    noBedroomsReserved=self.noOfRoomsEntry.get())
-        save_update(w)
-        self.master.destroy()
+        if not validation.EntriesNotEmpty(self.master):
+            dialogs.not_completed(self.master)
+        elif not self.band_selected():
+            dialogs.not_completed(self.master, 'Band must be selected')
+        elif not self.guests_entered():
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        else:
+            w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+                        address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
+                        eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
+                        dateOfBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                        bandPrice=self.bandCost, costPerhead=self.event.costPerhead,
+                        noBedroomsReserved=self.noOfRoomsEntry.get())
+            save_update(w, self.master)
+            self.master.destroy()
 
     def freeRooms(self, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedRooms = db.getBookedRooms('wedding', self.dateOfEventEntry.get(), self.event.id)
+            bookedRooms = db.getBookedRooms('wedding', self.dateOfEventValue.get(), self.event.id)
             freeRooms = []
             for room in CONST.WEDDING_ROOMS:
                 if room not in bookedRooms:
@@ -401,7 +441,7 @@ class UpdateWeddingUI(UpdatePartyUI):
 
     def freeBands(self, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedBands = db.getBookedBands(self.dateOfEventEntry.get(), 'wedding', self.event.id)
+            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), 'wedding', self.event.id)
             freeBands = []
             for band in list(CONST.BANDS.keys()):
                 if band not in bookedBands:

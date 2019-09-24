@@ -1,8 +1,15 @@
 from tkinter import *
-import ttkcalendar
 from classes import *
 from gui import view_details as vD
 from gui import update
+from gui import CalendarDialog
+
+
+def calendar_popup(event, master, stringDate, startDate=None):
+    """function to display calendar dialog and changes value of StringVar to the selected value"""
+    c = CalendarDialog.CalendarDialog(master, startDate)
+    if c.result is not None:
+        stringDate.set(c.result)
 
 
 def date_top_level(event, master, entry):
