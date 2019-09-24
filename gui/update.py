@@ -408,6 +408,7 @@ class UpdateWeddingUI(UpdatePartyUI):
 
         self.freeRooms()
         self.freeBands()
+        self.band_options()
 
     def create_booking(self):
         if not validation.EntriesNotEmpty(self.master):
@@ -416,6 +417,8 @@ class UpdateWeddingUI(UpdatePartyUI):
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        elif not self.number_room_entered():
+            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or greater')
         else:
             w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                         address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
@@ -452,3 +455,8 @@ class UpdateWeddingUI(UpdatePartyUI):
                 self.bandName.delete(0, 'end')
                 self.bandVariable.set('Please Select a Band')
                 self.band_options()
+
+    def number_room_entered(self):
+        if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
+            return True
+        return False
