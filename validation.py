@@ -16,6 +16,9 @@ def EntriesNotEmpty(master):
     return True
 
 
+
+
+
 def NumbersOnly(value, event):
     """Function will return True if value is a digit"""
     if event == '1':
