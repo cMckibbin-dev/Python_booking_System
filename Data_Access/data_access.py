@@ -289,12 +289,16 @@ class DBAccess:
         conference will last. If ID is passed then the query will not included room booked for that given ID"""
         if ID is None:
             self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
-            from conference where endDate BETWEEN date(?) and date(?)""",
-                                (date, date + datetime.timedelta(days=number_of_days)))
+            from conference where date(dateOfEvent) BETWEEN date('{startDate}') and date('{endDate}') or
+            endDate BETWEEN date('{startDate}') and date('{endDate}')""".format(startDate=date,
+                                                                                endDate=date + datetime.timedelta
+                                                                                (days=number_of_days - 1)))
         else:
             self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
-                       from conference where endDate BETWEEN date(?) and date(?) and id != ?""",
-                                (date, date + datetime.timedelta(days=number_of_days), ID))
+           from conference where ID !={ID} and date(dateOfEvent) BETWEEN date('{startDate}') and date('{endDate}') or
+           endDate BETWEEN date('{startDate}') and date('{endDate}')""".format(ID=ID, startDate=date,
+                                                                               endDate=date + datetime.timedelta
+                                                                               (days=number_of_days - 1)))
         all_rows = self.cursor.fetchall()
         results = []
         for row in all_rows:
