@@ -108,7 +108,7 @@ class BaseCreate:
         self.roomComboText = StringVar(self.master, 'Please select a Room')
         self.roomSelected = False
 
-        self.dateOfEventValue = StringVar()
+        self.dateOfEventValue = StringVar(self.master, datetime.datetime.now().date())
 
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
@@ -140,6 +140,7 @@ class BaseCreate:
                                bg=style.widgetBG)
         self.roomNoCombo = ttk.Combobox(self.master, value=self.roomNumbers, state='readonly',
                                         textvariable=self.roomComboText)
+        self.roomNoCombo.bind('<<ComboboxSelected>>', self.room_pick)
 
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
@@ -186,6 +187,12 @@ class BaseCreate:
         startDate = self.dateOfEventValue.get() if self.dateOfEventValue.get() != '' else None
         tlf.calendar_popup(event, self.master, self.dateOfEventValue, startDate)
 
+    def room_pick(self, event=None):
+        if self.roomNoCombo.get() in self.roomNumbers:
+            self.roomSelected = True
+        else:
+            self.roomSelected = False
+
     @abstractmethod
     def create_booking(self):
         """abstract method for each child class to have a method to create a booking once all infomration enterd
@@ -224,7 +231,7 @@ class CreateConference(BaseCreate):
         self.noOfDaysValue = StringVar()
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
-        self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
+        self.noOfDaysValue.trace('wr', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
@@ -393,7 +400,11 @@ class CreateParty(BaseCreate):
             for room in roomList:
                 if room not in bookedRooms:
                     freeRooms.append(room)
-                self.roomNumbers = freeRooms
+
+            self.roomNumbers = freeRooms
+            print(freeRooms)
+            print(self.roomNumbers)
+            print(bookedRooms)
             self.roomNoCombo.configure(values=self.roomNumbers)
             if self.roomNoCombo.get() not in freeRooms:
                 self.roomSelected = False
@@ -413,7 +424,7 @@ class CreateParty(BaseCreate):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or 'No band selected':
+                if band not in bookedBands or band == 'No band selected':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)

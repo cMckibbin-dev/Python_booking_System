@@ -59,6 +59,9 @@ class UpdateUIBase:
         # rooms combobox string for default option
         self.roomComboText = StringVar()
 
+        # bool to track if room number selected
+        self.roomSelected = False
+
         # string to track value of date of event
         self.dateOfEventValue = StringVar(self.master, self.event.dateOfEvent)
 
@@ -209,11 +212,10 @@ class UpdateConferenceUI(UpdateUIBase):
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
-        self.noOfDaysEntry = Entry(self.master, validate='key')
+        self.noOfDaysValue = StringVar(self.master, self.event.noOfDays)
+        self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
-        self.noOfDaysEntry.insert(0, event.noOfDays)
-        self.noOfDaysEntry.bind('<Leave>', self.conference_room_check)
-        self.noOfDaysEntry.bind('<FocusOut>', self.conference_room_check)
+        self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
@@ -238,8 +240,11 @@ class UpdateConferenceUI(UpdateUIBase):
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
         elif not self.number_days_entered():
             dialogs.not_completed(self.master, 'Number of days must be greater than 0')
+        elif not self.roomSelected:
+            dialogs.not_completed(self.master, 'A Room must be Selected')
         else:
-            c = Conference(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+            c = Conference(ID=self.event.id, noGuests=self.noGuestsEntry.get(),
+                           nameofContact=self.nameOfContactEntry.get(),
                            address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                            eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
                            companyName=self.companyEntry.get(), noOfDays=self.noOfDaysEntry.get(),
@@ -260,8 +265,14 @@ class UpdateConferenceUI(UpdateUIBase):
             self.roomNumbers = freeRooms
             self.roomNoCombo.configure(values=self.roomNumbers)
             if self.roomNoCombo.get() not in freeRooms:
+                self.roomSelected = False
                 self.roomNoCombo.delete(0, 'end')
-                self.roomComboText.set('please select room')
+                if len(freeRooms) > 0:
+                    self.roomComboText.set('please select room')
+                else:
+                    self.roomComboText.set('No Rooms available')
+            else:
+                self.roomSelected = True
 
     def number_days_entered(self):
         if int(self.noOfDaysEntry.get()) > 0:
@@ -292,8 +303,8 @@ class UpdatePartyUI(UpdateUIBase):
         # overriding super room numbers
         self.roomNoCombo.configure(values=self.roomNumbers)
         # overriding super date of event entry widget bind events
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands())
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms())
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()), 'party'))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.PARTY_ROOMS, 'party'))
 
         if type(event) == Party:
             self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
@@ -319,8 +330,8 @@ class UpdatePartyUI(UpdateUIBase):
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
         if type(self.event) == Party:
-            self.freeRooms()
-            self.freeBands()
+            self.freeBands(list(CONST.BANDS.keys()), 'party')
+            self.freeRooms(CONST.PARTY_ROOMS, 'party')
             self.band_options()
 
     def band_options(self, *args):
@@ -341,6 +352,8 @@ class UpdatePartyUI(UpdateUIBase):
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        elif not self.roomSelected:
+            dialogs.not_completed(self.master, 'A Room must be Selected')
         else:
             p = Party(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                       address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
@@ -353,25 +366,31 @@ class UpdatePartyUI(UpdateUIBase):
     def band_selected(self):
         return True if self.bandName.get() in self.bandOptions else False
 
-    def freeRooms(self, event=None):
+    def freeRooms(self, roomList, eventType, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedRooms = db.getBookedRooms('party', self.dateOfEventValue.get(), self.event.id)
+            bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get(), self.event.id)
             freeRooms = []
-            for room in CONST.PARTY_ROOMS:
+            for room in roomList:
                 if room not in bookedRooms:
                     freeRooms.append(room)
                 self.roomNumbers = freeRooms
             self.roomNoCombo.configure(values=self.roomNumbers)
             if self.roomNoCombo.get() not in freeRooms:
+                self.roomSelected = False
                 self.roomNoCombo.delete(0, 'end')
-                self.roomComboText.set('Please Select a Room')
+                if len(freeRooms) > 0:
+                    self.roomComboText.set('Please Select a Room')
+                else:
+                    self.roomComboText.set('No Rooms available')
+            else:
+                self.roomSelected = True
 
-    def freeBands(self, event=None):
+    def freeBands(self, bandList, eventType, event=None):
         if self.dateOfEventEntry.get() != '':
-            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), 'party', self.event.id)
+            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType, self.event.id)
             freeBands = []
-            for band in list(CONST.BANDS.keys()):
-                if band not in bookedBands:
+            for band in bandList:
+                if band not in bookedBands or band == 'No band selected':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
@@ -398,19 +417,28 @@ class UpdateWeddingUI(UpdatePartyUI):
 
         self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
 
+        # overriding parent class trace events
+        for ti in self.dateOfEventValue.trace_vinfo():
+            self.dateOfEventValue.trace_vdelete(*ti)
+
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()),
+                                                                                  'wedding'))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.WEDDING_ROOMS, 'wedding'))
+
         # widgets for form
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
         self.noOfRoomsEntry = Entry(self.master, font=style.textNormal, validate='key')
-        self.noOfRoomsEntry.configure(validatecommand=(self.noOfRoomsEntry.register(validation.NumbersOnly), '%S', '%d'))
+        self.noOfRoomsEntry.configure(
+            validatecommand=(self.noOfRoomsEntry.register(validation.NumbersOnly), '%S', '%d'))
         self.noOfRoomsEntry.insert(0, str(event.noBedroomsReserved))
 
         # grid layout for widgets
         self.noOfRoomsLbl.grid(row=12, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.noOfRoomsEntry.grid(row=12, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.freeRooms()
-        self.freeBands()
+        self.freeRooms(CONST.WEDDING_ROOMS, 'wedding')
+        self.freeBands(list(CONST.BANDS.keys()), 'wedding')
         self.band_options()
 
     def create_booking(self):
@@ -423,7 +451,8 @@ class UpdateWeddingUI(UpdatePartyUI):
         elif not self.number_room_entered():
             dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or greater')
         else:
-            w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
+            w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(),
+                        nameofContact=self.nameOfContactEntry.get(),
                         address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                         eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
                         dateOfBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
@@ -431,33 +460,6 @@ class UpdateWeddingUI(UpdatePartyUI):
                         noBedroomsReserved=self.noOfRoomsEntry.get())
             save_update(w, self.master)
             self.master.destroy()
-
-    def freeRooms(self, event=None):
-        if self.dateOfEventEntry.get() != '':
-            bookedRooms = db.getBookedRooms('wedding', self.dateOfEventValue.get(), self.event.id)
-            freeRooms = []
-            for room in CONST.WEDDING_ROOMS:
-                if room not in bookedRooms:
-                    freeRooms.append(room)
-                self.roomNumbers = freeRooms
-            self.roomNoCombo.configure(values=self.roomNumbers)
-            if self.roomNoCombo.get() not in freeRooms:
-                self.roomNoCombo.delete(0, 'end')
-                self.roomComboText.set('Please Select a Room')
-
-    def freeBands(self, event=None):
-        if self.dateOfEventEntry.get() != '':
-            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), 'wedding', self.event.id)
-            freeBands = []
-            for band in list(CONST.BANDS.keys()):
-                if band not in bookedBands:
-                    freeBands.append(band)
-            self.bandOptions = freeBands
-            self.bandName.configure(values=self.bandOptions)
-            if self.bandName.get() not in freeBands:
-                self.bandName.delete(0, 'end')
-                self.bandVariable.set('Please Select a Band')
-                self.band_options()
 
     def number_room_entered(self):
         if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
