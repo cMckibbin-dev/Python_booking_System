@@ -15,6 +15,7 @@ class CreateUI:
 
         self.root = root
         self.root.title("Create a Booking")
+        self.root.resizable(0, 0)
         self.root.config(background="#C1FFEA")
 
         # Event type options

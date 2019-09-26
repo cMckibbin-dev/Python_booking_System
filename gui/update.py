@@ -50,8 +50,11 @@ def getFreeBands(bandNames, event):
 
 class UpdateUIBase:
     def __init__(self, master, event):
+
         self.master = master
+        self.master.resizable(0, 0)
         self.event = event
+
 
         # rooms combobox string for default option
         self.roomComboText = StringVar()

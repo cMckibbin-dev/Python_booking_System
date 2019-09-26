@@ -39,6 +39,7 @@ class CreateMenu:
     def __init__(self, master):
         self.master = master
         self.master.configure(background=style.windowBG)
+        self.master.resizable(0, 0)
         self.master.title('Create Booking')
 
         self.master.protocol('WM_DELETE_WINDOW', self.back_to_main_menu)

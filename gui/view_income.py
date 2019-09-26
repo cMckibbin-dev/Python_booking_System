@@ -11,6 +11,7 @@ import validation
 class ViewIncome:
     def __init__(self, master):
         self.master = master
+        self.master.resizable(0, 0)
         # configure window
         self.master.title('Total Income')
         self.master.configure(bg=style.windowBG)
