@@ -227,6 +227,7 @@
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="db" />
+        <watch expression="self" />
       </configuration>
     </watches-manager>
   </component>

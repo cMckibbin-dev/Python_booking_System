@@ -288,13 +288,17 @@ class DBAccess:
         """method to return booked rooms from the conference table given a date of event and number of days the
         conference will last. If ID is passed then the query will not included room booked for that given ID"""
         if ID is None:
-            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
-            from conference where endDate BETWEEN date(?) and date(?)""",
-                                (date, date + datetime.timedelta(days=number_of_days)))
+            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate from conference where
+             ((date('{startDate}') BETWEEN date(dateOfEvent) and date(endDate) or date('{bookingEndDate}') BETWEEN 
+            date(dateOfEvent) and date(endDate))) or ((date(dateOfEvent) BETWEEN date('{startDate}') and date('
+            {bookingEndDate}') or date(endDate) BETWEEN date('{startDate}') and date('{bookingEndDate}')))""".format(
+                startDate=date, bookingEndDate=date + datetime.timedelta(days=number_of_days - 1)))
         else:
-            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate 
-                       from conference where endDate BETWEEN date(?) and date(?) and id != ?""",
-                                (date, date + datetime.timedelta(days=number_of_days), ID))
+            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate from conference where id != {ID} AND
+             ((date('{startDate}') BETWEEN date(dateOfEvent) and date(endDate) or date('{bookingEndDate}') BETWEEN 
+            date(dateOfEvent) and date(endDate))) or ((date(dateOfEvent) BETWEEN date('{startDate}') and date('
+            {bookingEndDate}') or date(endDate) BETWEEN date('{startDate}') and date('{bookingEndDate}')))""".format(
+                startDate=date, bookingEndDate=date + datetime.timedelta(days=number_of_days - 1), ID=ID))
         all_rows = self.cursor.fetchall()
         results = []
         for row in all_rows:
