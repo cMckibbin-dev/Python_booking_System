@@ -1,5 +1,6 @@
+import datetime
 from tkinter import *
-from gui import top_level_functions as tlf
+from gui import top_level_functions as tlf, dialogs
 from Data_Access.data_access import DBAccess
 import money_convert as mc
 from gui import main_menu
@@ -37,12 +38,17 @@ class ViewIncome:
         self.dateFrame = Frame(self.master, bg=style.widgetBG)
 
         self.dateFromLabel = Label(self.dateFrame, text='Date From:', font=style.textNormal, bg=style.widgetBG)
-        self.dateFromDatePick = Entry(self.dateFrame, font=style.textNormal, state='readonly', bg=style.widgetBG)
-        self.dateFromDatePick.bind('<Button-1>', lambda e: tlf.date_top_level(e, self.master, self.dateFromDatePick))
+        self.dateFromValue = StringVar()
+        self.dateFromDatePick = Entry(self.dateFrame, font=style.textNormal, state='readonly', bg=style.widgetBG,
+                                      textvariable=self.dateFromValue)
+        self.dateFromDatePick.bind('<Button-1>', lambda e: tlf.calendar_popup(e, self.master, self.dateFromValue,
+                                                                              minDate=False))
 
         self.dateToLabel = Label(self.dateFrame, text='Date To:', font=style.textNormal, bg=style.widgetBG)
-        self.dateToDatePick = Entry(self.dateFrame, font=style.textNormal, state='readonly', bg=style.widgetBG)
-        self.dateToDatePick.bind('<Button-1>', lambda e: tlf.date_top_level(e, self.master, self.dateToDatePick))
+        self.dateToValue = StringVar()
+        self.dateToDatePick = Entry(self.dateFrame, font=style.textNormal, state='readonly', bg=style.widgetBG,
+                                    textvariable=self.dateToValue)
+        self.dateToDatePick.bind('<Button-1>', lambda e: self.check_from_date(e))
 
         # widgets for displaying total income of events
         self.subHeading = Label(self.master, font=style.textHeading, text='Details', bg=style.widgetBG)
@@ -83,8 +89,16 @@ class ViewIncome:
         self.buttonBack.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.buttonSearch.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
+    def checkb_checked(self):
+        """function to check if checkboxes in view income have at least 1 checked"""
+        if self.weddingCheck.get() is False and self.partyCheck.get() is False and self.conferenceCheck.get() is False:
+            return False
+        else:
+            return True
+
+
     def search_Total(self):
-        if validation.EntriesNotEmpty(self.master):
+        if validation.EntriesNotEmpty(self.master) and self.checkb_checked():
             db = DBAccess()
             selectedTables = []
             if self.conferenceCheck.get():
@@ -101,10 +115,19 @@ class ViewIncome:
 
             self.totalIncomeInfo['text'] = mc.pound_string(total)
         else:
-            print('no search')
+            dialogs.no_search_criteria(self.master)
 
     def backToMainMenu(self):
         self.master.destroy()
         root = Tk()
         main_menu.MainMenuUI(root)
         root.mainloop()
+
+    def check_from_date(self, event):
+        if self.dateFromValue.get() == "":
+            dialogs.enter_from_date(self.master)
+        else:
+            tlf.calendar_popup(None, self.master, self.dateToValue,
+                               minDate=datetime.datetime.strptime
+                               (self.dateFromValue.get(), '%Y-%m-%d')
+                               .date())

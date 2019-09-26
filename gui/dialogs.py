@@ -24,3 +24,12 @@ def not_completed(parent, extra_info=''):
     messagebox.showerror('Error', 'Please ensure no inputs have been left empty and are completed with correct '
                                   'information.\n{}'.format(extra_info),
                          parent=parent)
+
+
+def no_search_criteria(parent):
+    messagebox.showerror("Error", "No search criteria! \n\nPlease make sure you have selected an event type and "
+                                  "entered a date range. ", parent=parent)
+
+
+def enter_from_date(parent):
+    messagebox.showerror("Error", "You have not selected a start date!", parent=parent)

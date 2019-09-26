@@ -1,5 +1,5 @@
 from tkinter import *
-from gui import create
+from gui import create_booking
 from gui import index, view_income
 from gui import tkinter_styling as style
 
@@ -49,6 +49,6 @@ class MainMenuUI:
     def load_create(self):
         self.root.destroy()
         root = Tk()
-        create.CreateUI(root)
+        create_booking.CreateMenu(root)
         root.mainloop()
 
