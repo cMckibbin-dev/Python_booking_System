@@ -220,10 +220,10 @@ class CreateConference(BaseCreate):
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
-        self.noOfDaysEntry = Entry(self.master, validate='key')
+        self.noOfDaysValue = StringVar()
+        self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
-        self.noOfDaysEntry.bind('<Leave>', self.conference_room_check)
-        self.noOfDaysEntry.bind('<FocusOut>', self.conference_room_check)
+        self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
@@ -273,13 +273,14 @@ class CreateConference(BaseCreate):
         return False
 
     def clear(self):
-        """"""
+        """method to clear all inputs on the create form"""
         clear(self.master)
         self.dateOfEventValue.set('')
         self.roomComboText.set('Please select a Room')
         self.projectorRequired.set(False)
 
     def create_booking(self):
+        """method to create the conference booking and store it in the database if all validation is passed"""
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.guests_entered():
@@ -303,6 +304,8 @@ class CreateConference(BaseCreate):
 
 
 class CreateParty(BaseCreate):
+    """class based on the baseCreate class that contains the extra UI elements and methods to book a party.  This class
+    is also used as the base for the Create Wedding class"""
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -343,7 +346,8 @@ class CreateParty(BaseCreate):
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
     def band_options(self, *args):
-
+        """method to change the bandcost being display and the background band price being stored when the user selects
+        an option in the band combobox"""
         bandPrice = CONST.BANDS.get(self.bandName.get())
         print(bandPrice)
         if bandPrice:
@@ -354,6 +358,7 @@ class CreateParty(BaseCreate):
             self.bandPrice = 0
 
     def create_booking(self):
+        """method to create a party booking when and store it in the database when all validation has been passed"""
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
@@ -374,9 +379,12 @@ class CreateParty(BaseCreate):
             back_to_main(self.master)
 
     def band_selected(self):
+        """method that returns true if the selected band name is in the bandOptions list else it returns false"""
         return True if self.bandName.get() in self.bandOptions else False
 
     def freeRooms(self, roomList, eventType, event=None):
+        """method that checks for free rooms for a given event type on a the selected date and updates the room combobox
+         to show only free rooms"""
         if self.dateOfEventEntry.get() != '':
             db = da.DBAccess()
             bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get())
@@ -397,6 +405,8 @@ class CreateParty(BaseCreate):
                 self.roomSelected = True
 
     def freeBands(self, bandList, eventType, event=None):
+        """method to check for free bands on the selected date and only show these is the band combobox.
+        If user selected a band that is not free on a give date they must reselect their option"""
         if self.dateOfEventEntry.get() != '':
             db = da.DBAccess()
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
@@ -412,6 +422,7 @@ class CreateParty(BaseCreate):
                 self.band_options()
 
     def clear(self):
+        """method to clear all inputs on the create party form"""
         clear(self.master)
         self.roomComboText.set('Please select a Room')
         self.dateOfEventValue.set('')
@@ -419,6 +430,8 @@ class CreateParty(BaseCreate):
 
 
 class CreateWedding(CreateParty):
+    """class based on the CreateParty class and contain the extra UI elements and methods to validate and
+    create a wedding booking"""
     def __init__(self, master):
         super().__init__(master)
 
@@ -444,6 +457,7 @@ class CreateWedding(CreateParty):
         self.noOfRoomsEntry.grid(row=12, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
     def create_booking(self):
+        """method to create a wedding booking and store it in the database if all validation is passed"""
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
@@ -467,6 +481,7 @@ class CreateWedding(CreateParty):
             back_to_main(self.master)
 
     def number_room_entered(self):
+        """method to ensure that a number of rooms entered is between 0 and 200"""
         if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
             return True
         return False

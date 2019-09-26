@@ -1,5 +1,5 @@
 from tkinter import *
-from gui import create, create_booking
+from gui import create_booking
 from gui import index, view_income
 from gui import tkinter_styling as style
 

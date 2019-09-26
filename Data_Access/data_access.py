@@ -294,11 +294,12 @@ class DBAccess:
             {bookingEndDate}') or date(endDate) BETWEEN date('{startDate}') and date('{bookingEndDate}')))""".format(
                 startDate=date, bookingEndDate=date + datetime.timedelta(days=number_of_days - 1)))
         else:
-            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate from conference where id != {ID} AND
-             ((date('{startDate}') BETWEEN date(dateOfEvent) and date(endDate) or date('{bookingEndDate}') BETWEEN 
-            date(dateOfEvent) and date(endDate))) or ((date(dateOfEvent) BETWEEN date('{startDate}') and date('
-            {bookingEndDate}') or date(endDate) BETWEEN date('{startDate}') and date('{bookingEndDate}')))""".format(
-                startDate=date, bookingEndDate=date + datetime.timedelta(days=number_of_days - 1), ID=ID))
+            self.cursor.execute("""select eventRoom, date(dateOfEvent, '+'||(numberDays - 1)||' days') as endDate from conference 
+            where id != {ID} AND ((date('{startDate}') BETWEEN date(dateOfEvent) and date(endDate) or date('{bookingEndDate}') 
+            BETWEEN date(dateOfEvent) and date(endDate)) or date(dateOfEvent) BETWEEN date('{startDate}') and date(
+            '{bookingEndDate}') or date(endDate) BETWEEN date('{startDate}') and date('{bookingEndDate}')) """.
+                                format(startDate=date,
+                                       bookingEndDate=date + datetime.timedelta(days=number_of_days - 1), ID=ID))
         all_rows = self.cursor.fetchall()
         results = []
         for row in all_rows:
