@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter.ttk as ttk
-import tkcalendar
 import constvalues as CONST
 import gui.top_level_functions as tlf
 from abc import abstractmethod
@@ -8,7 +7,6 @@ from gui import tkinter_styling as style
 import validation
 import money_convert as mc
 from Data_Access import data_access as da
-import datetime
 from gui import dialogs, main_menu
 from classes import *
 
@@ -22,12 +20,22 @@ def clear(master):
         elif type(widget) == Frame:
             clear(widget)
 
-        # CreateUI.set_default(context)  # calls the function to reset option menu
-        # CreateUI.clear_date(context)  # calls the function to clear the date
-        # CreateUI.clear_check(context)  # calls the function to clear the checkbox
+
+def back_to_main(master):
+    """function to close create window and bring user back to main menu to do this it finds the parent root of the
+    window and destroys it and creates a new root for the main menu"""
+    root = master
+    while type(root) != Tk:
+        root = root.master
+    root.destroy()
+    newRoot = Tk()
+    main_menu.MainMenuUI(newRoot)
+    newRoot.mainloop()
 
 
 class CreateMenu:
+    """class for the first loaded menu on the create window.  The class contains a frame which the rest of the create UI
+    will be displayed when the user selects which type of event is being booked"""
     def __init__(self, master):
         self.master = master
         self.master.configure(background=style.windowBG)
@@ -42,9 +50,9 @@ class CreateMenu:
         self.chooseEventTypeLabel = Label(self.master, text='Choose Event Type:', font=style.textNormal,
                                           bg=style.widgetBG)
         self.eventTypeVar = StringVar(self.master, 'Choose Event Type')
-        self.chooseEventTypeCombobox = ttk.Combobox(self.master, state='readonly', font=style.textNormal,
-                                                    value=CONST.EVENT_TYPES, textvariable=self.eventTypeVar)
-        self.chooseEventTypeCombobox.bind('<<ComboboxSelected>>', self.display_Create_form)
+        self.choseEventTypeCombobox = ttk.Combobox(self.master, state='readonly', font=style.textNormal,
+                                                   value=CONST.EVENT_TYPES, textvariable=self.eventTypeVar)
+        self.choseEventTypeCombobox.bind('<<ComboboxSelected>>', self.display_Create_form)
 
         self.buttonFrame = Frame(self.master, bg=style.widgetBG)
         self.backButton = Button(self.buttonFrame, text='Back', bg='snow', height=style.buttonHeight,
@@ -59,7 +67,7 @@ class CreateMenu:
         self.title.grid(row=0, column=0, columnspan=2, padx=style.paddingX, pady=style.paddingY)
 
         self.chooseEventTypeLabel.grid(row=1, column=0, padx=style.paddingX, pady=style.paddingY, sticky=E)
-        self.chooseEventTypeCombobox.grid(row=1, column=1, padx=style.paddingX, pady=style.paddingY, sticky=W)
+        self.choseEventTypeCombobox.grid(row=1, column=1, padx=style.paddingX, pady=style.paddingY, sticky=W)
         self.UI_Frame.grid(row=2, column=0, columnspan=2)
         self.buttonFrame.grid(row=3, column=0, columnspan=2)
         self.backButton.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
@@ -67,8 +75,9 @@ class CreateMenu:
         self.saveButton.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
     def display_Create_form(self, event=None):
+        """method to display the create UI for the selected Event type in the chosen event type combobox"""
         eventDic = {'Conference': CreateConference, 'Party': CreateParty, 'Wedding': CreateWedding}
-        self.UI = eventDic.get(self.chooseEventTypeCombobox.get())
+        self.UI = eventDic.get(self.choseEventTypeCombobox.get())
         if self.UI:
             for widget in self.UI_Frame.winfo_children():
                 widget.destroy()
@@ -82,6 +91,7 @@ class CreateMenu:
                 self.buttonActive = True
 
     def back_to_main_menu(self):
+        """method to close create window and open a new main menu window"""
         self.master.destroy()
         root = Tk()
         main_menu.MainMenuUI(root)
@@ -89,11 +99,13 @@ class CreateMenu:
 
 
 class BaseCreate:
+    """Class that is the base for all create booking classes for each event type"""
     def __init__(self, master):
         self.master = master
 
         self.roomNumbers = []
         self.roomComboText = StringVar(self.master, 'Please select a Room')
+        self.roomSelected = False
 
         self.dateOfEventValue = StringVar()
 
@@ -163,24 +175,31 @@ class BaseCreate:
         self.costPerHeadDisplay.grid(row=100, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
     def guests_entered(self):
+        """method that checks that a number of guests greater than 0"""
         if int(self.noGuestsEntry.get()) > 0:
             return True
         return False
 
     def selectDate(self, event=None):
+        """method to display calendar dialog when user clicks on the date of event entry"""
         startDate = self.dateOfEventValue.get() if self.dateOfEventValue.get() != '' else None
         tlf.calendar_popup(event, self.master, self.dateOfEventValue, startDate)
 
     @abstractmethod
     def create_booking(self):
+        """abstract method for each child class to have a method to create a booking once all infomration enterd
+        correctly"""
         pass
 
     @abstractmethod
     def clear(self):
+        """abstract method for all child classes to have a method to clear all user inputs in the create form"""
         pass
 
 
 class CreateConference(BaseCreate):
+    """Class based of BaseCreate class.  this class contains the extra UI elements and function to book and
+    validate a conference"""
     def __init__(self, master):
         self.master = master
         super().__init__(master)
@@ -221,6 +240,8 @@ class CreateConference(BaseCreate):
         self.projectorCheck.grid(row=12, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
     def conference_room_check(self, event):
+        """Method that checks for free conference rooms for a given date if the room the user has selected is not free
+        then there option is removed"""
         if self.dateOfEventValue.get() != '' and self.noOfDaysEntry.get() != '':
             db = da.DBAccess()
             bookedRooms = db.booked_conference_rooms(datetime.datetime.strptime(self.dateOfEventValue.get(), '%Y-%m-%d')
@@ -229,21 +250,30 @@ class CreateConference(BaseCreate):
             for rooms in CONST.CONFERENCE_ROOMS:
                 if rooms not in bookedRooms:
                     freeRooms.append(rooms)
+
             self.roomNumbers = freeRooms
             self.roomNoCombo.configure(values=self.roomNumbers)
+
             if self.roomNoCombo.get() not in freeRooms:
+                self.roomSelected = False
                 self.roomNoCombo.delete(0, 'end')
+
                 if len(freeRooms) > 0:
-                    self.roomComboText.set('Select an Option')
+                    self.roomComboText.set('Please select a Room')
                 else:
-                    self.roomComboText.set('No Rooms available for this date')
+                    self.roomComboText.set('No Rooms available')
+
+            else:
+                self.roomSelected = True
 
     def number_days_entered(self):
+        """method to ensure that the number of days entered is greater than 0"""
         if int(self.noOfDaysEntry.get()) > 0:
             return True
         return False
 
     def clear(self):
+        """"""
         clear(self.master)
         self.dateOfEventValue.set('')
         self.roomComboText.set('Please select a Room')
@@ -256,6 +286,8 @@ class CreateConference(BaseCreate):
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
         elif not self.number_days_entered():
             dialogs.not_completed(self.master, 'Number of days must be greater than 0')
+        elif not self.roomSelected:
+            dialogs.not_completed(self.master, 'Room must be selected for Conference')
         else:
             db = da.DBAccess()
             c = Conference(noGuests=self.noGuestsEntry.get(),
@@ -267,8 +299,7 @@ class CreateConference(BaseCreate):
                            costPerhead=CONST.EVENT_COST_PER_HEAD.get('Conference'))
             db.insert_conference(c)
             dialogs.saved(self.master)
-            self.master.destroy()
-            print('Created booking')
+            back_to_main(self.master)
 
 
 class CreateParty(BaseCreate):
@@ -283,8 +314,8 @@ class CreateParty(BaseCreate):
         self.costPerHeadDisplay.configure(text=mc.pound_string(CONST.EVENT_COST_PER_HEAD.get('Party')))
 
         # overriding super date of event entry widget bind events
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys())))
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.PARTY_ROOMS))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()), 'party'))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.PARTY_ROOMS, 'party'))
 
         # party class variables
         self.bandCost = StringVar(self.master, mc.pound_string(0))
@@ -329,6 +360,8 @@ class CreateParty(BaseCreate):
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+        elif not self.roomSelected:
+            dialogs.not_completed(self.master, 'Room must be selected for Party')
         else:
             db = da.DBAccess()
             p = Party(noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
@@ -338,15 +371,15 @@ class CreateParty(BaseCreate):
                       costPerhead=CONST.EVENT_COST_PER_HEAD.get('Party'))
             db.insert_party(p)
             dialogs.saved(self.master)
-            self.master.destroy()
+            back_to_main(self.master)
 
     def band_selected(self):
         return True if self.bandName.get() in self.bandOptions else False
 
-    def freeRooms(self, roomList, event=None):
+    def freeRooms(self, roomList, eventType, event=None):
         if self.dateOfEventEntry.get() != '':
             db = da.DBAccess()
-            bookedRooms = db.getBookedRooms('party', self.dateOfEventValue.get())
+            bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get())
             freeRooms = []
             for room in roomList:
                 if room not in bookedRooms:
@@ -354,13 +387,19 @@ class CreateParty(BaseCreate):
                 self.roomNumbers = freeRooms
             self.roomNoCombo.configure(values=self.roomNumbers)
             if self.roomNoCombo.get() not in freeRooms:
+                self.roomSelected = False
                 self.roomNoCombo.delete(0, 'end')
-                self.roomComboText.set('Please Select a Room')
+                if len(freeRooms) > 0:
+                    self.roomComboText.set('Please Select a Room')
+                else:
+                    self.roomComboText.set('No Rooms available')
+            else:
+                self.roomSelected = True
 
-    def freeBands(self, bandList, event=None, ):
+    def freeBands(self, bandList, eventType, event=None):
         if self.dateOfEventEntry.get() != '':
             db = da.DBAccess()
-            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), 'party')
+            bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
             for band in bandList:
                 if band not in bookedBands or 'No band selected':
@@ -390,8 +429,8 @@ class CreateWedding(CreateParty):
         for ti in self.dateOfEventValue.trace_vinfo():
             self.dateOfEventValue.trace_vdelete(*ti)
 
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys())))
-        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.WEDDING_ROOMS))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()), 'wedding'))
+        self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.WEDDING_ROOMS, 'wedding'))
 
         # widgets for form
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20,
@@ -413,6 +452,8 @@ class CreateWedding(CreateParty):
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
         elif not self.number_room_entered():
             dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or greater')
+        elif not self.roomSelected:
+            dialogs.not_completed(self.master, 'Room must be selected for Wedding')
         else:
             db = da.DBAccess()
             w = Wedding(noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
@@ -423,7 +464,7 @@ class CreateWedding(CreateParty):
                         noBedroomsReserved=self.noOfRoomsEntry.get())
             db.insert_wedding(w)
             dialogs.saved(self.master)
-            self.master.destroy()
+            back_to_main(self.master)
 
     def number_room_entered(self):
         if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
