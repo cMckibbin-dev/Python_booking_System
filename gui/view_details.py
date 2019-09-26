@@ -34,7 +34,9 @@ class BaseViewDetail:
     """class is used a base class for the other view details classes"""
 
     def __init__(self, master, event):
+
         self.master = master
+        self.master.resizable(0, 0)
         self.event = event
 
         # window configure

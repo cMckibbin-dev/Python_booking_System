@@ -17,10 +17,10 @@ class MainMenuUI:
         self.root = root
         self.root.title("Main Menu")
         self.root.resizable(0, 0)
-        self.root.config(background="#C1FFEA")
+        self.root.config(background=style.windowBG)
 
         # Widget creation
-        self.label = Label(self.root, text="Main Menu", font=style.textHeading, bg="#C1FFEA", height=2)
+        self.label = Label(self.root, text="Main Menu", font=style.textHeading, bg=style.widgetBG, height=2)
 
         self.createNewBookingBtn = Button(self.root, text="Create New Booking", font=style.textNormal, width=20,
                                           height=3, command=self.load_create, bg=style.buttonColour1)

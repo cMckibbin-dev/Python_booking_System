@@ -7,7 +7,7 @@ paddingY = 5
 buttonWidth = 10
 buttonHeight = 2
 # widget background colour
-widgetBG = "#C1FFEA"
-windowBG ="#C1FFEA"
+widgetBG = "#ccffe6"
+windowBG ="#ccffe6"
 buttonColour1 = "#8BD6CA"  # lighter
 buttonColour2 = "#8CACBF"  # darker
