@@ -2,6 +2,7 @@ from mailmerge import MailMerge
 from tkinter.filedialog import asksaveasfile
 from datetime import datetime
 import money_convert as mc
+from gui import dialogs
 
 
 def File_Dialog():
@@ -29,11 +30,14 @@ def Conference_Invoice(Conference):
         priceForAllDays=mc.pound_string(Conference.subTotal()),
         subTotal=mc.pound_string(Conference.subTotal()),
         VAT=mc.pound_string(Conference.VAT()),
-        total=mc.pound_string(Conference.total())
+        total=mc.pound_string(Conference.total()),
+        PricePerDay=mc.pound_string(Conference.PricePerDay())
+
     )
     path = File_Dialog()
     if path is not None:
         doc.write(path.name)
+        dialogs.saved_invoice()
 
 
 def party_invoice(party):
@@ -59,7 +63,7 @@ def party_invoice(party):
     path = File_Dialog()
     if path is not None:
         doc.write(path.name)
-
+        dialogs.saved_invoice()
 
 def wedding_invoice(wedding):
     PartyTemplatePath = "invoice_templates\\Wedding_template.docx"
@@ -86,3 +90,4 @@ def wedding_invoice(wedding):
     path = File_Dialog()
     if path is not None:
         doc.write(path.name)
+        dialogs.saved_invoice()

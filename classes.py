@@ -45,6 +45,9 @@ class Conference(Event):
     def VAT(self):
         return float(self.subTotal() / 5)
 
+    def PricePerDay(self):
+        return float(self.noGuests * self.costPerhead)
+
 
 # Party class which extends event
 class Party(Event):

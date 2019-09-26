@@ -15,6 +15,10 @@ def not_saved(parent):
 def saved(parent):
     messagebox.showinfo("Successful", "These details have been successfully saved!", parent=parent)
 
+# saved dialog message box
+def saved_invoice():
+    messagebox.showinfo("Successful", "This invoice has been successfully saved!\nYou can view this in Microsoft Word.")
+
 
 def deleted(parent):
     messagebox.showinfo("Successful", "These details have been successfully deleted!", parent=parent)
