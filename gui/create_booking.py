@@ -121,20 +121,20 @@ class BaseCreate:
 
         self.nameOfContactEntry = Entry(self.master, validate='key')
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
-                                                           '%S', '%d'))
+                                                           '%S', '%P', '%d'))
 
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20,
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%d'))
+            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%P', '%d'))
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
-        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.NumbersOnly),
-                                                      '%S', '%d')
+        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
+                                                      '%S', '%P', '%d')
 
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
                                bg=style.widgetBG)
@@ -178,7 +178,7 @@ class BaseCreate:
 
     def guests_entered(self):
         """method that checks that a number of guests greater than 0"""
-        if int(self.noGuestsEntry.get()) > 0:
+        if 0 <= int(self.noGuestsEntry.get()) <= 100:
             return True
         return False
 
@@ -192,6 +192,7 @@ class BaseCreate:
             self.roomSelected = True
         else:
             self.roomSelected = False
+
 
     @abstractmethod
     def create_booking(self):
@@ -223,14 +224,16 @@ class CreateConference(BaseCreate):
         # widgets
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
-        self.companyEntry = Entry(self.master, font=style.textNormal)
+        self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
+        self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P'))
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
         self.noOfDaysValue = StringVar()
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
-        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
+        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly),
+                                                      '%S', '%d'))
         self.noOfDaysValue.trace('wr', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
@@ -274,18 +277,18 @@ class CreateConference(BaseCreate):
             else:
                 self.roomSelected = True
 
-    def number_days_entered(self):
-        """method to ensure that the number of days entered is greater than 0"""
-        if int(self.noOfDaysEntry.get()) > 0:
-            return True
-        return False
-
     def clear(self):
         """method to clear all inputs on the create form"""
         clear(self.master)
         self.dateOfEventValue.set('')
         self.roomComboText.set('Please select a Room')
         self.projectorRequired.set(False)
+
+    def number_days_entered(self):
+        """method to ensure that the number of days entered is greater than 0"""
+        if 0 <= int(self.noOfDaysEntry.get()) <= 50:
+            return True
+        return False
 
     def create_booking(self):
         """method to create the conference booking and store it in the database if all validation is passed"""
@@ -294,7 +297,7 @@ class CreateConference(BaseCreate):
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
         elif not self.number_days_entered():
-            dialogs.not_completed(self.master, 'Number of days must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of days must be greater than 0 and no more than 30')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'Room must be selected for Conference')
         else:
@@ -451,6 +454,8 @@ class CreateWedding(CreateParty):
         self.roomNumbers = CONST.WEDDING_ROOMS
         self.roomNoCombo.configure(values=self.roomNumbers)
 
+        self.costPerHeadDisplay.configure(text=mc.pound_string(CONST.EVENT_COST_PER_HEAD.get('Wedding')))
+
         for ti in self.dateOfEventValue.trace_vinfo():
             self.dateOfEventValue.trace_vdelete(*ti)
 
@@ -477,7 +482,7 @@ class CreateWedding(CreateParty):
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
         elif not self.number_room_entered():
-            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or greater')
+            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 and no more than 1000')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'Room must be selected for Wedding')
         else:
@@ -493,7 +498,7 @@ class CreateWedding(CreateParty):
             back_to_main(self.master)
 
     def number_room_entered(self):
-        """method to ensure that a number of rooms entered is between 0 and 200"""
-        if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
+        """method to ensure that a number of rooms entered is between 0 and 1000"""
+        if 0 <= int(self.noOfRoomsEntry.get()) <= 1000:
             return True
         return False

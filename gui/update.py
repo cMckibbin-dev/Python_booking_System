@@ -84,7 +84,7 @@ class UpdateUIBase:
 
         self.nameOfContactEntry = Entry(self.master, validate='key')
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
-                                                           '%S', '%s', '%d'))
+                                                           '%S', '%P', '%d'))
 
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
@@ -93,7 +93,7 @@ class UpdateUIBase:
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%d'))
+            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%P', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,

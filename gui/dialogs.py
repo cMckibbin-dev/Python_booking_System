@@ -42,3 +42,7 @@ def enter_from_date(parent):
 
 def save_file_error(extra_info=''):
     messagebox.showerror('Error', 'Error occurred while trying to save file\n{}'.format(extra_info))
+
+
+def limit_reached(extra_info):
+    messagebox.showerror('Error', 'The Character of {} limit has been reached'.format(extra_info))

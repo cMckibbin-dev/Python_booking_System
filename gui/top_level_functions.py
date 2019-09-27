@@ -12,6 +12,8 @@ def calendar_popup(event, master, stringDate, startDate=None, minDate=None):
     c = CalendarDialog.CalendarDialog(master, startDate, minDate)
     if c.result is not None:
         stringDate.set(c.result)
+    if type(master) == Tk or type(master) == Toplevel:
+        master.grab_set()
 
 
 def date_top_level(event, master, entry):

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import re
+from gui import dialogs
 
 
 def EntriesNotEmpty(master):
@@ -31,20 +32,35 @@ def lettersOnly(char, string, event):
         for c in char:
             if not c.isalpha() and not c.isspace():
                 return False
+        if not char_limit(string, 100):
+            return False
     return True
 
 
-def noSpecialCharacter(value, event):
+def noSpecialCharacter(value, string, event):
     if event == '1':
         regex = re.compile('[@_!#$%^&*()<>?/|}{~:"]')
         if regex.match(value):
             return False
+        if not char_limit(string, 100):
+            return False
     return True
 
 
-def ValidatePhoneNumber(phoneNumber, event):
+def ValidatePhoneNumber(value, string,  event):
     if event == '1':
-        print(len(phoneNumber))
-        if not phoneNumber.isdigit():
+        regex = re.compile('[+]')
+        if not value.isdigit() and not regex.match(value):
             return False
+        if not char_limit(string, 25):
+            return False
+    return True
+
+
+def char_limit(value, limit):
+    print(value)
+    print(len(value))
+    if len(value) > limit:
+        dialogs.limit_reached(limit)
+        return False
     return True
