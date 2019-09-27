@@ -36,6 +36,7 @@ class IndexUI:
         self.master.title('View Bookings')
         self.master.config(background=style.windowBG)
         self.master.resizable(0, 0)
+        self.master.iconbitmap(str(style.logo))
         self.master.bind('<FocusIn>', self.refresh_onfocus)
         self.master.protocol('WM_DELETE_WINDOW', self.back_to_main_menu)
 
