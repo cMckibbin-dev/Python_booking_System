@@ -107,6 +107,7 @@ class UpdateUIBase:
                                bg=style.widgetBG)
         self.roomNoCombo = ttk.Combobox(self.master, value=self.roomNumbers, state='readonly',
                                         textvariable=self.roomComboText)
+        self.roomNoCombo.bind('<<ComboboxSelected>>', self.room_pick)
 
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
@@ -188,6 +189,12 @@ class UpdateUIBase:
         if int(self.noGuestsEntry.get()) > 0:
             return True
         return False
+
+    def room_pick(self, event=None):
+        if self.roomNoCombo.get() in self.roomNumbers:
+            self.roomSelected = True
+        else:
+            self.roomSelected = False
 
 
 # Update UI for conference
