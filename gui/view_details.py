@@ -37,6 +37,7 @@ class BaseViewDetail:
 
         self.master = master
         self.master.resizable(0, 0)
+        self.master.iconbitmap(str(style.logo))
         self.event = event
 
         # window configure
