@@ -53,6 +53,7 @@ class UpdateUIBase:
 
         self.master = master
         self.master.resizable(0, 0)
+        self.master.iconbitmap(str(style.logo))
         self.event = event
 
         # rooms combobox string for default option

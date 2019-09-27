@@ -17,6 +17,7 @@ class MainMenuUI:
         self.root = root
         self.root.title("Main Menu")
         self.root.resizable(0, 0)
+        self.root.iconbitmap(str(style.logo))
         self.root.config(background=style.windowBG)
 
         # Widget creation
