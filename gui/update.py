@@ -55,7 +55,6 @@ class UpdateUIBase:
         self.master.resizable(0, 0)
         self.event = event
 
-
         # rooms combobox string for default option
         self.roomComboText = StringVar()
 
@@ -85,7 +84,7 @@ class UpdateUIBase:
 
         self.nameOfContactEntry = Entry(self.master, validate='key')
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
-                                                           '%S', '%d'))
+                                                           '%S', '%s', '%d'))
 
         self.nameOfContactEntry.insert(0, event.nameofContact)
 

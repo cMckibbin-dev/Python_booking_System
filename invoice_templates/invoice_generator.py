@@ -11,6 +11,20 @@ def File_Dialog():
     return path
 
 
+def save_file(doc):
+    """function to save the MailMerge file on the give file path"""
+    try:
+        path = File_Dialog()
+        if path is not None:
+            doc.write(path.name)
+            dialogs.saved_invoice()
+    except OSError as e:
+        if e.errno == 13:
+            dialogs.save_file_error('Permission Denied file may be open in other program')
+        else:
+            dialogs.save_file_error()
+
+
 def Conference_Invoice(Conference):
     ConferenceTemplatePath = "invoice_templates\\Conference_template.docx"
     doc = MailMerge(ConferenceTemplatePath)
@@ -32,12 +46,8 @@ def Conference_Invoice(Conference):
         VAT=mc.pound_string(Conference.VAT()),
         total=mc.pound_string(Conference.total()),
         PricePerDay=mc.pound_string(Conference.PricePerDay())
-
     )
-    path = File_Dialog()
-    if path is not None:
-        doc.write(path.name)
-        dialogs.saved_invoice()
+    save_file(doc)
 
 
 def party_invoice(party):
@@ -60,15 +70,12 @@ def party_invoice(party):
         VAT=mc.pound_string(party.VAT()),
         total=mc.pound_string(party.total())
     )
-    path = File_Dialog()
-    if path is not None:
-        doc.write(path.name)
-        dialogs.saved_invoice()
+    save_file(doc)
+
 
 def wedding_invoice(wedding):
     PartyTemplatePath = "invoice_templates\\Wedding_template.docx"
     doc = MailMerge(PartyTemplatePath)
-    print(doc.get_merge_fields())
     doc.merge(
         name=wedding.nameofContact,
         address=wedding.address,
@@ -87,7 +94,4 @@ def wedding_invoice(wedding):
         VAT=mc.pound_string(wedding.VAT()),
         total=mc.pound_string(wedding.total())
     )
-    path = File_Dialog()
-    if path is not None:
-        doc.write(path.name)
-        dialogs.saved_invoice()
+    save_file(doc)

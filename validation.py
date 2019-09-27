@@ -16,22 +16,21 @@ def EntriesNotEmpty(master):
     return True
 
 
-
-
-
 def NumbersOnly(value, event):
     """Function will return True if value is a digit"""
     if event == '1':
-        if not value.isdigit():
-            return False
+        for v in value:
+            if not v.isdigit():
+                return False
     return True
 
 
-def lettersOnly(char, event):
+def lettersOnly(char, string, event):
     """function will return true if value is a letter"""
     if event == '1':
-        if not char.isalpha() and not char.isspace():
-            return False
+        for c in char:
+            if not c.isalpha() and not c.isspace():
+                return False
     return True
 
 

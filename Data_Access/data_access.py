@@ -30,12 +30,17 @@ def create_database(db):
 
 def _connect_to_database():
     """Will create connection to database or create database if it does not exist"""
-    if not os.isfile('Data_Access/database'):
-        db = sql.connect('Data_Access/database')
-        create_database(db)
-        return db
-    else:
-        return sql.connect('Data_Access/database')
+    try:
+        if not os.isfile('Data_Access/database.db'):
+            db = sql.connect('Data_Access/database.db')
+            create_database(db)
+            return db
+        else:
+            return sql.connect('Data_Access/database.db')
+    except OSError as e:
+        print(e)
+    except sql.Error as e:
+        print(e)
 
 
 def convert_pound(value):

@@ -15,6 +15,7 @@ def not_saved(parent):
 def saved(parent):
     messagebox.showinfo("Successful", "These details have been successfully saved!", parent=parent)
 
+
 # saved dialog message box
 def saved_invoice():
     messagebox.showinfo("Successful", "This invoice has been successfully saved!\nYou can view this in Microsoft Word.")
@@ -37,3 +38,7 @@ def no_search_criteria(parent):
 
 def enter_from_date(parent):
     messagebox.showerror("Error", "You have not selected a start date!", parent=parent)
+
+
+def save_file_error(extra_info=''):
+    messagebox.showerror('Error', 'Error occurred while trying to save file\n{}'.format(extra_info))
