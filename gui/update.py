@@ -169,7 +169,8 @@ class UpdateUIBase:
         self.buttonSave.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
     def delete_booking(self):
-        result = messagebox.askquestion('Delete Booking', 'Deleting booking cannot be undone', icon='warning')
+        result = messagebox.askquestion('Delete Booking', 'Deleting booking cannot be undone\nAre you Sure?',
+                                        icon='warning')
         if result == 'yes':
             db = da.DBAccess()
             print(str(self.event.__class__.__name__))
