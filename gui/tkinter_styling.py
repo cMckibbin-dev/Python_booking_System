@@ -11,4 +11,4 @@ widgetBG = "#ccffe6"
 windowBG ="#ccffe6"
 buttonColour1 = "#8BD6CA"  # lighter
 buttonColour2 = "#8CACBF"  # darker
-logo ='M:\GitHub\Python_booking_System\images\\favicon3.ico'
+logo ='images/favicon3.ico'
