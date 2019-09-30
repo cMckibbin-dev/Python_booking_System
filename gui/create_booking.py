@@ -36,6 +36,7 @@ def back_to_main(master):
 class CreateMenu:
     """class for the first loaded menu on the create window.  The class contains a frame which the rest of the create UI
     will be displayed when the user selects which type of event is being booked"""
+
     def __init__(self, master):
         self.master = master
         self.master.configure(background=style.windowBG)
@@ -102,6 +103,7 @@ class CreateMenu:
 
 class BaseCreate:
     """Class that is the base for all create booking classes for each event type"""
+
     def __init__(self, master):
         self.master = master
 
@@ -129,7 +131,7 @@ class BaseCreate:
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%P', '%d'))
+            validatecommand=(self.addressEntry.register(self.check_address), '%S', '%P', '%d'))
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
@@ -179,7 +181,7 @@ class BaseCreate:
 
     def guests_entered(self):
         """method that checks that a number of guests greater than 0"""
-        if 0 <= int(self.noGuestsEntry.get()) <= 100:
+        if 0 <= int(self.noGuestsEntry.get()) <= 1000:
             return True
         return False
 
@@ -194,6 +196,13 @@ class BaseCreate:
         else:
             self.roomSelected = False
 
+    def check_address(self, value, string, event):
+        if event == "1":
+            if not validation.number_and_letters(value, string, event):
+                for char in value:
+                    if char != ',':
+                        return False
+        return True
 
     @abstractmethod
     def create_booking(self):
@@ -210,6 +219,7 @@ class BaseCreate:
 class CreateConference(BaseCreate):
     """Class based of BaseCreate class.  this class contains the extra UI elements and function to book and
     validate a conference"""
+
     def __init__(self, master):
         self.master = master
         super().__init__(master)
@@ -226,7 +236,7 @@ class CreateConference(BaseCreate):
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
         self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
-        self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P'))
+        self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P', 100))
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
@@ -234,8 +244,8 @@ class CreateConference(BaseCreate):
         self.noOfDaysValue = StringVar()
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly),
-                                                      '%S', '%d'))
-        self.noOfDaysValue.trace('wr', lambda name, index, mode: self.conference_room_check(event=None))
+                                                      '%S', '%d', '%P', 50))
+        self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
@@ -296,7 +306,7 @@ class CreateConference(BaseCreate):
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_days_entered():
             dialogs.not_completed(self.master, 'Number of days must be greater than 0 and no more than 30')
         elif not self.roomSelected:
@@ -318,6 +328,7 @@ class CreateConference(BaseCreate):
 class CreateParty(BaseCreate):
     """class based on the baseCreate class that contains the extra UI elements and methods to book a party.  This class
     is also used as the base for the Create Wedding class"""
+
     def __init__(self, master):
         super().__init__(master)
         self.master = master
@@ -448,6 +459,7 @@ class CreateParty(BaseCreate):
 class CreateWedding(CreateParty):
     """class based on the CreateParty class and contain the extra UI elements and methods to validate and
     create a wedding booking"""
+
     def __init__(self, master):
         super().__init__(master)
 
@@ -481,7 +493,7 @@ class CreateWedding(CreateParty):
         elif not self.band_selected():
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_room_entered():
             dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 and no more than 1000')
         elif not self.roomSelected:

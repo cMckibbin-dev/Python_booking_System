@@ -94,14 +94,14 @@ class UpdateUIBase:
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.noSpecialCharacter), '%S', '%P', '%d'))
+            validatecommand=(self.addressEntry.register(validation.number_and_letters), '%S', '%P', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
-        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.NumbersOnly),
-                                                      '%S', '%d')
+        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
+                                                      '%S', '%P', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
 
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
@@ -187,7 +187,7 @@ class UpdateUIBase:
         pass
 
     def guests_entered(self):
-        if int(self.noGuestsEntry.get()) > 0:
+        if 0 <= int(self.noGuestsEntry.get()) <= 1000:
             return True
         return False
 
@@ -214,7 +214,8 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
-        self.companyEntry = Entry(self.master, font=style.textNormal)
+        self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
+        self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P', int(100)))
         self.companyEntry.insert(0, event.companyName)
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
@@ -245,9 +246,9 @@ class UpdateConferenceUI(UpdateUIBase):
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_days_entered():
-            dialogs.not_completed(self.master, 'Number of days must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of days must be greater than 0 and no more than 50')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'A Room must be Selected')
         else:
@@ -283,7 +284,7 @@ class UpdateConferenceUI(UpdateUIBase):
                 self.roomSelected = True
 
     def number_days_entered(self):
-        if int(self.noOfDaysEntry.get()) > 0:
+        if 0 < int(self.noOfDaysEntry.get()) <= 50:
             return True
         return False
 
@@ -359,7 +360,7 @@ class UpdatePartyUI(UpdateUIBase):
         elif not self.band_selected():
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'A Room must be Selected')
         else:
@@ -455,9 +456,9 @@ class UpdateWeddingUI(UpdatePartyUI):
         elif not self.band_selected():
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_room_entered():
-            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or greater')
+            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or and no more than 1000')
         else:
             w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(),
                         nameofContact=self.nameOfContactEntry.get(),

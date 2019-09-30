@@ -46,3 +46,7 @@ def save_file_error(extra_info=''):
 
 def limit_reached(extra_info):
     messagebox.showerror('Error', 'The Character of {} limit has been reached'.format(extra_info))
+
+
+def number_limit_reached(extra_info):
+    messagebox.showerror('Error', 'The limit of {} has been reached'.format(extra_info))
