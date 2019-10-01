@@ -94,7 +94,7 @@ class UpdateUIBase:
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.number_and_letters), '%S', '%P', '%d'))
+            validatecommand=(self.addressEntry.register(validation.check_address), '%S', '%P', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
@@ -223,7 +223,8 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.noOfDaysValue = StringVar(self.master, self.event.noOfDays)
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
-        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d'))
+        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d',
+                                                      '%P', 50))
         self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
@@ -376,7 +377,7 @@ class UpdatePartyUI(UpdateUIBase):
         return True if self.bandName.get() in self.bandOptions else False
 
     def freeRooms(self, roomList, eventType, event=None):
-        if self.dateOfEventEntry.get() != '':
+        if self.dateOfEventValue.get() != '':
             bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get(), self.event.id)
             freeRooms = []
             for room in roomList:
@@ -395,7 +396,7 @@ class UpdatePartyUI(UpdateUIBase):
                 self.roomSelected = True
 
     def freeBands(self, bandList, eventType, event=None):
-        if self.dateOfEventEntry.get() != '':
+        if self.dateOfEventValue.get() != '':
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType, self.event.id)
             freeBands = []
             for band in bandList:

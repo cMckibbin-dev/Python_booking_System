@@ -111,7 +111,9 @@ class BaseCreate:
         self.roomComboText = StringVar(self.master, 'Please select a Room')
         self.roomSelected = False
 
-        self.dateOfEventValue = StringVar(self.master, datetime.datetime.now().date())
+        # self.dateOfEventValue = StringVar(self.master, datetime.datetime.now().date())
+        self.dateOfEventValue = StringVar(self.master)
+        # self.dateOfEventValue.set('')
 
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
@@ -131,7 +133,7 @@ class BaseCreate:
                                 bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(self.check_address), '%S', '%P', '%d'))
+            validatecommand=(self.addressEntry.register(validation.check_address), '%S', '%P', '%d'))
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
@@ -196,14 +198,6 @@ class BaseCreate:
         else:
             self.roomSelected = False
 
-    def check_address(self, value, string, event):
-        if event == "1":
-            if not validation.number_and_letters(value, string, event):
-                for char in value:
-                    if char != ',':
-                        return False
-        return True
-
     @abstractmethod
     def create_booking(self):
         """abstract method for each child class to have a method to create a booking once all infomration enterd
@@ -264,6 +258,7 @@ class CreateConference(BaseCreate):
     def conference_room_check(self, event):
         """Method that checks for free conference rooms for a given date if the room the user has selected is not free
         then there option is removed"""
+        print('checking conference rooms')
         if self.dateOfEventValue.get() != '' and self.noOfDaysEntry.get() != '':
             db = da.DBAccess()
             bookedRooms = db.booked_conference_rooms(datetime.datetime.strptime(self.dateOfEventValue.get(), '%Y-%m-%d')
@@ -294,6 +289,7 @@ class CreateConference(BaseCreate):
         self.dateOfEventValue.set('')
         self.roomComboText.set('Please select a Room')
         self.projectorRequired.set(False)
+        self.roomSelected = False
 
     def number_days_entered(self):
         """method to ensure that the number of days entered is greater than 0"""
@@ -308,7 +304,7 @@ class CreateConference(BaseCreate):
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_days_entered():
-            dialogs.not_completed(self.master, 'Number of days must be greater than 0 and no more than 30')
+            dialogs.not_completed(self.master, 'Number of days must be greater than 0 and no more than 50')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'Room must be selected for Conference')
         else:
@@ -387,7 +383,7 @@ class CreateParty(BaseCreate):
         elif not self.band_selected():
             dialogs.not_completed(self.master, 'Band must be selected')
         elif not self.guests_entered():
-            dialogs.not_completed(self.master, 'Number of guests must be greater than 0')
+            dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'Room must be selected for Party')
         else:
@@ -408,7 +404,9 @@ class CreateParty(BaseCreate):
     def freeRooms(self, roomList, eventType, event=None):
         """method that checks for free rooms for a given event type on a the selected date and updates the room combobox
          to show only free rooms"""
-        if self.dateOfEventEntry.get() != '':
+        print('checking party rooms')
+        print(self.dateOfEventValue.get())
+        if self.dateOfEventValue.get() != '':
             db = da.DBAccess()
             bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get())
             freeRooms = []
@@ -454,6 +452,7 @@ class CreateParty(BaseCreate):
         self.roomComboText.set('Please select a Room')
         self.dateOfEventValue.set('')
         self.bandSelected.set('Please select a Band')
+        self.roomSelected = False
 
 
 class CreateWedding(CreateParty):

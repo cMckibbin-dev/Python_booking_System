@@ -7,13 +7,15 @@ from gui import update
 from gui import CalendarDialog
 
 
-def calendar_popup(event, master, stringDate, startDate=None, minDate=None):
+def calendar_popup(event, master, date_string, startDate=None, minDate=None):
     """function to display calendar dialog and changes value of StringVar to the selected value"""
     c = CalendarDialog.CalendarDialog(master, startDate, minDate)
-    if c.result is not None:
-        stringDate.set(c.result)
     if type(master) == Tk or type(master) == Toplevel:
         master.grab_set()
+
+    if c.result:
+        date_string.set(c.result)
+        return c.result
 
 
 def date_top_level(event, master, entry):

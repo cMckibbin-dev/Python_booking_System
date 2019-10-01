@@ -14,7 +14,7 @@ class CalendarDialog(simple.Dialog):
             self.startDate = datetime.strptime(startDate, '%Y-%m-%d').date()
         elif isinstance(startDate, datetime):
             self.startDate = startDate
-        elif startDate is None:
+        else:
             self.startDate = datetime.now().date()
 
         if minDate is not None and minDate:

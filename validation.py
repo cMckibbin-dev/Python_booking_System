@@ -49,13 +49,15 @@ def noSpecialCharacter(value, string, event):
     return True
 
 
-def number_and_letters(value, string, event):
+def number_and_letters(value, string, event, limit=None):
     if event == '1':
         for char in value:
             if not char.isdigit() and not char.isalpha() and not char.isspace():
                 return False
-        if not char_limit(string, 100):
-            return False
+
+        if limit:
+            if not char_limit(string, limit):
+                return False
     return True
 
 
@@ -85,4 +87,16 @@ def number_limit(value, limit):
     if int(value) > int(limit):
         dialogs.number_limit_reached(limit)
         return False
+    return True
+
+
+def check_address(value, string, event):
+    if event == '1':
+        regex = re.compile('^[a-zA-Z0-9,]')
+        for char in value:
+            if not regex.match(char) and not char.isspace():
+                return False
+
+        if not char_limit(string, 100):
+            return False
     return True
