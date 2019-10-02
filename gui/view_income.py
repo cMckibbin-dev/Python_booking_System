@@ -9,6 +9,7 @@ import validation
 
 
 class ViewIncome:
+    """ViewIncome contains the UI elements and methods needed for the view income window"""
     def __init__(self, master):
         self.master = master
 
@@ -92,7 +93,7 @@ class ViewIncome:
         self.buttonBack.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.buttonSearch.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
-    def checkb_checked(self):
+    def checkbox_checked(self):
         """method to check if checkboxes in view income have at least 1 checked"""
         if self.weddingCheck.get() is False and self.partyCheck.get() is False and self.conferenceCheck.get() is False:
             return False
@@ -100,7 +101,8 @@ class ViewIncome:
             return True
 
     def search_Total(self):
-        if validation.EntriesNotEmpty(self.master) and self.checkb_checked():
+        """method to get the total income of bookings made between two dates"""
+        if validation.EntriesNotEmpty(self.master) and self.checkbox_checked():
             db = DBAccess()
             selectedTables = []
             if self.conferenceCheck.get():
@@ -120,12 +122,14 @@ class ViewIncome:
             dialogs.no_search_criteria(self.master)
 
     def backToMainMenu(self):
+        """method to close current root and create new root and open main menu on it"""
         self.master.destroy()
         root = Tk()
         main_menu.MainMenuUI(root)
         root.mainloop()
 
     def check_from_date(self, event):
+        """method to ensure that user has entered a start date before they have entered an end date"""
         if self.dateFromValue.get() == "":
             dialogs.enter_from_date(self.master)
         else:

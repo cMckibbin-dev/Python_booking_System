@@ -1,3 +1,4 @@
+"""module contains the classes and functions needed to create a booking for wedding, party and conference"""
 from tkinter import *
 import tkinter.ttk as ttk
 import constvalues as CONST
@@ -39,24 +40,29 @@ class CreateMenu:
 
     def __init__(self, master):
         self.master = master
+
+        # window configure
         self.master.configure(background=style.windowBG)
         self.master.resizable(0, 0)
         self.master.iconbitmap(str(style.logo))
         self.master.title('Create Booking')
-
         self.master.protocol('WM_DELETE_WINDOW', self.back_to_main_menu)
 
         self.UI = None  # variable used to  store UI class being displayed in UI_Frame
         self.buttonActive = False  # boolean to track when the save and clear buttons are in normal state
 
+        # form title
         self.title = Label(self.master, text='Create New Booking', font=style.textHeading, bg=style.widgetBG)
+
+        #  label and combobox for choosing event type
         self.chooseEventTypeLabel = Label(self.master, text='Choose Event Type:', font=style.textNormal,
                                           bg=style.widgetBG)
-        self.eventTypeVar = StringVar(self.master, 'Choose Event Type')
+        self.eventTypeVar = StringVar(self.master, 'Choose Event Type')  # text variable for showing default option
         self.choseEventTypeCombobox = ttk.Combobox(self.master, state='readonly', font=style.textNormal,
                                                    value=CONST.EVENT_TYPES, textvariable=self.eventTypeVar)
         self.choseEventTypeCombobox.bind('<<ComboboxSelected>>', self.display_Create_form)
 
+        # frame for buttons and buttons
         self.buttonFrame = Frame(self.master, bg=style.widgetBG)
         self.backButton = Button(self.buttonFrame, text='Back', bg='snow', height=style.buttonHeight,
                                  width=style.buttonWidth, font=style.textNormal, command=self.back_to_main_menu)
@@ -107,20 +113,24 @@ class BaseCreate:
     def __init__(self, master):
         self.master = master
 
-        self.roomNumbers = []
+        # variables
+        self.roomNumbers = []  # list stores room numbers for room number combobox
+        # text variable for room combobox used to show default value
         self.roomComboText = StringVar(self.master, 'Please select a Room')
-        self.roomSelected = False
-
-        # self.dateOfEventValue = StringVar(self.master, datetime.datetime.now().date())
+        self.roomSelected = False  # boolean tracks if a room has been selected in the room combobox
+        # user as text variable to store date selected from calendar widget and run trace callbacks
         self.dateOfEventValue = StringVar(self.master)
-        # self.dateOfEventValue.set('')
 
+        # widgets for window
+
+        # number of guests widgets
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
         self.noGuestsEntry = Entry(self.master, validate='key')
         self.noGuestsEntry.configure(validatecommand=(self.noGuestsEntry.register(validation.NumbersOnly), '%S', '%d'))
 
+        # name of contact widgets
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
 
@@ -128,6 +138,7 @@ class BaseCreate:
         self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
                                                            '%S', '%P', '%d'))
 
+        # address widgets
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20,
                                 bg=style.widgetBG)
@@ -135,18 +146,21 @@ class BaseCreate:
         self.addressEntry.configure(
             validatecommand=(self.addressEntry.register(validation.check_address), '%S', '%P', '%d'))
 
+        # contact number widgets
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
                                                       '%S', '%P', '%d')
 
+        # room number widgets
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
                                bg=style.widgetBG)
         self.roomNoCombo = ttk.Combobox(self.master, value=self.roomNumbers, state='readonly',
                                         textvariable=self.roomComboText)
         self.roomNoCombo.bind('<<ComboboxSelected>>', self.room_pick)
 
+        # date of event widgets
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
 
@@ -154,10 +168,12 @@ class BaseCreate:
                                       state='readonly')
         self.dateOfEventEntry.bind('<Button-1>', self.selectDate)
 
+        # date of booking widgets
         self.dateOfBookingLal = Label(self.master, font=style.textNormal, bg=style.widgetBG, text='Date of Booking:')
         self.dateOfBookingInfo = Label(self.master, font=style.textNormal, bg=style.widgetBG,
                                        text=datetime.datetime.now().date())
 
+        # cost per head widgets
         self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
         self.costPerHeadDisplay = Label(self.master, font=style.textNormal, anchor=W, width=20,
@@ -227,27 +243,33 @@ class CreateConference(BaseCreate):
         # overriding room number configuration from parent class
         self.roomNumbers = CONST.CONFERENCE_ROOMS
         self.roomNoCombo.configure(values=self.roomNumbers)
+        # adding trace to  date of event text variable
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.conference_room_check(event=NONE))
 
+        # cost per head showing cost per head for conference
         self.costPerHeadDisplay.configure(text=mc.pound_string(CONST.EVENT_COST_PER_HEAD.get('Conference')))
 
-        self.projectorRequired = BooleanVar()
+        self.projectorRequired = BooleanVar()  # boolean to track state of projector required checkButton
 
-        # widgets
+        # widgets for conference class
+
+        # company name widgets
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
         self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
         self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P', 100))
 
+        # number of days widgets
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
-        self.noOfDaysValue = StringVar()
+        self.noOfDaysValue = StringVar()  # variable to store string value in noOfDaysEntry used to add trace
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
         self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly),
                                                       '%S', '%d', '%P', 50))
         self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
+        # projector required widgets
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
         self.projectorCheck = Checkbutton(self.master, text="Tick for yes", variable=self.projectorRequired,
@@ -338,7 +360,7 @@ class CreateParty(BaseCreate):
         self.master = master
 
         # overriding parent values
-        # overriding room number configuration from parent class
+        # overriding room number configuration from parent class and cost per head
         self.roomNumbers = CONST.PARTY_ROOMS
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.costPerHeadDisplay.configure(text=mc.pound_string(CONST.EVENT_COST_PER_HEAD.get('Party')))
@@ -348,11 +370,15 @@ class CreateParty(BaseCreate):
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.PARTY_ROOMS, 'party'))
 
         # party class variables
+        # variable used as textVariable for band cost display label
         self.bandCost = StringVar(self.master, mc.pound_string(0))
-        self.bandOptions = list(CONST.BANDS.keys())
+        self.bandOptions = list(CONST.BANDS.keys())  # setting band options using a list of keys in band dictionary
+        # variable used to show default option in band combobox
         self.bandSelected = StringVar(self.master, 'Please select a Band')
         self.bandPrice = 0
 
+        # widgets for party class
+        # band selecting widgets
         self.bandNameLbl = Label(self.master, text="Select Band:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
         self.bandName = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
@@ -383,6 +409,7 @@ class CreateParty(BaseCreate):
         else:
             self.bandCost.set(mc.pound_string(0))
             self.bandPrice = 0
+        print('band price {}'.format(self.bandPrice))
 
     def create_booking(self):
         """method to create a party booking when and store it in the database when all validation has been passed"""
@@ -445,7 +472,7 @@ class CreateParty(BaseCreate):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or band == 'No band selected':
+                if band not in bookedBands or band == list(CONST.BANDS.keys())[3]:
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
@@ -477,13 +504,15 @@ class CreateWedding(CreateParty):
 
         self.costPerHeadDisplay.configure(text=mc.pound_string(CONST.EVENT_COST_PER_HEAD.get('Wedding')))
 
+        # removing trace callbacks inherited from parent class
         for ti in self.dateOfEventValue.trace_vinfo():
             self.dateOfEventValue.trace_vdelete(*ti)
 
+        # adding trace calls to date of event
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()), 'wedding'))
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.WEDDING_ROOMS, 'wedding'))
 
-        # widgets for form
+        # widgets for number of rooms
         self.noOfRoomsLbl = Label(self.master, text="Number of Rooms:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
         self.noOfRoomsEntry = Entry(self.master, font=style.textNormal, validate='key')
@@ -511,7 +540,7 @@ class CreateWedding(CreateParty):
             w = Wedding(noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                         address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                         eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                        bandName=self.bandName.get(), bandPrice=CONST.BANDS.get(self.bandName.get()),
+                        bandName=self.bandName.get(), bandPrice=self.bandPrice,
                         costPerhead=CONST.EVENT_COST_PER_HEAD.get('Wedding'),
                         noBedroomsReserved=self.noOfRoomsEntry.get())
             db.insert_wedding(w)

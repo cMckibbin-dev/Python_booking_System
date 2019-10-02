@@ -34,7 +34,6 @@ class BaseViewDetail:
     """class is used a base class for the other view details classes"""
 
     def __init__(self, master, event):
-
         self.master = master
         self.master.resizable(0, 0)
         self.master.iconbitmap(str(style.logo))
@@ -44,7 +43,6 @@ class BaseViewDetail:
         self.master.title('View Details')
         self.master.configure(bg=style.widgetBG)
         # setting text formatting vars and padding vars
-
 
         # labels for form
         # heading label is given text value by child classes
@@ -59,7 +57,8 @@ class BaseViewDetail:
         self.nameContactInfo = Label(self.master, text=event.nameofContact, font=style.textNormal, bg=style.widgetBG)
 
         # Address Labels
-        self.addressTitle = Label(self.master, text='Full Address of Contact:', font=style.textNormal, bg=style.widgetBG)
+        self.addressTitle = Label(self.master, text='Full Address of Contact:', font=style.textNormal,
+                                  bg=style.widgetBG)
         self.addressInfo = Label(self.master, text=event.address, font=style.textNormal, bg=style.widgetBG)
 
         # Contact Number Labels
@@ -87,10 +86,12 @@ class BaseViewDetail:
         self.buttonFrame = Frame(self.master, bg=style.widgetBG)
         # buttons
         # these buttons are user on each child class and should be placed at the bottom
-        self.buttonBack = Button(self.buttonFrame, text='Back', font=style.textNormal, bg=style.buttonColour1, width=style.buttonWidth
+        self.buttonBack = Button(self.buttonFrame, text='Back', font=style.textNormal, bg=style.buttonColour1,
+                                 width=style.buttonWidth
                                  , height=style.buttonHeight, command=self.master.destroy)
 
-        self.buttonInvoice = Button(self.buttonFrame, text='Save Invoice', font=style.textNormal, bg=style.buttonColour2,
+        self.buttonInvoice = Button(self.buttonFrame, text='Save Invoice', font=style.textNormal,
+                                    bg=style.buttonColour2,
                                     width=style.buttonWidth, height=style.buttonHeight)
 
         # placing widgets on grid layout

@@ -1,3 +1,4 @@
+"""module contains the classes and functions needed to update a booking for party, wedding and conference"""
 from abc import abstractmethod
 from tkinter import *
 from tkinter import messagebox
@@ -14,6 +15,7 @@ db = da.DBAccess()
 
 
 def save_update(booking, master):
+    """function to save updated booking information into database"""
     if isinstance(booking, Conference):
         db.update_conference(booking)
     elif isinstance(booking, Wedding):
@@ -23,32 +25,9 @@ def save_update(booking, master):
     dialogs.updated(master)
 
 
-def number_only(value, event):
-    if event == '1':
-        if not value.isdigit():
-            return False
-    return True
-
-
-def getFreeRooms_Party_Wedding(listRooms, event):
-    usedRooms = db.getBookedRooms(event.__class__.__name__, event.dateOfEvent, event.id)
-    freeRooms = []
-    for room in listRooms:
-        if room not in list(usedRooms):
-            freeRooms.append(room)
-    return freeRooms
-
-
-def getFreeBands(bandNames, event):
-    userBands = db.getBookedBands(event.dateOfEvent, str(event.__class__.__name__).lower(), event.id)
-    freeBands = []
-    for band in bandNames:
-        if band not in userBands:
-            freeBands.append(band)
-    return freeBands
-
-
 class UpdateUIBase:
+    """class is used as the base for the UpdateConferenceUI class and UpdatePartyUI class"""
+
     def __init__(self, master, event):
 
         self.master = master
@@ -69,9 +48,11 @@ class UpdateUIBase:
         self.master.configure(background=style.windowBG)
         self.roomNumbers = ['select option']
 
-        # widget
+        # widgets
+        # form title
         self.title = Label(self.master, text='Heading', font=style.textHeading, height=2, bg=style.widgetBG)
 
+        # number of guests widgets
         self.noGuestsLbl = Label(self.master, text="Number of Guests:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
@@ -80,6 +61,7 @@ class UpdateUIBase:
 
         self.noGuestsEntry.insert(0, event.noGuests)
 
+        # name of contact widgets
         self.nameOfContactLbl = Label(self.master, text="Name of Contact:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
 
@@ -89,6 +71,7 @@ class UpdateUIBase:
 
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
+        # address widgets
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
                                 width=20, bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
@@ -97,6 +80,7 @@ class UpdateUIBase:
                 lambda S, P, d, parent=self.master: validation.check_address(S, P, d, parent)), '%S', '%P', '%d'))
         self.addressEntry.insert(0, event.address)
 
+        # contact number widgets
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
@@ -104,12 +88,14 @@ class UpdateUIBase:
             lambda S, P, d, parent=self.master: validation.ValidatePhoneNumber(S, P, d, parent)), '%S', '%P', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
 
+        # room number widgets
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
                                bg=style.widgetBG)
         self.roomNoCombo = ttk.Combobox(self.master, value=self.roomNumbers, state='readonly',
                                         textvariable=self.roomComboText)
         self.roomNoCombo.bind('<<ComboboxSelected>>', self.room_pick)
 
+        # date of event widgets
         self.dateOfEventLbl = Label(self.master, text="Date of Event:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
 
@@ -117,10 +103,12 @@ class UpdateUIBase:
         self.dateOfEventEntry.configure(disabledbackground="white", disabledforeground="black")
         self.dateOfEventEntry.configure(state='readonly')
 
+        # if date of event can only be changed if date not in the pasted
         if not self.event.dateOfEvent < datetime.datetime.now().date():
             self.dateOfEventEntry.bind('<Button-1>', lambda e: tlf.calendar_popup(e, self.master, self.dateOfEventValue,
                                                                                   self.dateOfEventValue.get()))
 
+        # cost per head widgets
         self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
         self.costPerHeadDisplay = Label(self.master, font=style.textNormal, anchor=W, width=20,
@@ -136,10 +124,9 @@ class UpdateUIBase:
                                    height=style.buttonHeight, command=self.delete_booking)
 
         self.buttonSave = Button(self.frame, text='Save', bg=style.buttonColour2, width=style.buttonWidth,
-                                 height=style.buttonHeight, command=self.create_booking)
+                                 height=style.buttonHeight, command=self.update_booking)
 
         # layout for widget
-        # heading
         self.title.grid(columnspan=5)
 
         self.noGuestsLbl.grid(row=1, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
@@ -170,6 +157,7 @@ class UpdateUIBase:
         self.buttonSave.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
     def delete_booking(self):
+        """method that will delete booking from database"""
         result = messagebox.askquestion('Delete Booking', 'Deleting booking cannot be undone\nAre you Sure?',
                                         icon='warning')
         if result == 'yes':
@@ -183,35 +171,40 @@ class UpdateUIBase:
             print('not deleted')
 
     @abstractmethod
-    def create_booking(self):
+    def update_booking(self):
+        """method to be given body by child classes. method is used to update the booking"""
         pass
 
     def guests_entered(self):
+        """method to check if number of guests is between 0 and 1000"""
         if 0 <= int(self.noGuestsEntry.get()) <= 1000:
             return True
         return False
 
     def room_pick(self, event=None):
+        """check if room selected is in the roomNumbers list and not the default option"""
         if self.roomNoCombo.get() in self.roomNumbers:
             self.roomSelected = True
         else:
             self.roomSelected = False
 
 
-# Update UI for conference
 class UpdateConferenceUI(UpdateUIBase):
+    """# Update UI for conference based of UpdateUIBase contains the methods and UI elements needed to update a
+    conference booking """
+
     def __init__(self, master, event):
         super().__init__(master, event)
 
+        # overriding room numbers from super
         self.roomNumbers = CONST.CONFERENCE_ROOMS
-        # todo add conference room validation
         self.title.configure(text='Update Conference')
         self.yesno = BooleanVar(self.master, event.projectorRequired)
-        # overriding room numbers from super
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.conference_room_check(event=NONE))
 
+        # widget for company name
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
         self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
@@ -219,6 +212,7 @@ class UpdateConferenceUI(UpdateUIBase):
             lambda P, limit=int(100), parent=self.master: validation.char_limit(P, limit, parent)), '%P'))
         self.companyEntry.insert(0, event.companyName)
 
+        # number of days widgets
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
 
@@ -229,11 +223,12 @@ class UpdateConferenceUI(UpdateUIBase):
                                                       '%P'))
         self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
+        # projector required widgets
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
         self.projectorCheck = Checkbutton(self.master, text="Tick for Yes", variable=self.yesno, bg=style.widgetBG)
 
-        # layout for from
+        # layout for from using gird layout
         self.companyLbl.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.companyEntry.grid(row=10, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
@@ -243,9 +238,12 @@ class UpdateConferenceUI(UpdateUIBase):
         self.projectorLbl.grid(row=12, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.projectorCheck.grid(row=12, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
+        # updating room list to remove any rooms that would be double booked on date of event
         self.conference_room_check(None)
 
-    def create_booking(self):
+    def update_booking(self):
+        """method to ensure that information entered into form is validated and if correct will save this information in
+            a conference booking object to be update in the database """
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.guests_entered():
@@ -267,6 +265,8 @@ class UpdateConferenceUI(UpdateUIBase):
             print('updated booking')
 
     def conference_room_check(self, event):
+        """method to check for rooms that would be double booked on the date of event and remove them as options in
+        the room number drop down """
         if self.dateOfEventValue.get() != '' and self.noOfDaysEntry.get() != '':
             bookedRooms = db.booked_conference_rooms(datetime.datetime.strptime(self.dateOfEventValue.get(), '%Y-%m-%d')
                                                      , int(self.noOfDaysEntry.get()), self.event.id)
@@ -287,13 +287,14 @@ class UpdateConferenceUI(UpdateUIBase):
                 self.roomSelected = True
 
     def number_days_entered(self):
+        """checks that the number of days is between 0 and 50"""
         if 0 < int(self.noOfDaysEntry.get()) <= 50:
             return True
         return False
 
 
-# update UI for party
 class UpdatePartyUI(UpdateUIBase):
+    """update UI for party based on UpdateUIBase class"""
     def __init__(self, master, event):
         super().__init__(master, event)
         self.master = master
@@ -302,7 +303,6 @@ class UpdatePartyUI(UpdateUIBase):
         # vars
         self.roomNumbers = CONST.PARTY_ROOMS
         self.bandOptions = list(CONST.BANDS.keys())
-        # self.bandOptions = getFreeBands(self.bandOptions, self.event)
 
         self.bandChose = StringVar(self.master, mc.pound_string(event.bandPrice))
         self.bandVariable = StringVar()
@@ -318,9 +318,11 @@ class UpdatePartyUI(UpdateUIBase):
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeBands(list(CONST.BANDS.keys()), 'party'))
         self.dateOfEventValue.trace('w', lambda name, index, mode: self.freeRooms(CONST.PARTY_ROOMS, 'party'))
 
+        # if type of event is party then select room booked on create from roomNumber list
         if type(event) == Party:
             self.roomNoCombo.current(self.roomNumbers.index(self.event.eventRoomNo))
-        # window Labels
+
+        # widgets for selecting a band
         self.bandNameLbl = Label(self.master, text="Select Band:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
         self.bandName = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
@@ -341,6 +343,7 @@ class UpdatePartyUI(UpdateUIBase):
         self.bandCostLbl.grid(row=11, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
+        # if event is a type of party then check for free bands and rooms for party
         if type(self.event) == Party:
             self.freeBands(list(CONST.BANDS.keys()), 'party')
             self.freeRooms(CONST.PARTY_ROOMS, 'party')
@@ -349,6 +352,7 @@ class UpdatePartyUI(UpdateUIBase):
     def band_options(self, *args):
 
         bandPrice = CONST.BANDS.get(self.bandName.get())
+        print('selected band{}'.format(self.bandName.get()))
         print(bandPrice)
         if bandPrice:
             self.bandChose.set(mc.pound_string(bandPrice))
@@ -357,7 +361,7 @@ class UpdatePartyUI(UpdateUIBase):
             self.bandCost = 0
             self.bandChose.set(mc.pound_string(0))
 
-    def create_booking(self):
+    def update_booking(self):
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
@@ -402,7 +406,7 @@ class UpdatePartyUI(UpdateUIBase):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType, self.event.id)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or band == 'No band selected':
+                if band not in bookedBands or band == 'No band':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
@@ -454,7 +458,7 @@ class UpdateWeddingUI(UpdatePartyUI):
         self.freeBands(list(CONST.BANDS.keys()), 'wedding')
         self.band_options()
 
-    def create_booking(self):
+    def update_booking(self):
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
