@@ -84,24 +84,24 @@ class UpdateUIBase:
                                       bg=style.widgetBG)
 
         self.nameOfContactEntry = Entry(self.master, validate='key')
-        self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(validation.lettersOnly),
-                                                           '%S', '%P', '%d'))
+        self.nameOfContactEntry.configure(validatecommand=(self.nameOfContactEntry.register(
+            lambda S, P, d, parent=self.master: validation.lettersOnly(S, P, d, parent)), '%S', '%P', '%d'))
 
         self.nameOfContactEntry.insert(0, event.nameofContact)
 
         self.addressLbl = Label(self.master, text="Full Address of Contact:", font=style.textNormal, anchor='e',
-                                width=20,
-                                bg=style.widgetBG)
+                                width=20, bg=style.widgetBG)
         self.addressEntry = Entry(self.master, validate='key')
         self.addressEntry.configure(
-            validatecommand=(self.addressEntry.register(validation.check_address), '%S', '%P', '%d'))
+            validatecommand=(self.addressEntry.register(
+                lambda S, P, d, parent=self.master: validation.check_address(S, P, d, parent)), '%S', '%P', '%d'))
         self.addressEntry.insert(0, event.address)
 
         self.contactNumberLbl = Label(self.master, text="Contact Number:", font=style.textNormal, anchor='e', width=20,
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
-        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
-                                                      '%S', '%P', '%d')
+        self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(
+            lambda S, P, d, parent=self.master: validation.ValidatePhoneNumber(S, P, d, parent)), '%S', '%P', '%d')
         self.contactNumberEntry.insert(0, event.contactNo)
 
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,
@@ -215,7 +215,8 @@ class UpdateConferenceUI(UpdateUIBase):
         self.companyLbl = Label(self.master, text="Company Name:", font=style.textNormal, anchor='e', width=20,
                                 bg=style.widgetBG)
         self.companyEntry = Entry(self.master, font=style.textNormal, validate='key')
-        self.companyEntry.configure(validatecommand=(self.companyEntry.register(validation.char_limit), '%P', int(100)))
+        self.companyEntry.configure(validatecommand=(self.companyEntry.register(
+            lambda P, limit=int(100), parent=self.master: validation.char_limit(P, limit, parent)), '%P'))
         self.companyEntry.insert(0, event.companyName)
 
         self.noOfDaysLbl = Label(self.master, text="Number of Days:", font=style.textNormal, anchor='e', width=20,
@@ -223,8 +224,9 @@ class UpdateConferenceUI(UpdateUIBase):
 
         self.noOfDaysValue = StringVar(self.master, self.event.noOfDays)
         self.noOfDaysEntry = Entry(self.master, validate='key', textvariable=self.noOfDaysValue)
-        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(validation.NumbersOnly), '%S', '%d',
-                                                      '%P', 50))
+        self.noOfDaysEntry.configure(validatecommand=(self.noOfDaysEntry.register(
+            lambda S, d, P, limit=50, parent=self.master: validation.NumbersOnly(S, d, P, limit, parent)), '%S', '%d',
+                                                      '%P'))
         self.noOfDaysValue.trace('w', lambda name, index, mode: self.conference_room_check(event=None))
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
@@ -440,7 +442,8 @@ class UpdateWeddingUI(UpdatePartyUI):
                                   bg=style.widgetBG)
         self.noOfRoomsEntry = Entry(self.master, font=style.textNormal, validate='key')
         self.noOfRoomsEntry.configure(
-            validatecommand=(self.noOfRoomsEntry.register(validation.NumbersOnly), '%S', '%d'))
+            validatecommand=(self.noOfRoomsEntry.register(
+                lambda S, d, parent=self.master: validation.NumbersOnly(S, d, parent=parent)), '%S', '%d'))
         self.noOfRoomsEntry.insert(0, str(event.noBedroomsReserved))
 
         # grid layout for widgets

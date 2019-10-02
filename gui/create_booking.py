@@ -154,6 +154,10 @@ class BaseCreate:
                                       state='readonly')
         self.dateOfEventEntry.bind('<Button-1>', self.selectDate)
 
+        self.dateOfBookingLal = Label(self.master, font=style.textNormal, bg=style.widgetBG, text='Date of Booking:')
+        self.dateOfBookingInfo = Label(self.master, font=style.textNormal, bg=style.widgetBG,
+                                       text=datetime.datetime.now().date())
+
         self.costPerHeadLbl = Label(self.master, text="Cost Per Head:", font=style.textNormal, anchor='e', width=20,
                                     bg=style.widgetBG)
         self.costPerHeadDisplay = Label(self.master, font=style.textNormal, anchor=W, width=20,
@@ -177,6 +181,9 @@ class BaseCreate:
 
         self.dateOfEventLbl.grid(row=5, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.dateOfEventEntry.grid(row=5, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
+
+        self.dateOfBookingLal.grid(row=6, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
+        self.dateOfBookingInfo.grid(row=6, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
         self.costPerHeadLbl.grid(row=100, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.costPerHeadDisplay.grid(row=100, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
