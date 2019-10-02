@@ -1,3 +1,5 @@
+"""This file stores all of the constant values for the program """
+
 CONFERENCE_ROOMS = ['A', 'B', 'C']
 PARTY_ROOMS = ['D', 'E', 'F', 'G']
 WEDDING_ROOMS = ['H', 'I']

@@ -460,6 +460,7 @@ class CreateParty(BaseCreate):
         self.dateOfEventValue.set('')
         self.bandSelected.set('Please select a Band')
         self.roomSelected = False
+        self.band_options()
 
 
 class CreateWedding(CreateParty):
