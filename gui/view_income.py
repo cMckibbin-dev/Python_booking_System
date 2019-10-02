@@ -93,7 +93,7 @@ class ViewIncome:
         self.buttonSearch.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
     def checkb_checked(self):
-        """function to check if checkboxes in view income have at least 1 checked"""
+        """method to check if checkboxes in view income have at least 1 checked"""
         if self.weddingCheck.get() is False and self.partyCheck.get() is False and self.conferenceCheck.get() is False:
             return False
         else:

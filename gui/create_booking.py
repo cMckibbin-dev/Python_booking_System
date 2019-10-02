@@ -250,7 +250,8 @@ class CreateConference(BaseCreate):
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
-        self.projectorCheck = Checkbutton(self.master, text="Tick for yes", variable=self.projectorRequired, bg=style.widgetBG)
+        self.projectorCheck = Checkbutton(self.master, text="Tick for yes", variable=self.projectorRequired,
+                                          bg=style.widgetBG, font=style.textNormal)
 
         # layout for from
         self.companyLbl.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
@@ -439,7 +440,7 @@ class CreateParty(BaseCreate):
     def freeBands(self, bandList, eventType, event=None):
         """method to check for free bands on the selected date and only show these is the band combobox.
         If user selected a band that is not free on a give date they must reselect their option"""
-        if self.dateOfEventEntry.get() != '':
+        if self.dateOfEventValue.get() != '':
             db = da.DBAccess()
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
