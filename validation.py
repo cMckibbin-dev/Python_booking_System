@@ -9,7 +9,7 @@ def EntriesNotEmpty(master):
     widgets = master.winfo_children()
     for widget in widgets:
         if type(widget) == Entry or type(widget) == ttk.Combobox:
-            if widget.get() == "":
+            if widget.get() == "" or widget.get().isspace():
                 return False
         elif type(widget) == Frame:
             if not EntriesNotEmpty(widget):
@@ -17,50 +17,86 @@ def EntriesNotEmpty(master):
     return True
 
 
-def NumbersOnly(value, event):
+def NumbersOnly(value, event, string=None, max_number=None, parent=None):
     """Function will return True if value is a digit"""
     if event == '1':
         for v in value:
             if not v.isdigit():
                 return False
+        if max_number is not None and string is not None:
+            return number_limit(string, max_number, parent)
     return True
 
 
-def lettersOnly(char, string, event):
+def lettersOnly(char, string, event, parent=None):
     """function will return true if value is a letter"""
     if event == '1':
         for c in char:
             if not c.isalpha() and not c.isspace():
                 return False
-        if not char_limit(string, 100):
+        if not char_limit(string, 100, parent):
             return False
     return True
 
 
-def noSpecialCharacter(value, string, event):
+def noSpecialCharacter(value, string, event, parent=None):
     if event == '1':
-        regex = re.compile('[@_!#$%^&*()<>?/|}{~:"]')
+        regex = re.compile('[@_!#$%^&*()<>?/|}{~:\'£=+"]')
         if regex.match(value):
             return False
-        if not char_limit(string, 100):
+        if not char_limit(string, 100, parent):
             return False
     return True
 
 
-def ValidatePhoneNumber(value, string,  event):
+def number_and_letters(value, string, event, limit=None, parent=None):
+    if event == '1':
+        for char in value:
+            if not char.isdigit() and not char.isalpha() and not char.isspace():
+                return False
+
+        if limit:
+            if not char_limit(string, limit, parent):
+                return False
+    return True
+
+
+def ValidatePhoneNumber(value, string, event, parent=None):
     if event == '1':
         regex = re.compile('[+]')
-        if not value.isdigit() and not regex.match(value):
-            return False
-        if not char_limit(string, 25):
+        for char in value:
+            if not char.isdigit() and not regex.match(char):
+                return False
+        if not char_limit(string, 50, parent):
             return False
     return True
 
 
-def char_limit(value, limit):
+def char_limit(value, limit, parent=None):
     print(value)
     print(len(value))
-    if len(value) > limit:
-        dialogs.limit_reached(limit)
+    if int(len(value)) >= int(limit):
+        dialogs.limit_reached(limit, parent)
         return False
+    return True
+
+
+def number_limit(value, limit, parent=None):
+    print('value: {}'.format(value))
+    print('limit {}'.format(limit))
+    if int(value) > int(limit):
+        dialogs.number_limit_reached(limit, parent)
+        return False
+    return True
+
+
+def check_address(value, string, event, parent=None):
+    if event == '1':
+        regex = re.compile('^[a-zA-Z0-9,]')
+        for char in value:
+            if not regex.match(char) and not char.isspace():
+                return False
+
+        if not char_limit(string, 100, parent):
+            return False
     return True
