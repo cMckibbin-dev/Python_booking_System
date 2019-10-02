@@ -389,7 +389,7 @@ class CreateParty(BaseCreate):
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
-            dialogs.not_completed(self.master, 'Band must be selected')
+            dialogs.not_completed(self.master, 'Band must be selected')  # extra info being passed to dialogs
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.roomSelected:
@@ -445,7 +445,7 @@ class CreateParty(BaseCreate):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or band == 'No band selected':
+                if band not in bookedBands or band == 'No band':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
@@ -462,6 +462,8 @@ class CreateParty(BaseCreate):
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.dateOfEventValue.set('')
         self.bandSelected.set('Please select a Band')
+        self.bandOptions = list(CONST.BANDS.keys())
+        self.bandName.configure(values=self.bandOptions)
         self.roomSelected = False
         self.band_options()
 
@@ -505,7 +507,7 @@ class CreateWedding(CreateParty):
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_room_entered():
-            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 and no more than 1000')
+            dialogs.not_completed(self.master, 'Number of Rooms reserved must be at least 0 and no more than 1000')
         elif not self.roomSelected:
             dialogs.not_completed(self.master, 'Room must be selected for Wedding')
         else:
@@ -513,7 +515,7 @@ class CreateWedding(CreateParty):
             w = Wedding(noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                         address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                         eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                        bandName=self.bandName.get(), bandPrice=CONST.BANDS.get(self.bandName.get()),
+                        bandName=self.bandName.get(),  bandPrice=self.bandPrice,
                         costPerhead=CONST.EVENT_COST_PER_HEAD.get('Wedding'),
                         noBedroomsReserved=self.noOfRoomsEntry.get())
             db.insert_wedding(w)
@@ -527,11 +529,13 @@ class CreateWedding(CreateParty):
         return False
 
     def clear(self):
-        """method to clear all inputs on the create party form"""
+        """method to clear all inputs on the create wedding form"""
         clear(self.master)
         self.roomComboText.set('Please select a Room')
         self.roomNumbers = CONST.WEDDING_ROOMS
         self.roomNoCombo.configure(values=self.roomNumbers)
         self.dateOfEventValue.set('')
         self.bandSelected.set('Please select a Band')
+        self.bandOptions = list(CONST.BANDS.keys())
+        self.bandName.configure(values=self.bandOptions)
         self.roomSelected = False

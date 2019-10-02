@@ -402,7 +402,7 @@ class UpdatePartyUI(UpdateUIBase):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType, self.event.id)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or band == 'No band selected':
+                if band not in bookedBands or band == 'No band':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
@@ -462,7 +462,7 @@ class UpdateWeddingUI(UpdatePartyUI):
         elif not self.guests_entered():
             dialogs.not_completed(self.master, 'Number of guests must be greater than 0 and no more than 1000')
         elif not self.number_room_entered():
-            dialogs.not_completed(self.master, 'Number of Rooms reserved must be 0 or and no more than 1000')
+            dialogs.not_completed(self.master, 'Number of Rooms reserved must be at least 0 and no more than 1000')
         else:
             w = Wedding(ID=self.event.id, noGuests=self.noGuestsEntry.get(),
                         nameofContact=self.nameOfContactEntry.get(),
