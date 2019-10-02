@@ -250,7 +250,7 @@ class CreateConference(BaseCreate):
 
         self.projectorLbl = Label(self.master, text="Projector Required?:", font=style.textNormal, anchor='e', width=20,
                                   bg=style.widgetBG)
-        self.projectorCheck = Checkbutton(self.master, variable=self.projectorRequired, bg=style.widgetBG)
+        self.projectorCheck = Checkbutton(self.master, text="Tick for yes", variable=self.projectorRequired, bg=style.widgetBG)
 
         # layout for from
         self.companyLbl.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
