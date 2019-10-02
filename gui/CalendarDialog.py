@@ -1,7 +1,6 @@
 import tkinter.simpledialog as simple
 import tkcalendar
 from datetime import datetime
-from tkinter import StringVar
 
 
 class CalendarDialog(simple.Dialog):

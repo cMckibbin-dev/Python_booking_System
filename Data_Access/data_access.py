@@ -1,3 +1,4 @@
+"""module contains functions and the DBAccess class to allow the program to interact with the sqlite 3 database"""
 import sqlite3 as sql
 from os import path as os
 from classes import *
@@ -44,12 +45,13 @@ def _connect_to_database():
 
 
 def convert_pound(value):
-    """converts pence store as int into pound and pence as a float"""
+    """converts pence store as int into pound and pence as a float. All currency values stored as pence in database"""
     return float(value / 100)
 
 
 def convert_pence(value):
-    """converts money store as pounds and pence into pence to be stored as int in database"""
+    """converts money store as pounds and pence into pence to be stored as int in database.
+     All currency values stored as pence in database"""
     return int(value * 100)
 
 
@@ -87,13 +89,17 @@ def _create_conference(row):
 
 
 class DBAccess:
+    """The class connects to the sqlite 3 database and provides methods to retrieve stored bookings, delete bookings,
+    update currently stored bookings and insert new booking for weddings, party and conference. class also contains
+    methods to return booked rooms and bands on a given date. Method also exist to return events booked between tow
+    given date"""
 
     def __init__(self):
         self.dbCon = _connect_to_database()
         self.cursor = self.dbCon.cursor()
 
     def all_weddings(self, future=False):
-        """gets all weddings from database"""
+        """gets all weddings from database and returns a list of wedding objects"""
         if not future:
             self.cursor.execute("select * from wedding")
         else:
@@ -106,7 +112,7 @@ class DBAccess:
         return listWeddings
 
     def all_conferences(self, future=False):
-        """returns all conferences from connected database"""
+        """returns all conferences from connected database and returns a list of conferences"""
         if not future:
             self.cursor.execute('select * from conference')
         else:
@@ -120,7 +126,7 @@ class DBAccess:
         return listConferences
 
     def all_party(self, future=False):
-        """returns all parties from connected database"""
+        """returns all parties from connected database and returns a list of parties"""
         if not future:
             self.cursor.execute('select * from party')
         else:
@@ -133,7 +139,7 @@ class DBAccess:
         return listParties
 
     def all_records(self, future=False):
-        """returns all events from connected database in one list"""
+        """returns all events from connected database in one list containing all event types"""
         weddings = self.all_weddings() if not future else self.all_weddings(future)
         parties = self.all_party() if not future else self.all_party(future)
         conferences = self.all_conferences() if not future else self.all_conferences(future)
@@ -141,7 +147,7 @@ class DBAccess:
         return results
 
     def insert_wedding(self, wedding):
-        """inserts a wedding object to the database"""
+        """inserts a wedding object into the database"""
         self.cursor.execute("""insert into wedding(numberGuests, name_of_contact, address,
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice, numberOfRooms) values(?,?,?,?,?,?,?,?,?,?,?)""",
@@ -153,7 +159,7 @@ class DBAccess:
         self.dbCon.commit()
 
     def insert_conference(self, conference):
-        """inserts a conference object to the database"""
+        """inserts a conference object into the database"""
 
         self.cursor.execute("""Insert into conference(numberGuests, name_of_contact, address,
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
@@ -165,7 +171,7 @@ class DBAccess:
         self.dbCon.commit()
 
     def insert_party(self, party):
-        """inserts a party object to the database"""
+        """inserts a party object into the database"""
         self.cursor.execute("""Insert into party(numberGuests, name_of_contact, address,
                           contactNumber, eventRoom, dateOfEvent, dateOfBooking,
                           costPerHead, bandName, bandPrice) values(?,?,?,?,?,?,?,?,?,?)""",
@@ -216,35 +222,37 @@ class DBAccess:
         self.dbCon.commit()
 
     def delete_booking(self, event, tableName):
-        """method to delete a booking from the database"""
+        """method to delete a booking from the database when given table name"""
         sqlString = """Delete from {} WHERE ID = ?""".format(tableName)
         print(sqlString)
         self.cursor.execute(sqlString, (event.id,))
         self.dbCon.commit()
 
     def bookings_between_dates(self, eventTypes, dateFrom, dateTo):
-        """method will return the total income of events of a certain type between two dates. takes in a list of event
-        types that will be selected from"""
+        """method returns wedding, conference and party objects type between two dates. takes in a list of event
+        types that will be selected from and to dates"""
         results = []
         for event in eventTypes:
             self.cursor.execute("select * from {} Where date(dateOfEvent) between date('{}') and date('{}')"
                                 .format(event, dateFrom, dateTo))
             all_rows = self.cursor.fetchall()
-            if event == 'Conference':
+            if event.lower() == 'conference':
                 for row in all_rows:
                     results.append(_create_conference(row))
-            elif event == 'Wedding':
+            elif event.lower() == 'wedding':
                 for row in all_rows:
                     results.append(_create_wedding(row))
-            elif event == 'party':
+            elif event.lower() == 'party':
                 for row in all_rows:
                     results.append(_create_party(row))
+            else:
+                raise ValueError('eventTypes must be one of the following: "conference", "wedding", "party"')
 
         return results
 
     def getBookedRooms(self, tableName, date, ID=None):
-        """method to return a list of all rooms booked for a certain date for an event type.  If ID is given for the
-        bookings then the room booked with the provided ID will not be counted"""
+        """method returns a list of all rooms booked for a certain date for an event type.  If ID is given for the
+        booking then the room booked with the provided ID will not be counted"""
         if ID is None:
             sqlQuery = "select eventRoom from {} where date(dateOfEvent) == date('{}')".format(tableName, date)
         else:
@@ -261,7 +269,8 @@ class DBAccess:
         return results
 
     def getBookedBands(self, date, eventType, ID=None):
-        """method to return a list of all bands booked for a certain date for an event type"""
+        """method to return a list of all bands booked for a certain date. eventType is passed so that the correct
+        tables are queried when ID is given"""
         sqlQueries = []
         if ID is None:
             sqlQueryParty = "select bandName from party where date(dateOfEvent) == date('{}')".format(date)
@@ -312,5 +321,6 @@ class DBAccess:
         return list(set(results))
 
     def __del__(self):
+        """closes database connection when DBAccess object is deleted"""
         self.dbCon.close()
         print('closed connection')

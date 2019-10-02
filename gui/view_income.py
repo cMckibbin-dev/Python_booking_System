@@ -67,7 +67,7 @@ class ViewIncome:
                                    command=self.search_Total, bg=style.buttonColour2)
 
         # placing widgets in grid layout
-        self.heading.grid(row=0, column=0, columnspan=4, padx=style.paddingX, pady=(10,25))
+        self.heading.grid(row=0, column=0, columnspan=4, padx=style.paddingX, pady=(10, 25))
 
         # placing event type widgets
         self.eventTypeFrame.grid(row=1, column=0, columnspan=4)
@@ -83,22 +83,21 @@ class ViewIncome:
         self.dateToLabel.grid(row=2, column=3, sticky=W, padx=style.paddingX, pady=style.paddingY)
         self.dateToDatePick.grid(row=2, column=4, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        self.subHeading.grid(row=4, column=0, sticky=NSEW, columnspan=4, padx=style.paddingX, pady=(25,10))
+        self.subHeading.grid(row=4, column=0, sticky=NSEW, columnspan=4, padx=style.paddingX, pady=(25, 10))
 
-        self.totalIncomeLabel.grid(row=5, column=0, sticky=E, padx=(25,25), pady=(10,25))
-        self.totalIncomeInfo.grid(row=5, column=1, sticky=W, padx=(25,25), pady=(10,25))
+        self.totalIncomeLabel.grid(row=5, column=0, sticky=E, padx=(25, 25), pady=(10, 25))
+        self.totalIncomeInfo.grid(row=5, column=1, sticky=W, padx=(25, 25), pady=(10, 25))
 
         self.buttonFrame.grid(row=6, columnspan=4)
         self.buttonBack.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.buttonSearch.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
 
     def checkb_checked(self):
-        """function to check if checkboxes in view income have at least 1 checked"""
+        """method to check if checkboxes in view income have at least 1 checked"""
         if self.weddingCheck.get() is False and self.partyCheck.get() is False and self.conferenceCheck.get() is False:
             return False
         else:
             return True
-
 
     def search_Total(self):
         if validation.EntriesNotEmpty(self.master) and self.checkb_checked():
