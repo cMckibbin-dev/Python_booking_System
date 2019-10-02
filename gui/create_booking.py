@@ -207,7 +207,7 @@ class BaseCreate:
 
     @abstractmethod
     def create_booking(self):
-        """abstract method for each child class to have a method to create a booking once all infomration enterd
+        """abstract method for each child class to have a method to create a booking once all information enterd
         correctly"""
         pass
 
@@ -457,6 +457,8 @@ class CreateParty(BaseCreate):
         """method to clear all inputs on the create party form"""
         clear(self.master)
         self.roomComboText.set('Please select a Room')
+        self.roomNumbers = CONST.PARTY_ROOMS
+        self.roomNoCombo.configure(values=self.roomNumbers)
         self.dateOfEventValue.set('')
         self.bandSelected.set('Please select a Band')
         self.roomSelected = False
@@ -521,3 +523,13 @@ class CreateWedding(CreateParty):
         if 0 <= int(self.noOfRoomsEntry.get()) <= 1000:
             return True
         return False
+
+    def clear(self):
+        """method to clear all inputs on the create party form"""
+        clear(self.master)
+        self.roomComboText.set('Please select a Room')
+        self.roomNumbers = CONST.WEDDING_ROOMS
+        self.roomNoCombo.configure(values=self.roomNumbers)
+        self.dateOfEventValue.set('')
+        self.bandSelected.set('Please select a Band')
+        self.roomSelected = False
