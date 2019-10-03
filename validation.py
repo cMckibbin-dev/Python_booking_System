@@ -1,3 +1,4 @@
+"""module contains the functions used to validate user input in the update and create forms"""
 from tkinter import *
 from tkinter import ttk
 import re
@@ -18,7 +19,7 @@ def EntriesNotEmpty(master):
 
 
 def NumbersOnly(value, event, string=None, max_number=None, parent=None):
-    """Function will return True if value is a digit"""
+    """Function will return True if value is a digit and if number limit has not been reached"""
     if event == '1':
         for v in value:
             if not v.isdigit():
@@ -29,7 +30,7 @@ def NumbersOnly(value, event, string=None, max_number=None, parent=None):
 
 
 def lettersOnly(char, string, event, parent=None):
-    """function will return true if value is a letter"""
+    """function will return true if value is a letter and character limit has not been reached"""
     if event == '1':
         for c in char:
             if not c.isalpha() and not c.isspace():
@@ -40,6 +41,7 @@ def lettersOnly(char, string, event, parent=None):
 
 
 def noSpecialCharacter(value, string, event, parent=None):
+    """function returns true if value is not a special character and character limit has not been reached"""
     if event == '1':
         regex = re.compile('[@_!#$%^&*()<>?/|}{~:\'£=+"]')
         if regex.match(value):
@@ -50,6 +52,7 @@ def noSpecialCharacter(value, string, event, parent=None):
 
 
 def number_and_letters(value, string, event, limit=None, parent=None):
+    """function returns true if value is a number or letter and character limit has not been reached"""
     if event == '1':
         for char in value:
             if not char.isdigit() and not char.isalpha() and not char.isspace():
@@ -62,6 +65,7 @@ def number_and_letters(value, string, event, limit=None, parent=None):
 
 
 def ValidatePhoneNumber(value, string, event, parent=None):
+    """function returns True if value entered is a number or a + and if the character limit has not been reached"""
     if event == '1':
         regex = re.compile('[+]')
         for char in value:
@@ -73,8 +77,7 @@ def ValidatePhoneNumber(value, string, event, parent=None):
 
 
 def char_limit(value, limit, parent=None):
-    print(value)
-    print(len(value))
+    """function returns False if character limit has been reached or exceeded"""
     if int(len(value)) >= int(limit):
         dialogs.limit_reached(limit, parent)
         return False
@@ -82,8 +85,7 @@ def char_limit(value, limit, parent=None):
 
 
 def number_limit(value, limit, parent=None):
-    print('value: {}'.format(value))
-    print('limit {}'.format(limit))
+    """function returns False if number limit has been exceeded"""
     if int(value) > int(limit):
         dialogs.number_limit_reached(limit, parent)
         return False
@@ -91,6 +93,9 @@ def number_limit(value, limit, parent=None):
 
 
 def check_address(value, string, event, parent=None):
+    """function to ensure that value entered is either a letter, number or a comma.
+    Returns False if character limit has been reached"""
+    
     if event == '1':
         regex = re.compile('^[a-zA-Z0-9,]')
         for char in value:

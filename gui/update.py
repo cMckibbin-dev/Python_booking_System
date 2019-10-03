@@ -295,6 +295,7 @@ class UpdateConferenceUI(UpdateUIBase):
 
 class UpdatePartyUI(UpdateUIBase):
     """update UI for party based on UpdateUIBase class"""
+
     def __init__(self, master, event):
         super().__init__(master, event)
         self.master = master
@@ -325,10 +326,10 @@ class UpdatePartyUI(UpdateUIBase):
         # widgets for selecting a band
         self.bandNameLbl = Label(self.master, text="Select Band:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
-        self.bandName = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
-                                     postcommand=self.band_options, textvariable=self.bandVariable)
-        self.bandName.current(self.bandOptions.index(self.event.bandName))
-        self.bandName.bind('<<ComboboxSelected>>', self.band_options)
+        self.bandNameCombobox = ttk.Combobox(self.master, values=self.bandOptions, state='readonly',
+                                             postcommand=self.band_options, textvariable=self.bandVariable)
+        self.bandNameCombobox.current(self.bandOptions.index(self.event.bandName))
+        self.bandNameCombobox.bind('<<ComboboxSelected>>', self.band_options)
 
         self.bandCostLbl = Label(self.master, text="Band Cost:", font=style.textNormal, anchor='e', width=20,
                                  bg=style.widgetBG)
@@ -338,7 +339,7 @@ class UpdatePartyUI(UpdateUIBase):
 
         # grid layout for widgets
         self.bandNameLbl.grid(row=10, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
-        self.bandName.grid(row=10, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
+        self.bandNameCombobox.grid(row=10, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
         self.bandCostLbl.grid(row=11, column=0, sticky=E, padx=style.paddingX, pady=style.paddingY)
         self.bandCostDisplay.grid(row=11, column=1, sticky=W, padx=style.paddingX, pady=style.paddingY)
@@ -350,10 +351,10 @@ class UpdatePartyUI(UpdateUIBase):
             self.band_options()
 
     def band_options(self, *args):
-
-        bandPrice = CONST.BANDS.get(self.bandName.get())
-        print('selected band{}'.format(self.bandName.get()))
-        print(bandPrice)
+        """
+        method to change displayed band price when a band is selected in combobox, also changes to band cost value
+        """
+        bandPrice = CONST.BANDS.get(self.bandNameCombobox.get())
         if bandPrice:
             self.bandChose.set(mc.pound_string(bandPrice))
             self.bandCost = bandPrice
@@ -362,6 +363,8 @@ class UpdatePartyUI(UpdateUIBase):
             self.bandChose.set(mc.pound_string(0))
 
     def update_booking(self):
+        """method to ensure that information entered into form is validated and if correct will save this information in
+            a party booking object to be update in the database """
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
@@ -374,15 +377,22 @@ class UpdatePartyUI(UpdateUIBase):
             p = Party(ID=self.event.id, noGuests=self.noGuestsEntry.get(), nameofContact=self.nameOfContactEntry.get(),
                       address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                       eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                      dateofBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                      dateofBooking=self.event.dateOfBooking, bandName=self.bandNameCombobox.get(),
                       bandPrice=self.bandCost, costPerhead=self.event.costPerhead)
             save_update(p, self.master)
             self.master.destroy()
 
     def band_selected(self):
-        return True if self.bandName.get() in self.bandOptions else False
+        """returns True if selected band name is in the bandOptions list else False"""
+        return True if self.bandNameCombobox.get() in self.bandOptions else False
 
     def freeRooms(self, roomList, eventType, event=None):
+        """methods checks for rooms that would be double booked on a given date and will remove these as options from
+        the room combobox.  Method takes a list of room numbers, what type of event (ether party or wedding)
+        event if method bind to event """
+
+        if eventType.lower() != 'party' and eventType.lower() != 'wedding':
+            raise ValueError('event type must be either party or wedding')
         if self.dateOfEventValue.get() != '':
             bookedRooms = db.getBookedRooms(eventType, self.dateOfEventValue.get(), self.event.id)
             freeRooms = []
@@ -402,6 +412,13 @@ class UpdatePartyUI(UpdateUIBase):
                 self.roomSelected = True
 
     def freeBands(self, bandList, eventType, event=None):
+        """method checks for bands that would be double booked on the selected date of event and removes these as
+        options from the band combobox.  Method takes a list of bandNames, event type (either party or wedding) and
+        event if method is bind to event"""
+
+        if eventType.lower() != 'party' and eventType.lower() != 'wedding':
+            raise ValueError('event type must be either party or wedding')
+
         if self.dateOfEventValue.get() != '':
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType, self.event.id)
             freeBands = []
@@ -409,15 +426,16 @@ class UpdatePartyUI(UpdateUIBase):
                 if band not in bookedBands or band == 'No band':
                     freeBands.append(band)
             self.bandOptions = freeBands
-            self.bandName.configure(values=self.bandOptions)
-            if self.bandName.get() not in freeBands:
-                self.bandName.delete(0, 'end')
+            self.bandNameCombobox.configure(values=self.bandOptions)
+            if self.bandNameCombobox.get() not in freeBands:
+                self.bandNameCombobox.delete(0, 'end')
                 self.bandVariable.set('Please Select a Band')
                 self.band_options()
 
 
-# Update UI for wedding
 class UpdateWeddingUI(UpdatePartyUI):
+    """Update UI for wedding based of the UpdatePartyUI class"""
+
     def __init__(self, master, event):
         super().__init__(master, event)
         self.master = master
@@ -459,6 +477,8 @@ class UpdateWeddingUI(UpdatePartyUI):
         self.band_options()
 
     def update_booking(self):
+        """method to ensure that information entered into form is validated and if correct will save this information in
+                    a wedding booking object to be update in the database"""
         if not validation.EntriesNotEmpty(self.master):
             dialogs.not_completed(self.master)
         elif not self.band_selected():
@@ -472,13 +492,14 @@ class UpdateWeddingUI(UpdatePartyUI):
                         nameofContact=self.nameOfContactEntry.get(),
                         address=self.addressEntry.get(), contactNo=self.contactNumberEntry.get(),
                         eventRoomNo=self.roomNoCombo.get(), dateOfEvent=self.dateOfEventEntry.get(),
-                        dateOfBooking=self.event.dateOfBooking, bandName=self.bandName.get(),
+                        dateOfBooking=self.event.dateOfBooking, bandName=self.bandNameCombobox.get(),
                         bandPrice=self.bandCost, costPerhead=self.event.costPerhead,
                         noBedroomsReserved=self.noOfRoomsEntry.get())
             save_update(w, self.master)
             self.master.destroy()
 
     def number_room_entered(self):
+        """method to check if number of rooms entered is between 0 and 200"""
         if 0 <= int(self.noOfRoomsEntry.get()) <= 200:
             return True
         return False
