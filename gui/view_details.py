@@ -31,7 +31,7 @@ def CostBreakDownUI(master, booking):
 
 
 class BaseViewDetail:
-    """class is used a base class for the other view details classes"""
+    """class is used as base class for the other view details classes"""
 
     def __init__(self, master, event):
         self.master = master
