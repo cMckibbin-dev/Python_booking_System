@@ -55,6 +55,7 @@ class ViewIncome:
         self.dateToDatePick.bind('<Button-1>', lambda e: self.check_from_date(e))  # checks start date entered first
 
         # widgets for displaying total income of events
+
         self.subHeading = Label(self.master, font=style.textHeading, text='Details', bg=style.widgetBG)
         self.totalIncomeLabel = Label(self.master, font=style.textNormal, text='Total Income From Events:',
                                       bg=style.widgetBG)
@@ -68,7 +69,7 @@ class ViewIncome:
                                    command=self.search_Total, bg=style.buttonColour2)
 
         # placing widgets in grid layout
-        self.heading.grid(row=0, column=0, columnspan=4, padx=style.paddingX, pady=(10, 25))
+        self.heading.grid(row=0, column=0, columnspan=7, padx=style.paddingX, pady=(10, 25))
 
         # placing event type widgets
         self.eventTypeFrame.grid(row=1, column=0, columnspan=4)
@@ -84,9 +85,9 @@ class ViewIncome:
         self.dateToLabel.grid(row=2, column=3, sticky=W, padx=style.paddingX, pady=style.paddingY)
         self.dateToDatePick.grid(row=2, column=4, sticky=W, padx=style.paddingX, pady=style.paddingY)
 
-        # placing heading for results
-        self.subHeading.grid(row=4, column=0, sticky=NSEW, columnspan=4, padx=style.paddingX, pady=(25, 10))
 
+        # placing heading for results
+        self.subHeading.grid(row=4, column=0, sticky=NSEW, columnspan=4, padx=style.paddingX, pady=(10, 10))
         # placing labels and info for for result
         self.totalIncomeLabel.grid(row=5, column=0, sticky=E, padx=(25, 25), pady=(10, 25))
         self.totalIncomeInfo.grid(row=5, column=1, sticky=W, padx=(25, 25), pady=(10, 25))

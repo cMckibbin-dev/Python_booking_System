@@ -73,12 +73,12 @@ class CreateMenu:
         self.UI_Frame = Frame(self.master, bg=style.widgetBG)
 
         # grid layout for widgets
-        self.title.grid(row=0, column=0, columnspan=2, padx=style.paddingX, pady=style.paddingY)
+        self.title.grid(row=0, column=0, columnspan=2, padx=style.paddingX, pady=(10,25))
 
-        self.chooseEventTypeLabel.grid(row=1, column=0, padx=style.paddingX, pady=style.paddingY, sticky=E)
-        self.choseEventTypeCombobox.grid(row=1, column=1, padx=style.paddingX, pady=style.paddingY, sticky=W)
+        self.chooseEventTypeLabel.grid(row=1, column=0, padx=style.paddingX, pady=(10,20), sticky=E)
+        self.choseEventTypeCombobox.grid(row=1, column=1, padx=style.paddingX, pady=(10,20), sticky=W)
         self.UI_Frame.grid(row=2, column=0, columnspan=2)
-        self.buttonFrame.grid(row=3, column=0, columnspan=2)
+        self.buttonFrame.grid(row=3, column=0, columnspan=2,padx=style.paddingX, pady=style.paddingY)
         self.backButton.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.clearButton.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
         self.saveButton.pack(side=LEFT, padx=style.paddingX, pady=style.paddingY)
