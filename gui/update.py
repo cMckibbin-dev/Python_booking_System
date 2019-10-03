@@ -85,7 +85,7 @@ class UpdateUIBase:
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(
-            lambda S, P, d, parent=self.master: validation.ValidatePhoneNumber(S, P, d, parent)), '%S', '%P', '%d')
+            lambda S, P, d, i, parent=self.master: validation.ValidatePhoneNumber(S, P, d, i, parent)), '%S', '%P', '%d', '%i')
         self.contactNumberEntry.insert(0, event.contactNo)
 
         # room number widgets

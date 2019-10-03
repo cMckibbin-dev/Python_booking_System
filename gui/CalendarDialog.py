@@ -24,12 +24,14 @@ class CalendarDialog(simple.Dialog):
             self.minDate = None
         else:
             self.minDate = datetime.now().date()
+
         super().__init__(self.master, title='Calender')
 
     def body(self, master):
         """Function to set up the body of the calender and pack it. Allows us to set a default date and min date """
+        self.iconbitmap(str(style.logo))
         self.calendar = tkcalendar.Calendar(master, mindate=self.minDate, year=self.startDate.year,
-                                            month=self.startDate.month, day=self.startDate.day)
+                                            month=self.startDate.month, day=self.startDate.day, )
         self.calendar.pack()
 
     def apply(self):

@@ -151,7 +151,7 @@ class BaseCreate:
                                       bg=style.widgetBG)
         self.contactNumberEntry = Entry(self.master, validate='key')
         self.contactNumberEntry['validatecommand'] = (self.contactNumberEntry.register(validation.ValidatePhoneNumber),
-                                                      '%S', '%P', '%d')
+                                                      '%S', '%P', '%d', '%i')
 
         # room number widgets
         self.roomNoLbl = Label(self.master, text="Event Room Number:", font=style.textNormal, anchor='e', width=20,

@@ -64,12 +64,13 @@ def number_and_letters(value, string, event, limit=None, parent=None):
     return True
 
 
-def ValidatePhoneNumber(value, string, event, parent=None):
-    """function returns True if value entered is a number or a + and if the character limit has not been reached"""
+def ValidatePhoneNumber(value, string, event, index, parent=None):
+    """function returns True if value entered is a number or a '+' being entered at the start of the string
+     and if the character limit has not been reached"""
     if event == '1':
         regex = re.compile('[+]')
         for char in value:
-            if not char.isdigit() and not regex.match(char):
+            if not char.isdigit() and not(regex.match(char) and int(index) == 0 and value.index(char) == 0):
                 return False
         if not char_limit(string, 50, parent):
             return False
