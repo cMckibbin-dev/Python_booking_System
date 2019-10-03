@@ -1,6 +1,6 @@
 import locale
 
-locale.setlocale(locale.LC_ALL, '')
+locale.setlocale(locale.LC_ALL, '')  # gets local location for setting currency
 
 
 def pound_string(value):

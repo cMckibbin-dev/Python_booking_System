@@ -26,6 +26,7 @@ def save_file(doc):
 
 
 def Conference_Invoice(Conference):
+    """This function merges the values that we want into the mail merge place holders on the invoice template"""
     ConferenceTemplatePath = "invoice_templates\\Conference_template.docx"
     doc = MailMerge(ConferenceTemplatePath)
     doc.merge(
@@ -47,10 +48,11 @@ def Conference_Invoice(Conference):
         total=mc.pound_string(Conference.total()),
         PricePerDay=mc.pound_string(Conference.PricePerDay())
     )
-    save_file(doc)
+    save_file(doc)  # saves document
 
 
 def party_invoice(party):
+    """This function merges the values that we want into the mail merge place holders on the invoice template"""
     PartyTemplatePath = "invoice_templates\\Party_template.docx"
     doc = MailMerge(PartyTemplatePath)
     doc.merge(
@@ -70,10 +72,11 @@ def party_invoice(party):
         VAT=mc.pound_string(party.VAT()),
         total=mc.pound_string(party.total())
     )
-    save_file(doc)
+    save_file(doc)  # saves document
 
 
 def wedding_invoice(wedding):
+    """This function merges the values that we want into the mail merge place holders on the invoice template"""
     PartyTemplatePath = "invoice_templates\\Wedding_template.docx"
     doc = MailMerge(PartyTemplatePath)
     doc.merge(
@@ -94,4 +97,4 @@ def wedding_invoice(wedding):
         VAT=mc.pound_string(wedding.VAT()),
         total=mc.pound_string(wedding.total())
     )
-    save_file(doc)
+    save_file(doc)  # saves document
