@@ -5,8 +5,9 @@ from gui import tkinter_styling as style
 
 
 def load_index(parent_root):
-    parent_root.destroy()
-    root = Tk()
+    """Function to load the view all bookings form"""
+    parent_root.destroy()  # destroys old root
+    root = Tk()  # creates a new one for view all bookings
     ui = index.IndexUI(root)
     root.mainloop()
 
@@ -14,6 +15,7 @@ def load_index(parent_root):
 class MainMenuUI:
 
     def __init__(self, root):
+        """main menu GUI"""
         self.root = root
         self.root.title("Main Menu")
         self.root.resizable(0, 0)
@@ -21,8 +23,11 @@ class MainMenuUI:
         self.root.config(background=style.windowBG)
 
         # Widget creation
+
+        # Title
         self.label = Label(self.root, text="Main Menu", font=style.textHeading, bg=style.widgetBG, height=2)
 
+        # Buttons
         self.createNewBookingBtn = Button(self.root, text="Create New Booking", font=style.textNormal, width=20,
                                           height=3, command=self.load_create, bg=style.buttonColour1)
         self.ViewAllBookingsBtn = Button(self.root, text="View All Bookings", font=style.textNormal, width=20, height=3,
@@ -39,17 +44,22 @@ class MainMenuUI:
         self.ViewTotalIncomeBtn.grid(row=4, column=1, padx=(20, 5), pady=(5, 30))
         self.ExitBtn.grid(row=4, column=2, padx=(0, 20), pady=(5, 30))
 
-    # function to load the view total income form
+
     def load_income(self):
-        self.root.destroy()
-        root = Tk()
+        """function to load the view total income form"""
+        self.root.destroy()  # destroys old root
+        root = Tk()  # creates a new one for total income
         view_income.ViewIncome(root)
         root.mainloop()
 
-    # function to load the create form
+
     def load_create(self):
-        self.root.destroy()
-        root = Tk()
+        """function to load the create form"""
+        self.root.destroy()  # destroys old root
+        root = Tk()  # creates a new one for create
         create_booking.CreateMenu(root)
         root.mainloop()
+
+
+
 
