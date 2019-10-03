@@ -8,6 +8,7 @@ from gui import CalendarDialog
 def calendar_popup(event, master, date_string, startDate=None, minDate=None):
     """function to display calendar dialog and changes value of StringVar to the selected value"""
     c = CalendarDialog.CalendarDialog(master, startDate, minDate)
+    # if master is root or Toplevel then it grab_set of the program once dialog closes
     if type(master) == Tk or type(master) == Toplevel:
         master.grab_set()
 
