@@ -472,7 +472,7 @@ class CreateParty(BaseCreate):
             bookedBands = db.getBookedBands(self.dateOfEventValue.get(), eventType)
             freeBands = []
             for band in bandList:
-                if band not in bookedBands or band == list(CONST.BANDS.keys())[3]:
+                if band not in bookedBands or band == 'No band':
                     freeBands.append(band)
             self.bandOptions = freeBands
             self.bandName.configure(values=self.bandOptions)
