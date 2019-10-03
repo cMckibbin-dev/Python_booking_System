@@ -51,6 +51,8 @@ def view_details_popup(booking, parent):
 
 
 def update_popup(parent, booking):
+    """This function allows us to create a toplevel window for the edit window that grabs focus of the application
+     while in use, this mean view all bookings will still run in the background as the main root"""
     top = Toplevel()
     top.title('Update Booking')
     form = _update_form(booking)

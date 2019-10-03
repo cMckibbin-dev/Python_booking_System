@@ -25,9 +25,11 @@ class CalendarDialog(simple.Dialog):
         super().__init__(self.master, title='Calender')
 
     def body(self, master):
+        """Function to set up the body of the calender and pack it. Allows us to set a default date and min date """
         self.calendar = tkcalendar.Calendar(master, mindate=self.minDate, year=self.startDate.year,
                                             month=self.startDate.month, day=self.startDate.day)
         self.calendar.pack()
 
     def apply(self):
+        """Function to assign what date the user has selected to result"""
         self.result = self.calendar.selection_get()
