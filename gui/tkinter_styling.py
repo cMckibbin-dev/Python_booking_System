@@ -16,4 +16,4 @@ windowBG ="#ccffe6"
 buttonColour1 = "#8BD6CA"  # lighter
 buttonColour2 = "#8CACBF"  # darker
 # Logo
-logo ='images/favicon3.ico'
+logo ='images/logo.ico'

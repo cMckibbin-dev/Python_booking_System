@@ -8,6 +8,7 @@ class CalendarDialog(simple.Dialog):
     """Dialog for a calendar popup that will allow user to input a date"""
 
     def __init__(self, master, startDate=None, minDate=None):
+
         self.master = master
         self.startDate = None
         if isinstance(startDate, str):
